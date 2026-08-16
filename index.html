@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Co-Pilot Swarm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --surface: #FFFFFF;
+    --app-bg: #F1F3F4;
+    --text: #202124;
+    --text-secondary: #5F6368;
+    --text-faint: #80868B;
+    --border: #E0E3E7;
+    --border-soft: #ECEDEF;
+    --blue: #1A73E8;
+    --blue-dark: #1557B0;
+    --blue-tint: #E8F0FE;
+    --red: #EA4335;
+    --red-tint: #FCE8E6;
+    --green: #1E8E3E;
+    --green-tint: #E6F4EA;
+    --yellow: #F9AB00;
+    --yellow-tint: #FEF7E0;
+    --shadow-1: 0 1px 2px rgba(60,64,67,0.30), 0 1px 3px 1px rgba(60,64,67,0.15);
+    --shadow-2: 0 1px 3px rgba(60,64,67,0.30), 0 4px 8px 3px rgba(60,64,67,0.15);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html, body{ height:100%; background: var(--app-bg); }
+  body{
+    font-family: 'Roboto', Arial, sans-serif;
+    color: var(--text);
+    overflow: hidden;
+  }
+  .mono{ font-family: 'Roboto Mono', monospace; }
+
+  #map{ position:absolute; top:0; left:0; right:0; bottom:0; z-index:1; background:#E5E3DF; }
+
+  .leaflet-control-attribution{
+    background: rgba(255,255,255,0.85) !important;
+    font-size: 10px !important;
+    color: var(--text-faint) !important;
+    border-radius: 4px 0 0 0;
+  }
+  .leaflet-control-zoom{ display:none; }
+
+  .topbar{
+    position:absolute; top:12px; left:12px; z-index:20;
+    display:flex; align-items:center; gap:10px;
+  }
+  .search-pill{
+    background: var(--surface);
+    border-radius: 24px;
+    box-shadow: var(--shadow-1);
+    height: 48px;
+    display:flex; align-items:center;
+    padding: 0 8px 0 16px;
+    width: 360px;
+  }
+  .search-pill .menu-icon{
+    width:20px; height:20px; margin-right:14px; flex-shrink:0; cursor:pointer;
+  }
+  .search-pill .menu-icon span{
+    display:block; height:2px; background: var(--text-secondary); margin:4px 0; border-radius:1px;
+  }
+  .search-pill input{
+    border:none; outline:none; flex:1; font-size:15px; font-family:'Roboto'; color:var(--text);
+    background:transparent; min-width: 0;
+  }
+  .search-pill input::placeholder{ color: var(--text-faint); }
+  .search-btn{
+    border:none; background:none; cursor:pointer; color: var(--text-secondary);
+    width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition: background .15s, color .15s;
+  }
+  .search-btn:hover{ background:#F1F3F4; color:var(--blue); }
+  .search-btn:active{ transform: scale(.93); }
+  .search-btn.loading svg{ animation: spin .8s linear infinite; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .search-status{
+    position:absolute; top:56px; left:0;
+    background: var(--surface); border-radius:8px; box-shadow: var(--shadow-1);
+    padding:8px 14px; font-size:12.5px; color: var(--text-secondary);
+    opacity:0; transform: translateY(-4px); transition: opacity .2s, transform .2s; pointer-events:none;
+    max-width:340px;
+  }
+  .search-status.show{ opacity:1; transform: translateY(0); }
+  .search-status.error{ color: var(--red); }
+  .live-pill{
+    background: var(--surface); border-radius:24px; box-shadow: var(--shadow-1);
+    height:48px; padding: 0 18px; display:flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:500; color: var(--text-secondary);
+  }
+  .live-dot{
+    width:8px; height:8px; border-radius:50%; background: var(--red);
+    box-shadow: 0 0 0 0 rgba(234,67,53,.6);
+    animation: liveDot 2s infinite;
+  }
+  @keyframes liveDot{
+    0%{ box-shadow:0 0 0 0 rgba(234,67,53,.55);}
+    70%{ box-shadow:0 0 0 7px rgba(234,67,53,0);}
+    100%{ box-shadow:0 0 0 0 rgba(234,67,53,0);}
+  }
+  .live-pill b{ color: var(--text); font-weight:700; font-family:'Roboto Mono'; }
+
+  .map-controls{
+    position:absolute; right:16px; bottom: 320px; z-index:20;
+    display:flex; flex-direction:column; gap:14px; align-items:flex-end;
+    transition: bottom .25s ease;
+  }
+  .ctrl-stack{
+    background: var(--surface); border-radius:8px; box-shadow: var(--shadow-1);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .ctrl-btn{
+    width:40px; height:40px; display:flex; align-items:center; justify-content:center;
+    background:none; border:none; cursor:pointer; color: var(--text-secondary);
+    font-size:18px; transition: background .15s;
+  }
+  .ctrl-btn:hover{ background:#F8F9FA; color:var(--text); }
+  .ctrl-stack .ctrl-btn + .ctrl-btn{ border-top:1px solid var(--border-soft); }
+  .ctrl-single{
+    width:40px; height:40px; border-radius:50%;
+    background:var(--surface); box-shadow: var(--shadow-1);
+    border:none; cursor:pointer; color: var(--blue); font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ctrl-single:hover{ background:#F8F9FA; }
+
+  .fab-hazard{
+    position:absolute; right:16px; z-index:20;
+    bottom: 256px;
+    background: var(--surface); border:1px solid var(--border);
+    border-radius:24px; box-shadow: var(--shadow-2);
+    height:48px; padding:0 20px 0 16px;
+    display:flex; align-items:center; gap:8px;
+    cursor:pointer; font-weight:500; font-size:14px; color: var(--red);
+    transition: bottom .25s ease, transform .15s, box-shadow .15s;
+  }
+  .fab-hazard:hover{ box-shadow: 0 2px 6px rgba(60,64,67,.35), 0 6px 12px 4px rgba(60,64,67,.18); }
+  .fab-hazard:active{ transform: scale(.97); }
+  .fab-hazard svg{ width:20px; height:20px; }
+
+  .sheet{
+    position:absolute; left:0; right:0; bottom:0; z-index:25;
+    background: var(--surface);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -2px 10px rgba(60,64,67,.15), 0 -1px 2px rgba(60,64,67,.1);
+    max-height: 78vh;
+    display:flex; flex-direction:column;
+    transition: transform .32s cubic-bezier(.2,.8,.2,1);
+    transform: translateY(calc(100% - 230px));
+  }
+  .sheet.collapsed{ transform: translateY(calc(100% - 230px)); }
+  .sheet.expanded{ transform: translateY(0); }
+
+  .sheet-handle{
+    display:flex; justify-content:center; padding: 10px 0 6px; cursor:grab; flex-shrink:0;
+  }
+  .sheet-handle .bar{ width:36px; height:4px; border-radius:2px; background: var(--border); }
+
+  .sheet-summary{
+    padding: 4px 20px 14px; flex-shrink:0; cursor:pointer;
+  }
+  .sheet-summary-row{ display:flex; align-items:center; justify-content:space-between; }
+  .sheet-summary h2{ font-size:18px; font-weight:700; color:var(--text); }
+  .sheet-summary .toggle-arrow{ color:var(--text-secondary); font-size:13px; transition: transform .3s; }
+  .sheet.expanded .toggle-arrow{ transform: rotate(180deg); }
+  .sheet-summary p{ font-size:13px; color: var(--text-secondary); margin-top:4px; }
+
+  .summary-stats{ display:flex; gap:10px; margin-top:14px; }
+  .sum-chip{
+    flex:1; background: var(--app-bg); border-radius:10px; padding:10px 12px;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .sum-chip .n{ font-family:'Roboto Mono'; font-size:18px; font-weight:700; color:var(--text); }
+  .sum-chip .l{ font-size:11px; color: var(--text-secondary); }
+  .sum-chip.red .n{ color: var(--red); }
+  .sum-chip.green .n{ color: var(--green); }
+  .sum-chip.yellow .n{ color: #B06000; }
+
+  .sheet-body{
+    overflow-y:auto; padding: 0 20px 28px;
+    flex:1;
+  }
+  .sheet-body::-webkit-scrollbar{ width:6px; }
+  .sheet-body::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
+
+  .tabs{ display:flex; gap:6px; border-bottom:1px solid var(--border-soft); margin-bottom:18px; position:sticky; top:0; background:var(--surface); padding-top:4px; }
+  .tab{
+    padding: 10px 14px; font-size:13px; font-weight:500; color: var(--text-secondary);
+    cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-1px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .tab.active{ color: var(--blue); border-bottom-color: var(--blue); }
+  .tab .dot{ width:7px; height:7px; border-radius:50%; }
+
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .feature-card{
+    border: 1px solid var(--border-soft); border-radius:12px; padding:16px; margin-bottom:14px;
+  }
+  .feature-card h3{ font-size:14px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px;}
+  .feature-card .icon-badge{
+    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+  }
+  .icon-badge.blue{ background:var(--blue-tint); color:var(--blue);}
+  .icon-badge.green{ background:var(--green-tint); color:var(--green);}
+  .icon-badge.yellow{ background:var(--yellow-tint); color:#B06000;}
+  .feature-card p.desc{ font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-bottom:12px; }
+
+  .metric-grid{ display:flex; gap:10px; margin-bottom: 12px; }
+  .metric-box{ flex:1; background:var(--app-bg); border-radius:8px; padding:10px 12px; }
+  .metric-box .mv{ font-family:'Roboto Mono'; font-size:17px; font-weight:700; }
+  .metric-box .ml{ font-size:10.5px; color:var(--text-secondary); margin-top:2px; }
+
+  .heat-row{ display:flex; align-items:center; gap:10px; font-size:12px; padding:7px 0; }
+  .heat-name{ width:150px; color:var(--text); flex-shrink:0; }
+  .heat-track{ flex:1; height:6px; background:var(--border-soft); border-radius:3px; overflow:hidden; }
+  .heat-fill{ height:100%; background:var(--blue); border-radius:3px; transition:width .6s; }
+  .heat-count{ width:24px; text-align:right; color:var(--text-secondary); font-family:'Roboto Mono'; font-size:11px; }
+
+  .gauge-track{ height:8px; background:var(--border-soft); border-radius:4px; overflow:hidden; margin-top:4px;}
+  .gauge-fill{ height:100%; background:linear-gradient(90deg,#A8DAB5,var(--green)); border-radius:4px; transition:width .8s; }
+  .gauge-cap{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-faint); margin-top:5px;}
+
+  .token-hero{ display:flex; align-items:baseline; gap:8px; margin-bottom:14px; }
+  .token-hero .num{ font-family:'Roboto Mono'; font-size:30px; font-weight:700; color:#B06000; }
+  .token-hero .unit{ font-size:12px; color:var(--text-secondary); }
+
+  .driver-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:9px 12px; border-radius:8px; background: var(--app-bg); margin-bottom:6px; font-size:12.5px;
+  }
+  .driver-row.you{ background: var(--yellow-tint); border:1px solid #F5D87A; }
+  .driver-row .name{ font-weight:500; }
+  .driver-row .pts{ font-family:'Roboto Mono'; font-weight:700; color:#B06000; }
+
+  .empty-note{ font-size:12px; color: var(--text-faint); font-style:italic; padding:10px 0; }
+
+  .feed-row{ display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px; }
+  .feed-row:last-child{ border-bottom:none; }
+  .feed-dot{ width:8px; height:8px; border-radius:50%; margin-top:4px; flex-shrink:0; }
+  .feed-row .time{ font-family:'Roboto Mono'; font-size:10.5px; color:var(--text-faint); }
+  .feed-row .msg{ color:var(--text-secondary); line-height:1.5; margin-top:1px; }
+  .feed-row .msg b{ color:var(--text); font-weight:600; }
+
+  .leaflet-popup-content-wrapper{
+    border-radius: 12px !important;
+    box-shadow: var(--shadow-2) !important;
+    padding: 0 !important;
+  }
+  .leaflet-popup-content{ margin:0 !important; width:260px !important; }
+  .leaflet-popup-tip{ box-shadow: var(--shadow-1) !important; }
+  .popup-card{ font-family:'Roboto'; }
+  .popup-card .ph{
+    padding:14px 16px 10px; display:flex; align-items:flex-start; gap:10px;
+  }
+  .popup-card .pin-ic{
+    width:32px; height:32px; border-radius:50%; background:var(--red-tint); color:var(--red);
+    display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+  }
+  .popup-card h4{ font-size:14px; font-weight:700; color:var(--text); }
+  .popup-card .meta{ font-size:11.5px; color:var(--text-secondary); margin-top:2px; }
+  .popup-card .pb{ padding: 0 16px 14px; font-size:12px; color:var(--text-secondary); line-height:1.5;}
+  .popup-card .pb b{ color:var(--text); }
+
+  .toast{
+    position:absolute; top:74px; left:50%; transform:translateX(-50%);
+    z-index:30; background:var(--surface); border-radius:10px; box-shadow:var(--shadow-2);
+    padding:12px 18px; display:flex; align-items:center; gap:10px; font-size:13px;
+    animation: toastIn .35s ease, toastOut .35s ease 2.5s forwards;
+  }
+  @keyframes toastIn{ from{opacity:0; transform:translate(-50%,-8px);} to{opacity:1; transform:translate(-50%,0);} }
+  @keyframes toastOut{ to{opacity:0; transform:translate(-50%,-6px);} }
+  .toast .tic{ width:24px; height:24px; border-radius:50%; background:var(--yellow-tint); color:#B06000; display:flex; align-items:center; justify-content:center; font-size:13px;}
+  .toast b{ color:#B06000; font-family:'Roboto Mono'; }
+
+  .reset-btn{
+    position:absolute; top:12px; right:12px; z-index:20;
+    background:var(--surface); border-radius:8px; box-shadow:var(--shadow-1);
+    height:40px; padding:0 16px; font-size:13px; font-weight:500; color:var(--text-secondary);
+    border:none; cursor:pointer; display:flex; align-items:center; gap:6px;
+  }
+  .reset-btn:hover{ background:#F8F9FA; }
+
+  .hint-chip{
+    position:absolute; left:50%; top:72px; transform:translateX(-50%); z-index:19;
+    background:rgba(32,33,36,0.92); color:#fff; font-size:12.5px; padding:9px 16px;
+    border-radius:20px; box-shadow:var(--shadow-1); transition:opacity .3s; pointer-events:none;
+  }
+
+  @media (max-width: 720px){
+    .search-pill{ width: 70vw; }
+    .live-pill{ display:none; }
+    .map-controls{ bottom: 254px; gap: 10px; }
+    .fab-hazard span.label{ display:none; }
+    .fab-hazard{ padding:0; width:48px; justify-content:center; bottom: 254px; right: 68px; }
+    .search-status{ max-width: 70vw; }
+  }
+
+  :focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+
+  /* ---- Auth overlay ---- */
+  .auth-overlay{
+    position:fixed; inset:0; z-index:100;
+    background: linear-gradient(135deg, #0B3C8C 0%, #1A73E8 55%, #4F9CF9 100%);
+    display:flex; align-items:center; justify-content:center;
+    padding: 24px;
+  }
+  .auth-card{
+    background: var(--surface); border-radius:16px; box-shadow: var(--shadow-2);
+    width: 100%; max-width: 380px; padding: 32px 28px 28px;
+  }
+  .auth-logo{ display:flex; align-items:center; gap:10px; margin-bottom: 6px; }
+  .auth-logo .mark{
+    width:36px; height:36px; border-radius:10px; background:var(--blue-tint); color:var(--blue);
+    display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
+  }
+  .auth-logo span{ font-size:18px; font-weight:700; }
+  .auth-card p.sub{ font-size:13px; color: var(--text-secondary); margin-bottom: 22px; }
+  .auth-field{ margin-bottom: 14px; }
+  .auth-field label{ font-size:12px; font-weight:500; color: var(--text-secondary); display:block; margin-bottom:6px; }
+  .auth-field input{
+    width:100%; height:44px; border:1px solid var(--border); border-radius:8px;
+    padding: 0 14px; font-size:14px; font-family:'Roboto'; color:var(--text); outline:none;
+    transition: border-color .15s;
+  }
+  .auth-field input:focus{ border-color: var(--blue); }
+  .auth-submit{
+    width:100%; height:44px; border:none; border-radius:8px; background: var(--blue); color:#fff;
+    font-size:14px; font-weight:500; cursor:pointer; margin-top: 6px; transition: background .15s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .auth-submit:hover{ background: var(--blue-dark); }
+  .auth-submit:disabled{ opacity:.6; cursor:default; }
+  .auth-switch{ text-align:center; font-size:13px; color: var(--text-secondary); margin-top:18px; }
+  .auth-switch a{ color: var(--blue); cursor:pointer; font-weight:500; text-decoration:none; }
+  .auth-error{
+    background: var(--red-tint); color: var(--red); font-size:12.5px; border-radius:8px;
+    padding:10px 12px; margin-bottom: 14px; display:none;
+  }
+  .auth-error.show{ display:block; }
+  .auth-spinner{
+    width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; animation: spin .8s linear infinite; display:none;
+  }
+  .auth-submit.loading .auth-spinner{ display:inline-block; }
+  .auth-submit.loading .auth-label{ opacity:.85; }
+
+  .user-pill{
+    background: var(--surface); border-radius:24px; box-shadow: var(--shadow-1);
+    height:48px; padding: 0 8px 0 16px; display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:500; color: var(--text);
+  }
+  .user-pill .avatar{
+    width:28px; height:28px; border-radius:50%; background: var(--blue); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;
+  }
+  .user-pill button{
+    border:none; background:none; cursor:pointer; color: var(--text-faint); font-size:12px;
+    padding:6px 10px; border-radius:14px; transition: background .15s, color .15s;
+  }
+  .user-pill button:hover{ background: var(--app-bg); color: var(--text); }
+
+  .sync-status{
+    position:absolute; left:50%; top:128px; transform:translateX(-50%); z-index:19;
+    font-size:11.5px; color: var(--text-faint); background: var(--surface); border-radius:14px;
+    padding:5px 12px; box-shadow: var(--shadow-1); opacity:0; transition: opacity .25s; pointer-events:none;
+  }
+  .sync-status.show{ opacity:1; }
+  .sync-status.error{ color: var(--red); }
+
+  @media (max-width: 720px){
+    .auth-card{ padding: 26px 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="mark">⛯</div><span>Co-Pilot Swarm</span></div>
+    <p class="sub" id="authSub">Sign in to track your hazard reports, EV stats and Safety Tokens.</p>
+    <div class="auth-error" id="authError"></div>
+    <form id="authForm">
+      <div class="auth-field">
+        <label for="authUsername">Username</label>
+        <input type="text" id="authUsername" autocomplete="username" placeholder="e.g. test_driver" required minlength="3" maxlength="32" />
+      </div>
+      <div class="auth-field">
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" autocomplete="current-password" placeholder="At least 6 characters" required minlength="6" />
+      </div>
+      <button type="submit" class="auth-submit" id="authSubmit">
+        <span class="auth-spinner"></span><span class="auth-label" id="authSubmitLabel">Log in</span>
+      </button>
+    </form>
+    <div class="auth-switch" id="authSwitch">New here? <a id="authSwitchLink">Create an account</a></div>
+  </div>
+</div>
+
+<div class="sync-status" id="syncStatus">Synced</div>
+
+<div class="hint-chip" id="hintChip">Tap any car icon to simulate it hitting a hazard</div>
+
+<div class="topbar">
+  <div class="search-pill">
+    <div class="menu-icon"><span></span><span></span><span></span></div>
+    <input type="text" id="searchInput" placeholder="Search a city in India — try Bhubaneswar" autocomplete="off" />
+    <button class="search-btn" id="searchBtn" aria-label="Search" type="button">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="search-status" id="searchStatus"></div>
+  <div class="live-pill"><span class="live-dot"></span> Live · <b id="vehicleCount">12</b> vehicles</div>
+  <div class="user-pill" id="userPill" style="display:none;">
+    <div class="avatar" id="userAvatar">?</div>
+    <span id="userName">—</span>
+    <button id="logoutBtn" type="button">Log out</button>
+  </div>
+</div>
+
+<button class="reset-btn" id="resetBtn">↺ Reset</button>
+
+<div class="fab-hazard" id="hazardFab">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L1 21h22L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
+  <span class="label">Simulate hazard</span>
+</div>
+
+<div class="map-controls" id="mapControls">
+  <div class="ctrl-stack">
+    <button class="ctrl-btn" id="zoomIn">+</button>
+    <button class="ctrl-btn" id="zoomOut">–</button>
+  </div>
+  <button class="ctrl-single" id="locateBtn">⌖</button>
+</div>
+
+<div class="sheet collapsed" id="sheet">
+  <div class="sheet-handle" id="sheetHandle"><div class="bar"></div></div>
+  <div class="sheet-summary" id="sheetSummary">
+    <div class="sheet-summary-row">
+      <div>
+        <h2>Co-Pilot Swarm</h2>
+        <p>3 connected features · tap to expand</p>
+      </div>
+      <div class="toggle-arrow">▲</div>
+    </div>
+    <div class="summary-stats">
+      <div class="sum-chip red"><span class="n" id="sumFlares">0</span><span class="l">Flares dropped</span></div>
+      <div class="sum-chip green"><span class="n" id="sumEv">0</span><span class="l">EVs pre-conditioned</span></div>
+      <div class="sum-chip yellow"><span class="n" id="sumTokens">0</span><span class="l">Tokens issued</span></div>
+    </div>
+  </div>
+
+  <div class="sheet-body">
+    <div class="tabs">
+      <div class="tab active" data-tab="factory"><span class="dot" style="background:var(--blue)"></span>Factory Feedback</div>
+      <div class="tab" data-tab="energy"><span class="dot" style="background:var(--green)"></span>EV Energy Saver</div>
+      <div class="tab" data-tab="tokens"><span class="dot" style="background:var(--yellow)"></span>Safety Points</div>
+      <div class="tab" data-tab="feed"><span class="dot" style="background:var(--text-faint)"></span>Activity</div>
+    </div>
+
+    <div class="tab-panel active" id="panel-factory">
+      <div class="feature-card">
+        <h3><span class="icon-badge blue">⛯</span>Factory Feedback Loop</h3>
+        <p class="desc">Anonymized hazard reports stream back to the Tata Motors engineering team at the Pimpri plant — showing exactly where vehicles take the worst structural stress on this route.</p>
+        <div class="metric-grid">
+          <div class="metric-box"><div class="mv" id="dataPoints" style="color:var(--blue)">0</div><div class="ml">Reports sent</div></div>
+          <div class="metric-box"><div class="mv" id="dataZones">0</div><div class="ml">Stress zones flagged</div></div>
+        </div>
+        <div id="heatList"><div class="empty-note">No reports yet — simulate a hazard to see this populate.</div></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-energy">
+      <div class="feature-card">
+        <h3><span class="icon-badge green">⚡</span>EV Energy Saver</h3>
+        <p class="desc">When an EV gets a hazard alert ahead, it pre-conditions its regenerative brakes and battery cooling — so the driver doesn't have to brake hard at the last second.</p>
+        <div class="metric-grid">
+          <div class="metric-box"><div class="mv" id="evCount" style="color:var(--green)">0</div><div class="ml">EVs pre-conditioned</div></div>
+          <div class="metric-box"><div class="mv" id="evRange" style="color:var(--green)">+0%</div><div class="ml">Avg. range recovered</div></div>
+        </div>
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
+        <div class="gauge-cap"><span>Efficiency vs. hard-brake baseline</span><span id="gaugeLabel">0%</span></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-tokens">
+      <div class="feature-card">
+        <h3><span class="icon-badge yellow">★</span>Safety Points</h3>
+        <p class="desc">Drivers who confirm a hazard alert as accurate earn Safety Tokens, redeemable for service or charging discounts at brand partner stations.</p>
+        <div class="token-hero"><span class="num" id="tokenTotal">0</span><span class="unit">tokens issued fleet-wide</span></div>
+        <div class="driver-row you"><span class="name">★ You (Test Driver)</span><span class="pts" id="yourTokens">0 pts</span></div>
+        <div id="driverList"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-feed">
+      <div class="feature-card" style="padding-top:6px;">
+        <div id="feedList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+// ---------------------------------------------------------------------------
+// Backend API client + auth
+// ---------------------------------------------------------------------------
+
+// Point this at wherever server.js is running. Defaults to same host, port 4000.
+// Defaults to http://localhost:4000 regardless of how this page is loaded
+// (file://, a static server, etc.) — override with window.SWARM_API_BASE
+// if your backend runs somewhere else.
+const API_BASE = window.SWARM_API_BASE || 'http://localhost:4000';
+
+const Auth = {
+  token: null,
+  user: null,
+  STORAGE_KEY: 'swarm_auth_v1',
+
+  load(){
+    try{
+      const raw = window.name && window.name.startsWith('SWARM_AUTH:')
+        ? window.name.slice('SWARM_AUTH:'.length)
+        : null;
+      if(raw){
+        const parsed = JSON.parse(raw);
+        this.token = parsed.token;
+        this.user = parsed.user;
+      }
+    }catch(e){ /* ignore */ }
+  },
+  persist(){
+    try{
+      window.name = 'SWARM_AUTH:' + JSON.stringify({ token: this.token, user: this.user });
+    }catch(e){ /* ignore */ }
+  },
+  set(token, user){
+    this.token = token;
+    this.user = user;
+    this.persist();
+  },
+  clear(){
+    this.token = null;
+    this.user = null;
+    try{ window.name = ''; }catch(e){ /* ignore */ }
+  },
+  get isAuthed(){ return !!this.token; }
+};
+
+async function apiRequest(path, { method='GET', body=null, auth=true } = {}){
+  const headers = { 'Content-Type': 'application/json' };
+  if(auth && Auth.token) headers['Authorization'] = 'Bearer ' + Auth.token;
+  const resp = await fetch(API_BASE + path, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined
+  });
+  let data = null;
+  try{ data = await resp.json(); }catch(e){ /* no body, e.g. 204 */ }
+  if(!resp.ok){
+    const err = new Error((data && data.error) || `Request failed (${resp.status})`);
+    err.status = resp.status;
+    throw err;
+  }
+  return data;
+}
+
+const API = {
+  signup: (username, password) => apiRequest('/api/auth/signup', { method:'POST', auth:false, body:{ username, password } }),
+  login: (username, password) => apiRequest('/api/auth/login', { method:'POST', auth:false, body:{ username, password } }),
+  me: () => apiRequest('/api/auth/me'),
+  getState: () => apiRequest('/api/swarm/state'),
+  postFlare: (payload) => apiRequest('/api/swarm/flares', { method:'POST', body:payload }),
+  postTokens: (payload) => apiRequest('/api/swarm/tokens', { method:'POST', body:payload }),
+  postFeed: (payload) => apiRequest('/api/swarm/feed', { method:'POST', body:payload }),
+  resetState: () => apiRequest('/api/swarm/state', { method:'DELETE' })
+};
+
+function showSyncStatus(msg, isError){
+  const el = document.getElementById('syncStatus');
+  el.textContent = msg;
+  el.classList.toggle('error', !!isError);
+  el.classList.add('show');
+  clearTimeout(showSyncStatus._t);
+  showSyncStatus._t = setTimeout(()=> el.classList.remove('show'), 1800);
+}
+
+// Fire-and-forget persistence helpers: the UI updates optimistically and
+// instantly via the existing in-memory logic; these calls sync that activity
+// to the backend without blocking the simulation if the API is unreachable.
+function persistFlare(payload){
+  if(!Auth.isAuthed) return;
+  API.postFlare(payload).then(()=> showSyncStatus('Synced')).catch(()=> showSyncStatus('Sync failed — offline?', true));
+}
+function persistTokens(payload){
+  if(!Auth.isAuthed) return;
+  API.postTokens(payload).catch(()=> showSyncStatus('Sync failed — offline?', true));
+}
+function persistFeed(payload){
+  if(!Auth.isAuthed) return;
+  API.postFeed(payload).catch(()=> {/* feed sync errors are non-critical, stay quiet */});
+}
+
+// ---------------------------------------------------------------------------
+// Auth UI
+// ---------------------------------------------------------------------------
+
+const authOverlay = document.getElementById('authOverlay');
+const authForm = document.getElementById('authForm');
+const authUsername = document.getElementById('authUsername');
+const authPassword = document.getElementById('authPassword');
+const authSubmit = document.getElementById('authSubmit');
+const authSubmitLabel = document.getElementById('authSubmitLabel');
+const authError = document.getElementById('authError');
+const authSub = document.getElementById('authSub');
+const authSwitch = document.getElementById('authSwitch');
+const authSwitchLink = document.getElementById('authSwitchLink');
+const userPill = document.getElementById('userPill');
+const userAvatar = document.getElementById('userAvatar');
+const userName = document.getElementById('userName');
+const logoutBtn = document.getElementById('logoutBtn');
+
+let authMode = 'login'; // 'login' | 'signup'
+
+function setAuthMode(mode){
+  authMode = mode;
+  if(mode === 'signup'){
+    authSubmitLabel.textContent = 'Create account';
+    authSub.textContent = 'Create an account to start tracking your swarm activity.';
+    authSwitch.innerHTML = 'Already have an account? <a id="authSwitchLink">Log in</a>';
+    authPassword.setAttribute('autocomplete','new-password');
+  } else {
+    authSubmitLabel.textContent = 'Log in';
+    authSub.textContent = 'Sign in to track your hazard reports, EV stats and Safety Tokens.';
+    authSwitch.innerHTML = 'New here? <a id="authSwitchLink">Create an account</a>';
+    authPassword.setAttribute('autocomplete','current-password');
+  }
+  document.getElementById('authSwitchLink').addEventListener('click', ()=>{
+    setAuthMode(authMode === 'login' ? 'signup' : 'login');
+  });
+  hideAuthError();
+}
+
+function showAuthError(msg){
+  authError.textContent = msg;
+  authError.classList.add('show');
+}
+function hideAuthError(){
+  authError.classList.remove('show');
+}
+
+authForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  hideAuthError();
+  const username = authUsername.value.trim();
+  const password = authPassword.value;
+  authSubmit.disabled = true;
+  authSubmit.classList.add('loading');
+  try{
+    const fn = authMode === 'signup' ? API.signup : API.login;
+    const data = await fn(username, password);
+    Auth.set(data.token, data.user);
+    enterApp();
+  }catch(err){
+    showAuthError(err.message || 'Something went wrong — try again.');
+  }finally{
+    authSubmit.disabled = false;
+    authSubmit.classList.remove('loading');
+  }
+});
+
+logoutBtn.addEventListener('click', ()=>{
+  Auth.clear();
+  authOverlay.style.display = 'flex';
+  userPill.style.display = 'none';
+  setAuthMode('login');
+  authUsername.value = '';
+  authPassword.value = '';
+});
+
+function enterApp(){
+  authOverlay.style.display = 'none';
+  userPill.style.display = 'flex';
+  userName.textContent = Auth.user.username;
+  userAvatar.textContent = Auth.user.username.slice(0,2).toUpperCase();
+  loadRemoteState();
+}
+
+setAuthMode('login');
+Auth.load();
+if(Auth.isAuthed){
+  // Verify the token is still valid before trusting it
+  API.me().then(()=> enterApp()).catch(()=>{ Auth.clear(); });
+} 
+
+const ROUTE = [
+  [18.6020, 73.7890],
+  [18.6065, 73.7935],
+  [18.6098, 73.7978],
+  [18.6135, 73.8015],
+  [18.6170, 73.8050],
+  [18.6190, 73.8075],
+  [18.6210, 73.8095],
+  [18.6230, 73.8108],
+  [18.6261, 73.8122]
+];
+
+const map = L.map('map', {
+  zoomControl: false,
+  attributionControl: true
+}).setView([18.613, 73.802], 14);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+document.getElementById('zoomIn').onclick = ()=> map.zoomIn();
+document.getElementById('zoomOut').onclick = ()=> map.zoomOut();
+document.getElementById('locateBtn').onclick = ()=> map.flyTo([18.613,73.802], 14);
+
+const QUICK_CITIES = {
+  "bhubaneswar": [20.2961, 85.8245, 12],
+  "cuttack": [20.4625, 85.8830, 12],
+  "mumbai": [19.0760, 72.8777, 11],
+  "delhi": [28.6139, 77.2090, 11],
+  "new delhi": [28.6139, 77.2090, 11],
+  "bengaluru": [12.9716, 77.5946, 11],
+  "bangalore": [12.9716, 77.5946, 11],
+  "chennai": [13.0827, 80.2707, 11],
+  "kolkata": [22.5726, 88.3639, 11],
+  "hyderabad": [17.3850, 78.4867, 11],
+  "ahmedabad": [23.0225, 72.5714, 11],
+  "jaipur": [26.9124, 75.7873, 12],
+  "lucknow": [26.8467, 80.9462, 12],
+  "nagpur": [21.1458, 79.0882, 12],
+  "indore": [22.7196, 75.8577, 12],
+  "surat": [21.1702, 72.8311, 12],
+  "patna": [25.5941, 85.1376, 12],
+  "bhopal": [23.2599, 77.4126, 12],
+  "visakhapatnam": [17.6868, 83.2185, 12],
+  "guwahati": [26.1445, 91.7362, 12],
+  "coimbatore": [11.0168, 76.9558, 12],
+  "chandigarh": [30.7333, 76.7794, 12],
+  "kochi": [9.9312, 76.2673, 12],
+  "pune": [18.613, 73.802, 14],
+  "pimpri": [18.6260, 73.8121, 14],
+  "pimpri-chinchwad": [18.6260, 73.8121, 14]
+};
+
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const searchStatus = document.getElementById('searchStatus');
+
+function showSearchStatus(msg, isError){
+  searchStatus.textContent = msg;
+  searchStatus.classList.toggle('error', !!isError);
+  searchStatus.classList.add('show');
+  clearTimeout(showSearchStatus._t);
+  showSearchStatus._t = setTimeout(()=> searchStatus.classList.remove('show'), 3200);
+}
+
+function setSearchLoading(isLoading){
+  searchBtn.classList.toggle('loading', isLoading);
+}
+
+async function runSearch(){
+  const q = searchInput.value.trim();
+  if(!q){ return; }
+  hideHint();
+
+  const key = q.toLowerCase();
+  if(QUICK_CITIES[key]){
+    const [lat,lng,zoom] = QUICK_CITIES[key];
+    map.flyTo([lat,lng], zoom);
+    showSearchStatus(`Showing ${q}`);
+    return;
+  }
+
+  setSearchLoading(true);
+  try{
+    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=in&q=${encodeURIComponent(q)}`, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if(!resp.ok) throw new Error('lookup failed');
+    const results = await resp.json();
+    if(results && results.length){
+      const lat = parseFloat(results[0].lat);
+      const lng = parseFloat(results[0].lon);
+      map.flyTo([lat,lng], 12);
+      showSearchStatus(`Showing ${results[0].display_name.split(',').slice(0,2).join(', ')}`);
+    } else {
+      showSearchStatus(`Couldn't find "${q}" — try a city or place name`, true);
+    }
+  } catch(err){
+    showSearchStatus(`Search is unreachable right now — try a major city name`, true);
+  } finally {
+    setSearchLoading(false);
+  }
+}
+
+searchBtn.addEventListener('click', runSearch);
+searchInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); runSearch(); } });
+
+const routeLine = L.polyline(ROUTE, { color:'#1A73E8', weight:6, opacity:0.85, lineCap:'round', lineJoin:'round' }).addTo(map);
+L.polyline(ROUTE, { color:'#FFFFFF', weight:9, opacity:0.5 }).addTo(map).bringToBack();
+
+const plantIcon = L.divIcon({
+  className:'', html: `<div style="width:30px;height:30px;border-radius:50%;background:#1A73E8;border:3px solid white;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">🏭</div>`,
+  iconSize:[30,30], iconAnchor:[15,15]
+});
+L.marker(ROUTE[ROUTE.length-1], {icon: plantIcon, zIndexOffset: 100})
+  .addTo(map)
+  .bindPopup(`<div class="popup-card"><div class="ph"><div class="pin-ic" style="background:#E8F0FE;color:#1A73E8;">🏭</div><div><h4>Tata Motors — Pimpri Plant</h4><div class="meta">Engineering &amp; assembly</div></div></div><div class="pb">Structural stress reports from the swarm are routed here for next-gen suspension design.</div></div>`);
+
+function totalRouteLength(){
+  let len=0;
+  for(let i=0;i<ROUTE.length-1;i++){
+    len += map.distance(ROUTE[i], ROUTE[i+1]);
+  }
+  return len;
+}
+const ROUTE_LEN = totalRouteLength();
+
+function pointAtFraction(f){
+  f = ((f % 1) + 1) % 1;
+  let target = f * ROUTE_LEN;
+  let acc = 0;
+  for(let i=0;i<ROUTE.length-1;i++){
+    const segLen = map.distance(ROUTE[i], ROUTE[i+1]);
+    if(acc + segLen >= target || i === ROUTE.length-2){
+      const segT = segLen===0 ? 0 : (target-acc)/segLen;
+      const lat = lerp(ROUTE[i][0], ROUTE[i+1][0], segT);
+      const lng = lerp(ROUTE[i][1], ROUTE[i+1][1], segT);
+      const bearing = Math.atan2(ROUTE[i+1][1]-ROUTE[i][1], ROUTE[i+1][0]-ROUTE[i][0]) * 180/Math.PI;
+      return {lat, lng, bearing};
+    }
+    acc += segLen;
+  }
+  return {lat:ROUTE[0][0], lng:ROUTE[0][1], bearing:0};
+}
+
+function offsetLatLng(lat, lng, bearingDeg, metersRight){
+  const R = 6378137;
+  const perpRad = (bearingDeg + 90) * Math.PI/180;
+  const dLat = (metersRight * Math.cos(perpRad)) / R * (180/Math.PI);
+  const dLng = (metersRight * Math.sin(perpRad)) / (R * Math.cos(lat*Math.PI/180)) * (180/Math.PI);
+  return [lat + dLat, lng + dLng];
+}
+
+function lerp(a,b,t){ return a + (b-a)*t; }
+
+const NAMES = ["A. Sharma","R. Iyer","M. Khan","P. Nair","S. Verma","D. Gupta","T. Singh","K. Reddy","J. Das","V. Rao","N. Joshi","B. Patel"];
+const ZONES = ["NH-60 KM 2.1","Spine Road Junction","Telco Road Bend","NH-60 KM 4.6","Pimpri Flyover Approach","KSB Chowk Stretch"];
+
+function rand(min,max){ return min + Math.random()*(max-min); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+let vehicles = [];
+let nextId = 1;
+let stressZones = {};
+let evStats = { count:0, rangeSum:0 };
+let tokenBalance = { you:0, total:0 };
+let driverTokens = {};
+let stats = { flares:0 };
+
+const carColors = { normal:'#5F6368', ev:'#1E8E3E', warned:'#EA4335', you:'#F9AB00' };
+
+function carIconSize(){
+  const z = map.getZoom();
+  if(z >= 13) return 22;
+  if(z >= 10) return 15;
+  if(z >= 7)  return 10;
+  return 6;
+}
+
+function carDivIcon(color, isYou, sizeOverride){
+  const size = sizeOverride || carIconSize();
+  const showStar = isYou && size >= 14;
+  const border = size >= 14 ? 2 : 1;
+  return L.divIcon({
+    className:'',
+    html: `<div style="
+        width:${size}px;height:${size}px;border-radius:50% 50% 50% ${size>=14?4:50}%;
+        background:${color}; transform: rotate(${size>=14?-45:0}deg);
+        border:${border}px solid white; box-shadow:0 1px 3px rgba(0,0,0,.4);
+        display:flex; align-items:center; justify-content:center;
+      ">${showStar? '<span style="transform:rotate(45deg);font-size:10px;">★</span>':''}</div>`,
+    iconSize:[size,size], iconAnchor:[size/2,size/2]
+  });
+}
+
+function refreshVehicleIconSizes(){
+  vehicles.forEach(v=>{
+    if(v.state==='normal' || v.state==='reported'){
+      v.marker.setIcon(carDivIcon(v.isYou? carColors.you : (v.isEV? carColors.ev: carColors.normal), v.isYou));
+    } else if(v.state==='warned'){
+      v.marker.setIcon(carDivIcon(carColors.warned, v.isYou));
+    }
+  });
+  nationalVehicles.forEach(nv=>{
+    nv.marker.setIcon(carDivIcon(nv.isEV? carColors.ev : carColors.normal, false));
+  });
+}
+
+function makeVehicle(idx){
+  const isEV = Math.random() < 0.45;
+  const dir = idx % 2 === 0 ? 1 : -1;
+  const v = {
+    id: nextId++,
+    name: pick(NAMES),
+    f: Math.random(),
+    dir: dir,
+    laneOffset: dir===1 ? rand(4,9) : -rand(4,9),
+    speed: rand(0.0000045, 0.0000075),
+    speedMul: 1,
+    isEV: isEV,
+    isYou: false,
+    state: 'normal',
+    warnedTimer: 0,
+    marker: null
+  };
+  const pos = pointAtFraction(v.f);
+  const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+  v.marker = L.marker(ll, { icon: carDivIcon(carColors.normal, false), zIndexOffset: 50 }).addTo(map);
+  v.marker.on('click', ()=> onVehicleClick(v));
+  return v;
+}
+
+const INDIA_CITIES = [
+  {name:"Bhubaneswar", lat:20.2961, lng:85.8245},
+  {name:"Mumbai", lat:19.0760, lng:72.8777},
+  {name:"Delhi", lat:28.6139, lng:77.2090},
+  {name:"Bengaluru", lat:12.9716, lng:77.5946},
+  {name:"Chennai", lat:13.0827, lng:80.2707},
+  {name:"Kolkata", lat:22.5726, lng:88.3639},
+  {name:"Hyderabad", lat:17.3850, lng:78.4867},
+  {name:"Ahmedabad", lat:23.0225, lng:72.5714},
+  {name:"Jaipur", lat:26.9124, lng:75.7873},
+  {name:"Lucknow", lat:26.8467, lng:80.9462},
+  {name:"Nagpur", lat:21.1458, lng:79.0882},
+  {name:"Indore", lat:22.7196, lng:75.8577},
+  {name:"Surat", lat:21.1702, lng:72.8311},
+  {name:"Patna", lat:25.5941, lng:85.1376},
+  {name:"Bhopal", lat:23.2599, lng:77.4126},
+  {name:"Visakhapatnam", lat:17.6868, lng:83.2185},
+  {name:"Guwahati", lat:26.1445, lng:91.7362},
+  {name:"Coimbatore", lat:11.0168, lng:76.9558},
+  {name:"Chandigarh", lat:30.7333, lng:76.7794},
+  {name:"Kochi", lat:9.9312, lng:76.2673}
+];
+
+let nationalVehicles = [];
+
+function initNationalFleet(){
+  nationalVehicles.forEach(nv=> map.removeLayer(nv.marker));
+  nationalVehicles = [];
+  INDIA_CITIES.forEach(city=>{
+    const carsHere = Math.floor(rand(3,7));
+    for(let i=0;i<carsHere;i++){
+      const lat = city.lat + rand(-0.18, 0.18);
+      const lng = city.lng + rand(-0.18, 0.18);
+      const isEV = Math.random() < 0.4;
+      const marker = L.marker([lat,lng], {
+        icon: carDivIcon(isEV? carColors.ev : carColors.normal, false),
+        zIndexOffset: 10,
+        interactive: false
+      }).addTo(map);
+      nationalVehicles.push({ city: city.name, lat, lng, isEV, marker, driftSeed: Math.random()*1000 });
+    }
+  });
+}
+
+function driftNationalFleet(t){
+  nationalVehicles.forEach(nv=>{
+    const dlat = Math.sin(t*0.0002 + nv.driftSeed) * 0.0006;
+    const dlng = Math.cos(t*0.00017 + nv.driftSeed) * 0.0006;
+    nv.marker.setLatLng([nv.lat + dlat, nv.lng + dlng]);
+  });
+}
+
+function initVehicles(){
+  vehicles.forEach(v=> map.removeLayer(v.marker));
+  vehicles = [];
+  for(let i=0;i<12;i++) vehicles.push(makeVehicle(i));
+  vehicles[0].isYou = true;
+  vehicles[0].name = "You (Test Driver)";
+  vehicles[0].marker.setIcon(carDivIcon(carColors.you, true));
+}
+
+let activeRings = [];
+
+function onVehicleClick(v){
+  if(v.state !== 'normal') return;
+  dropFlare(v);
+}
+
+document.getElementById('hazardFab').addEventListener('click', ()=>{
+  const candidates = vehicles.filter(v=>v.state==='normal');
+  if(candidates.length===0) return;
+  dropFlare(pick(candidates));
+});
+
+function hazardPinIcon(){
+  return L.divIcon({
+    className:'',
+    html: `<div style="position:relative;width:34px;height:44px;">
+        <svg viewBox="0 0 34 44" width="34" height="44">
+          <path d="M17 0C7.6 0 0 7.6 0 17c0 12 17 27 17 27s17-15 17-27C34 7.6 26.4 0 17 0z" fill="#EA4335"/>
+          <circle cx="17" cy="17" r="7" fill="white"/>
+        </svg>
+        <div style="position:absolute;top:8px;left:0;width:34px;text-align:center;font-size:13px;">⚠</div>
+      </div>`,
+    iconSize:[34,44], iconAnchor:[17,44]
+  });
+}
+
+function dropFlare(v){
+  const pos = pointAtFraction(v.f);
+  const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+  const zone = pick(ZONES);
+
+  stats.flares++;
+  document.getElementById('sumFlares').textContent = stats.flares;
+
+  const pin = L.marker(ll, { icon: hazardPinIcon(), zIndexOffset: 200 }).addTo(map);
+  pin.bindPopup(`<div class="popup-card"><div class="ph"><div class="pin-ic">⚠</div><div><h4>Digital Flare</h4><div class="meta">${zone}</div></div></div><div class="pb">Reported by <b>${v.name}</b> · pothole hazard · broadcasting to vehicles within 500m.</div></div>`).openPopup();
+
+  const circle = L.circle(ll, {
+    radius: 1, color:'#EA4335', weight:1.5, fillColor:'#EA4335', fillOpacity:0.12, opacity:0.55
+  }).addTo(map);
+
+  let r = 1;
+  const targetR = 500;
+  const growInterval = setInterval(()=>{
+    r += 40;
+    circle.setRadius(r);
+    if(r >= targetR){
+      clearInterval(growInterval);
+      warnNearby(ll, v);
+    }
+  }, 18);
+
+  setTimeout(()=>{
+    map.removeLayer(pin);
+  }, 6000);
+  setTimeout(()=>{
+    let op = 0.12;
+    const fade = setInterval(()=>{
+      op -= 0.012;
+      if(op<=0){ clearInterval(fade); map.removeLayer(circle); return; }
+      circle.setStyle({ fillOpacity: Math.max(0,op), opacity: Math.max(0,op*4.5) });
+    }, 60);
+  }, 3500);
+
+  logFeed('factory','red', `<b>${v.name}</b> dropped a Digital Flare near <b>${zone}</b> — pothole detected.`);
+
+  stressZones[zone] = (stressZones[zone]||0)+1;
+  document.getElementById('dataPoints').textContent = Object.values(stressZones).reduce((a,b)=>a+b,0);
+  document.getElementById('dataZones').textContent = Object.keys(stressZones).length;
+  renderHeat();
+  logFeed('factory','blue', `Stress reading for <b>${zone}</b> queued for the Tata Motors engineering feed.`);
+
+  persistFlare({
+    vehicleName: v.name,
+    zone: zone,
+    lat: ll[0],
+    lng: ll[1],
+    isEV: !!v.isEV
+  });
+
+  awardTokens(v.name, 15, v.isYou);
+
+  v.state = 'reported';
+  setTimeout(()=>{ if(v.state==='reported') v.state='normal'; }, 1200);
+}
+
+function warnNearby(originLatLng, source){
+  let count = 0;
+  vehicles.forEach(v=>{
+    if(v.id === source.id) return;
+    const pos = pointAtFraction(v.f);
+    const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+    const dist = map.distance(originLatLng, ll);
+    if(dist < 500){
+      count++;
+      v.state = 'warned';
+      v.speedMul = 0.4;
+      v.warnedTimer = 5.5;
+      v.marker.setIcon(carDivIcon(carColors.warned, v.isYou));
+      if(v.isEV){
+        preConditionEV(v);
+      }
+    }
+  });
+  if(count>0){
+    updateVehicleCount();
+    logFeed('factory','red', `${count} nearby vehicle${count>1?'s':''} received the alert and slowed in advance.`);
+  }
+}
+
+function preConditionEV(v){
+  evStats.count++;
+  const recovered = rand(8,18);
+  evStats.rangeSum += recovered;
+  document.getElementById('evCount').textContent = evStats.count;
+  document.getElementById('sumEv').textContent = evStats.count;
+  const avg = evStats.rangeSum/evStats.count;
+  document.getElementById('evRange').textContent = '+'+avg.toFixed(1)+'%';
+  const pct = Math.min(100, avg*4);
+  document.getElementById('gaugeFill').style.width = pct+'%';
+  document.getElementById('gaugeLabel').textContent = pct.toFixed(0)+'%';
+  const msg = `<b>${v.name}'s EV</b> pre-conditioned brakes &amp; battery cooling ahead of the hazard.`;
+  logFeed('energy','green', msg);
+  if(Auth.isAuthed){
+    persistFlare({
+      vehicleName: v.name,
+      zone: 'EV pre-conditioning event',
+      isEV: true,
+      evRangeRecovered: recovered
+    });
+  }
+}
+
+function awardTokens(name, amount, isYou){
+  driverTokens[name] = (driverTokens[name]||0)+amount;
+  tokenBalance.total += amount;
+  document.getElementById('tokenTotal').textContent = tokenBalance.total;
+  document.getElementById('sumTokens').textContent = tokenBalance.total;
+  if(isYou){
+    tokenBalance.you += amount;
+    document.getElementById('yourTokens').textContent = tokenBalance.you+' pts';
+    showToast(amount);
+  }
+  renderDrivers();
+  logFeed('tokens','yellow', `<b>${name}</b> earned <b>+${amount} Safety Tokens</b> for a verified hazard report.`);
+  persistTokens({ driverName: name, amount: amount, isYou: !!isYou, reason: 'verified hazard report' });
+}
+
+function renderDrivers(){
+  const list = document.getElementById('driverList');
+  const entries = Object.entries(driverTokens).filter(([n])=>n!=="You (Test Driver)").sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(entries.length===0){ list.innerHTML = '<div class="empty-note">No other driver activity yet.</div>'; return; }
+  list.innerHTML = entries.map(([n,p])=>`<div class="driver-row"><span class="name">${n}</span><span class="pts">${p} pts</span></div>`).join('');
+}
+
+function renderHeat(){
+  const list = document.getElementById('heatList');
+  const entries = Object.entries(stressZones).sort((a,b)=>b[1]-a[1]);
+  if(entries.length===0){ list.innerHTML = '<div class="empty-note">No reports yet — simulate a hazard to see this populate.</div>'; return; }
+  const max = Math.max(...entries.map(e=>e[1]));
+  list.innerHTML = entries.map(([z,c])=>`
+    <div class="heat-row">
+      <span class="heat-name">${z}</span>
+      <span class="heat-track"><span class="heat-fill" style="width:${(c/max)*100}%"></span></span>
+      <span class="heat-count">${c}</span>
+    </div>
+  `).join('');
+}
+
+function showToast(amount){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="tic">★</span> Safety Token earned — <b>+${amount}</b>`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2900);
+}
+
+const feedList = document.getElementById('feedList');
+let simSeconds = 0;
+function logFeed(group, color, html, skipPersist){
+  const colorMap = { red:'#EA4335', blue:'#1A73E8', green:'#1E8E3E', yellow:'#F9AB00' };
+  const row = document.createElement('div');
+  row.className = 'feed-row';
+  const time = new Date(simSeconds*1000).toISOString().substr(11,8);
+  row.innerHTML = `<span class="feed-dot" style="background:${colorMap[color]}"></span><div><div class="time">${time}</div><div class="msg">${html}</div></div>`;
+  feedList.insertBefore(row, feedList.firstChild);
+  while(feedList.children.length>50) feedList.removeChild(feedList.lastChild);
+  if(!skipPersist){
+    persistFeed({ group, color, message: html });
+  }
+}
+
+const sheet = document.getElementById('sheet');
+const sheetSummary = document.getElementById('sheetSummary');
+const mapControls = document.getElementById('mapControls');
+const hazardFab = document.getElementById('hazardFab');
+
+function setSheetExpanded(expanded){
+  sheet.classList.toggle('expanded', expanded);
+  sheet.classList.toggle('collapsed', !expanded);
+}
+sheetSummary.addEventListener('click', ()=> setSheetExpanded(!sheet.classList.contains('expanded')));
+document.getElementById('sheetHandle').addEventListener('click', ()=> setSheetExpanded(!sheet.classList.contains('expanded')));
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+    if(!sheet.classList.contains('expanded')) setSheetExpanded(true);
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', resetSim);
+
+function resetSim(){
+  initVehicles();
+  initNationalFleet();
+  updateVehicleCount();
+  stats = { flares:0 };
+  stressZones = {};
+  evStats = { count:0, rangeSum:0 };
+  tokenBalance = { you:0, total:0 };
+  driverTokens = {};
+  feedList.innerHTML = '';
+  simSeconds = 0;
+  document.getElementById('sumFlares').textContent = '0';
+  document.getElementById('sumEv').textContent = '0';
+  document.getElementById('sumTokens').textContent = '0';
+  document.getElementById('dataPoints').textContent = '0';
+  document.getElementById('dataZones').textContent = '0';
+  document.getElementById('evCount').textContent = '0';
+  document.getElementById('evRange').textContent = '+0%';
+  document.getElementById('gaugeFill').style.width = '0%';
+  document.getElementById('gaugeLabel').textContent = '0%';
+  document.getElementById('tokenTotal').textContent = '0';
+  document.getElementById('yourTokens').textContent = '0 pts';
+  renderHeat();
+  renderDrivers();
+  document.getElementById('hintChip').style.opacity = '1';
+  logFeed('factory','blue', 'Simulation reset — fleet re-deployed nationwide.', true);
+  map.flyTo([18.613,73.802], 14);
+  if(Auth.isAuthed){
+    API.resetState().then(()=> showSyncStatus('Reset synced')).catch(()=> showSyncStatus('Reset sync failed', true));
+  }
+}
+
+// Pull this user's previously saved swarm activity from the backend and
+// repopulate the dashboard (flares/zones, EV stats, tokens, feed) so a
+// returning driver sees their history instead of starting from zero.
+async function loadRemoteState(){
+  try{
+    const state = await API.getState();
+
+    stats.flares = state.flares.total;
+    stressZones = Object.assign({}, state.flares.stressZones);
+    document.getElementById('sumFlares').textContent = stats.flares;
+    document.getElementById('dataPoints').textContent = Object.values(stressZones).reduce((a,b)=>a+b,0);
+    document.getElementById('dataZones').textContent = Object.keys(stressZones).length;
+    renderHeat();
+
+    evStats.count = state.ev.count;
+    evStats.rangeSum = state.ev.avgRangeRecovered * state.ev.count;
+    document.getElementById('evCount').textContent = evStats.count;
+    document.getElementById('sumEv').textContent = evStats.count;
+    document.getElementById('evRange').textContent = '+'+state.ev.avgRangeRecovered.toFixed(1)+'%';
+    const pct = Math.min(100, state.ev.avgRangeRecovered*4);
+    document.getElementById('gaugeFill').style.width = pct+'%';
+    document.getElementById('gaugeLabel').textContent = pct.toFixed(0)+'%';
+
+    tokenBalance.total = state.tokens.total;
+    tokenBalance.you = state.tokens.you;
+    document.getElementById('tokenTotal').textContent = tokenBalance.total;
+    document.getElementById('sumTokens').textContent = tokenBalance.total;
+    document.getElementById('yourTokens').textContent = tokenBalance.you+' pts';
+    driverTokens = {};
+    state.tokens.leaderboard.forEach(row => { driverTokens[row.name] = row.pts; });
+    renderDrivers();
+
+    feedList.innerHTML = '';
+    state.feed.slice().reverse().forEach(ev => {
+      logFeed(ev.group, ev.color, ev.message, true);
+    });
+
+    showSyncStatus('Loaded saved activity');
+  }catch(err){
+    showSyncStatus('Could not load saved activity', true);
+  }
+}
+
+initVehicles();
+initNationalFleet();
+renderHeat();
+renderDrivers();
+updateVehicleCount();
+logFeed('factory','blue', `Swarm online — ${vehicles.length + nationalVehicles.length} vehicles connected nationwide.`, true);
+
+function updateVehicleCount(){
+  document.getElementById('vehicleCount').textContent = vehicles.length + nationalVehicles.length;
+}
+
+let lastTime = performance.now();
+function tick(now){
+  const dt = Math.min(0.05, (now-lastTime)/1000);
+  lastTime = now;
+  simSeconds += dt;
+
+  vehicles.forEach(v=>{
+    v.f += v.speed * v.speedMul * v.dir;
+    v.f = ((v.f % 1)+1)%1;
+
+    if(v.warnedTimer>0){
+      v.warnedTimer -= dt;
+      if(v.warnedTimer<=0){
+        v.state='normal';
+        v.speedMul=1;
+        v.marker.setIcon(carDivIcon(v.isYou? carColors.you : (v.isEV? carColors.ev: carColors.normal), v.isYou));
+      }
+    }
+
+    const pos = pointAtFraction(v.f);
+    const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+    v.marker.setLatLng(ll);
+  });
+
+  driftNationalFleet(now);
+
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+map.on('zoomend', refreshVehicleIconSizes);
+
+function hideHint(){ document.getElementById('hintChip').style.opacity='0'; }
+map.on('click', hideHint);
+
+setInterval(()=>{
+  const candidates = vehicles.filter(v=>v.state==='normal' && !v.isYou);
+  if(candidates.length===0) return;
+  if(Math.random()<0.5) dropFlare(pick(candidates));
+}, 6000);
+})();
+</script>
+</body>
+</html>
