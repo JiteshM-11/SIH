@@ -3,392 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Co-Pilot Swarm</title>
+<title>Co-Pilot Swarm - Autonomous Fleet Network</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
   :root{
     --surface: #FFFFFF;
-    --app-bg: #F1F3F4;
-    --text: #202124;
-    --text-secondary: #5F6368;
-    --text-faint: #80868B;
-    --border: #E0E3E7;
-    --border-soft: #ECEDEF;
-    --blue: #1A73E8;
-    --blue-dark: #1557B0;
-    --blue-tint: #E8F0FE;
-    --red: #EA4335;
-    --red-tint: #FCE8E6;
-    --green: #1E8E3E;
-    --green-tint: #E6F4EA;
-    --yellow: #F9AB00;
-    --yellow-tint: #FEF7E0;
-    --shadow-1: 0 1px 2px rgba(60,64,67,0.30), 0 1px 3px 1px rgba(60,64,67,0.15);
-    --shadow-2: 0 1px 3px rgba(60,64,67,0.30), 0 4px 8px 3px rgba(60,64,67,0.15);
+    --app-bg: #F4F6F8;
+    --text: #1C1B1F;
+    --text-secondary: #474747;
+    --text-faint: #757575;
+    --border: #DADCE0;
+    --border-soft: #F1F3F4;
+    --blue: #0B57D0;
+    --blue-dark: #0045B5;
+    --blue-tint: #D3E3FD;
+    --red: #B3261E;
+    --red-tint: #F9DEDC;
+    --green: #146C2E;
+    --green-tint: #C4EED0;
+    --yellow: #B06000;
+    --yellow-tint: #FFE082;
+    --purple: #6750A4;
+    --purple-tint: #E8DDFF;
+    --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+    --shadow-2: 0 4px 16px rgba(0,0,0,0.16), 0 2px 4px rgba(0,0,0,0.08);
   }
-
   *{ box-sizing: border-box; margin:0; padding:0; }
   html, body{ height:100%; background: var(--app-bg); }
-  body{
-    font-family: 'Roboto', Arial, sans-serif;
-    color: var(--text);
-    overflow: hidden;
-  }
+  body{ font-family: 'Roboto', Arial, sans-serif; color: var(--text); overflow: hidden; }
   .mono{ font-family: 'Roboto Mono', monospace; }
-
   #map{ position:absolute; top:0; left:0; right:0; bottom:0; z-index:1; background:#E5E3DF; }
-
-  .leaflet-control-attribution{
-    background: rgba(255,255,255,0.85) !important;
-    font-size: 10px !important;
-    color: var(--text-faint) !important;
-    border-radius: 4px 0 0 0;
-  }
+  .leaflet-control-attribution{ background: rgba(255,255,255,0.85) !important; font-size: 10px !important; color: var(--text-faint) !important; }
   .leaflet-control-zoom{ display:none; }
 
-  .topbar{
-    position:absolute; top:12px; left:12px; z-index:20;
-    display:flex; align-items:center; gap:10px;
+  .topbar{ 
+    position:absolute; 
+    top:12px; 
+    left:12px; 
+    z-index:20; 
+    display:flex; 
+    align-items:center; 
+    justify-content: flex-start;
+    gap:12px; 
+    width: calc(100% - 24px); 
+    flex-wrap: nowrap;
+    opacity: 0;
   }
-  .search-pill{
-    background: var(--surface);
-    border-radius: 24px;
-    box-shadow: var(--shadow-1);
-    height: 48px;
-    display:flex; align-items:center;
-    padding: 0 8px 0 16px;
-    width: 360px;
-  }
-  .search-pill .menu-icon{
-    width:20px; height:20px; margin-right:14px; flex-shrink:0; cursor:pointer;
-  }
-  .search-pill .menu-icon span{
-    display:block; height:2px; background: var(--text-secondary); margin:4px 0; border-radius:1px;
-  }
-  .search-pill input{
-    border:none; outline:none; flex:1; font-size:15px; font-family:'Roboto'; color:var(--text);
-    background:transparent; min-width: 0;
-  }
-  .search-pill input::placeholder{ color: var(--text-faint); }
-  .search-btn{
-    border:none; background:none; cursor:pointer; color: var(--text-secondary);
-    width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    flex-shrink:0; transition: background .15s, color .15s;
-  }
-  .search-btn:hover{ background:#F1F3F4; color:var(--blue); }
-  .search-btn:active{ transform: scale(.93); }
-  .search-btn.loading svg{ animation: spin .8s linear infinite; }
-  @keyframes spin{ to{ transform: rotate(360deg); } }
-  .search-status{
-    position:absolute; top:56px; left:0;
-    background: var(--surface); border-radius:8px; box-shadow: var(--shadow-1);
-    padding:8px 14px; font-size:12.5px; color: var(--text-secondary);
-    opacity:0; transform: translateY(-4px); transition: opacity .2s, transform .2s; pointer-events:none;
-    max-width:340px;
-  }
-  .search-status.show{ opacity:1; transform: translateY(0); }
-  .search-status.error{ color: var(--red); }
-  .live-pill{
-    background: var(--surface); border-radius:24px; box-shadow: var(--shadow-1);
-    height:48px; padding: 0 18px; display:flex; align-items:center; gap:8px;
-    font-size:13px; font-weight:500; color: var(--text-secondary);
-  }
-  .live-dot{
-    width:8px; height:8px; border-radius:50%; background: var(--red);
-    box-shadow: 0 0 0 0 rgba(234,67,53,.6);
-    animation: liveDot 2s infinite;
-  }
-  @keyframes liveDot{
-    0%{ box-shadow:0 0 0 0 rgba(234,67,53,.55);}
-    70%{ box-shadow:0 0 0 7px rgba(234,67,53,0);}
-    100%{ box-shadow:0 0 0 0 rgba(234,67,53,0);}
-  }
+  .search-pill{ background: var(--surface); border-radius: 24px; box-shadow: var(--shadow-2); height: 48px; display:flex; align-items:center; padding: 0 8px 0 16px; width: 340px; flex-shrink: 0; }
+  .search-pill .menu-icon{ width:20px; height:20px; margin-right:14px; flex-shrink:0; cursor:pointer; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+  .search-pill .menu-icon span{ display:block; height:2px; background: var(--text); border-radius:1px; width: 100%; }
+  .search-pill input{ border:none; outline:none; flex:1; font-size:15px; font-family:'Roboto'; color:var(--text); background:transparent; min-width: 0; }
+  .search-btn{ border:none; background:none; cursor:pointer; color: var(--text-secondary); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+
+  .live-pill{ background: var(--surface); border-radius:24px; box-shadow: var(--shadow-2); height:48px; padding: 0 18px; display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color: var(--text-secondary); white-space: nowrap; flex-shrink: 0; }
+  .live-dot{ width:8px; height:8px; border-radius:50%; background: var(--red); box-shadow: 0 0 0 0 rgba(179,38,30,.6); animation: liveDot 2s infinite; }
+  @keyframes liveDot{ 0%{ box-shadow:0 0 0 0 rgba(179,38,30,.55);} 70%{ box-shadow:0 0 0 7px rgba(179,38,30,0);} 100%{ box-shadow:0 0 0 0 rgba(179,38,30,0);} }
   .live-pill b{ color: var(--text); font-weight:700; font-family:'Roboto Mono'; }
 
-  .map-controls{
-    position:absolute; right:16px; bottom: 320px; z-index:20;
-    display:flex; flex-direction:column; gap:14px; align-items:flex-end;
-    transition: bottom .25s ease;
+  .user-pill{ 
+    background: var(--surface); 
+    border-radius:24px; 
+    box-shadow: var(--shadow-2); 
+    height:48px; 
+    padding: 0 8px 0 16px; 
+    display:flex; 
+    align-items:center; 
+    gap:10px; 
+    font-size:13px; 
+    font-weight:500; 
+    color: var(--text); 
+    margin-left: auto; 
+    cursor:pointer; 
+    flex-shrink: 0;
   }
-  .ctrl-stack{
-    background: var(--surface); border-radius:8px; box-shadow: var(--shadow-1);
-    display:flex; flex-direction:column; overflow:hidden;
-  }
-  .ctrl-btn{
-    width:40px; height:40px; display:flex; align-items:center; justify-content:center;
-    background:none; border:none; cursor:pointer; color: var(--text-secondary);
-    font-size:18px; transition: background .15s;
-  }
-  .ctrl-btn:hover{ background:#F8F9FA; color:var(--text); }
-  .ctrl-stack .ctrl-btn + .ctrl-btn{ border-top:1px solid var(--border-soft); }
-  .ctrl-single{
-    width:40px; height:40px; border-radius:50%;
-    background:var(--surface); box-shadow: var(--shadow-1);
-    border:none; cursor:pointer; color: var(--blue); font-size:18px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .ctrl-single:hover{ background:#F8F9FA; }
+  .user-pill .avatar{ width:28px; height:28px; border-radius:50%; background: var(--purple); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
 
-  .fab-hazard{
-    position:absolute; right:16px; z-index:20;
-    bottom: 256px;
-    background: var(--surface); border:1px solid var(--border);
-    border-radius:24px; box-shadow: var(--shadow-2);
-    height:48px; padding:0 20px 0 16px;
-    display:flex; align-items:center; gap:8px;
-    cursor:pointer; font-weight:500; font-size:14px; color: var(--red);
-    transition: bottom .25s ease, transform .15s, box-shadow .15s;
+  .map-controls{ position:absolute; right:16px; bottom: 32px; z-index:20; display:flex; flex-direction:column; gap:12px; align-items:flex-end; opacity: 0; }
+  .ctrl-stack{ background: var(--surface); border-radius:8px; box-shadow: var(--shadow-2); display:flex; flex-direction:column; overflow:hidden; }
+  .ctrl-btn{ width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; color: var(--text-secondary); font-size:18px; }
+  .ctrl-stack .ctrl-btn + .ctrl-btn{ border-top:1px solid var(--border-soft); }
+  .ctrl-single{ width:40px; height:40px; border-radius:50%; background:var(--surface); box-shadow: var(--shadow-2); border:none; cursor:pointer; color: var(--blue); font-size:18px; display:flex; align-items:center; justify-content:center; }
+
+  .reset-btn{ 
+    background: var(--surface); 
+    border-radius: 20px; 
+    box-shadow: var(--shadow-2); 
+    height: 40px; 
+    padding: 0 16px; 
+    font-size: 13px; 
+    font-weight: 500; 
+    color: var(--text-secondary); 
+    border: 1px solid var(--border); 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
   }
-  .fab-hazard:hover{ box-shadow: 0 2px 6px rgba(60,64,67,.35), 0 6px 12px 4px rgba(60,64,67,.18); }
-  .fab-hazard:active{ transform: scale(.97); }
+
+  .fab-hazard{ position:absolute; right:16px; z-index:20; bottom: 232px; background: var(--surface); border:1px solid var(--border); border-radius:24px; box-shadow: var(--shadow-2); height:48px; padding:0 20px 0 16px; display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:500; font-size:14px; color: var(--red); opacity: 0; }
   .fab-hazard svg{ width:20px; height:20px; }
 
-  .sheet{
-    position:absolute; left:0; right:0; bottom:0; z-index:25;
-    background: var(--surface);
-    border-radius: 16px 16px 0 0;
-    box-shadow: 0 -2px 10px rgba(60,64,67,.15), 0 -1px 2px rgba(60,64,67,.1);
-    max-height: 78vh;
-    display:flex; flex-direction:column;
-    transition: transform .32s cubic-bezier(.2,.8,.2,1);
-    transform: translateY(calc(100% - 230px));
-  }
-  .sheet.collapsed{ transform: translateY(calc(100% - 230px)); }
-  .sheet.expanded{ transform: translateY(0); }
+  .sidebar-panel{ position:absolute; left:0; top:0; bottom:0; z-index:25; background: var(--surface); width: 420px; box-shadow: 4px 0 24px rgba(0,0,0,0.15); display:flex; flex-direction:column; transform: translateX(-100%); border-right: 1px solid var(--border); }
+  .sidebar-header { padding: 72px 24px 16px 24px; border-bottom: 1px solid var(--border-soft); position: relative; }
+  .sidebar-header h2 { font-size: 22px; font-weight: 700; color: var(--text); }
+  .sidebar-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .close-sidebar { position: absolute; top: 72px; right: 20px; font-size: 28px; cursor: pointer; color: var(--text-secondary); font-weight: 300; z-index: 30; line-height: 1; }
 
-  .sheet-handle{
-    display:flex; justify-content:center; padding: 10px 0 6px; cursor:grab; flex-shrink:0;
-  }
-  .sheet-handle .bar{ width:36px; height:4px; border-radius:2px; background: var(--border); }
-
-  .sheet-summary{
-    padding: 4px 20px 14px; flex-shrink:0; cursor:pointer;
-  }
-  .sheet-summary-row{ display:flex; align-items:center; justify-content:space-between; }
-  .sheet-summary h2{ font-size:18px; font-weight:700; color:var(--text); }
-  .sheet-summary .toggle-arrow{ color:var(--text-secondary); font-size:13px; transition: transform .3s; }
-  .sheet.expanded .toggle-arrow{ transform: rotate(180deg); }
-  .sheet-summary p{ font-size:13px; color: var(--text-secondary); margin-top:4px; }
-
-  .summary-stats{ display:flex; gap:10px; margin-top:14px; }
-  .sum-chip{
-    flex:1; background: var(--app-bg); border-radius:10px; padding:10px 12px;
-    display:flex; flex-direction:column; gap:2px;
-  }
+  .summary-stats{ display:flex; gap:10px; margin-top:14px; padding: 0 24px 16px 24px; }
+  .sum-chip{ flex:1; background: var(--app-bg); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; }
   .sum-chip .n{ font-family:'Roboto Mono'; font-size:18px; font-weight:700; color:var(--text); }
   .sum-chip .l{ font-size:11px; color: var(--text-secondary); }
   .sum-chip.red .n{ color: var(--red); }
   .sum-chip.green .n{ color: var(--green); }
-  .sum-chip.yellow .n{ color: #B06000; }
+  .sum-chip.yellow .n{ color: var(--yellow); }
 
-  .sheet-body{
-    overflow-y:auto; padding: 0 20px 28px;
-    flex:1;
-  }
-  .sheet-body::-webkit-scrollbar{ width:6px; }
-  .sheet-body::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
+  .sidebar-body{ overflow-y:auto; padding: 0 24px 28px; display:flex; flex-direction:column; flex:1; }
+  .sidebar-body::-webkit-scrollbar{ width:6px; }
+  .sidebar-body::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
 
-  .tabs{ display:flex; gap:6px; border-bottom:1px solid var(--border-soft); margin-bottom:18px; position:sticky; top:0; background:var(--surface); padding-top:4px; }
-  .tab{
-    padding: 10px 14px; font-size:13px; font-weight:500; color: var(--text-secondary);
-    cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-1px;
-    display:flex; align-items:center; gap:6px;
-  }
+  .tabs{ display:flex; gap:4px; border-bottom:1px solid var(--border-soft); margin-bottom:18px; position:sticky; top:0; background:var(--surface); padding-top:4px; z-index:5; overflow-x: auto; }
+  .tabs::-webkit-scrollbar{ display: none; }
+  .tab{ padding: 10px 14px; font-size:13px; font-weight:500; color: var(--text-secondary); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-1px; display:flex; align-items:center; gap:6px; white-space: nowrap; }
   .tab.active{ color: var(--blue); border-bottom-color: var(--blue); }
   .tab .dot{ width:7px; height:7px; border-radius:50%; }
 
   .tab-panel{ display:none; }
-  .tab-panel.active{ display:block; animation: fadeIn .25s ease; }
-  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+  .tab-panel.active{ display:block; }
 
-  .feature-card{
-    border: 1px solid var(--border-soft); border-radius:12px; padding:16px; margin-bottom:14px;
-  }
+  .feature-card{ border: 1px solid var(--border-soft); border-radius:12px; padding:16px; margin-bottom:14px; background: #FAFAFA; }
   .feature-card h3{ font-size:14px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px;}
-  .feature-card .icon-badge{
-    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
-  }
+  .feature-card .icon-badge{ width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
   .icon-badge.blue{ background:var(--blue-tint); color:var(--blue);}
   .icon-badge.green{ background:var(--green-tint); color:var(--green);}
-  .icon-badge.yellow{ background:var(--yellow-tint); color:#B06000;}
+  .icon-badge.yellow{ background:var(--yellow-tint); color:var(--yellow);}
+  .icon-badge.purple{ background:var(--purple-tint); color:var(--purple);}
   .feature-card p.desc{ font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-bottom:12px; }
 
   .metric-grid{ display:flex; gap:10px; margin-bottom: 12px; }
-  .metric-box{ flex:1; background:var(--app-bg); border-radius:8px; padding:10px 12px; }
+  .metric-box{ flex:1; background:var(--surface); border: 1px solid var(--border-soft); border-radius:8px; padding:10px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
   .metric-box .mv{ font-family:'Roboto Mono'; font-size:17px; font-weight:700; }
   .metric-box .ml{ font-size:10.5px; color:var(--text-secondary); margin-top:2px; }
 
   .heat-row{ display:flex; align-items:center; gap:10px; font-size:12px; padding:7px 0; }
-  .heat-name{ width:150px; color:var(--text); flex-shrink:0; }
+  .heat-name{ width:130px; color:var(--text); flex-shrink:0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
   .heat-track{ flex:1; height:6px; background:var(--border-soft); border-radius:3px; overflow:hidden; }
-  .heat-fill{ height:100%; background:var(--blue); border-radius:3px; transition:width .6s; }
+  .heat-fill{ height:100%; background:var(--blue); border-radius:3px; width: 0%; }
   .heat-count{ width:24px; text-align:right; color:var(--text-secondary); font-family:'Roboto Mono'; font-size:11px; }
 
   .gauge-track{ height:8px; background:var(--border-soft); border-radius:4px; overflow:hidden; margin-top:4px;}
-  .gauge-fill{ height:100%; background:linear-gradient(90deg,#A8DAB5,var(--green)); border-radius:4px; transition:width .8s; }
+  .gauge-fill{ height:100%; background:linear-gradient(90deg, #A8DAB5, var(--green)); border-radius:4px; width: 0%; }
   .gauge-cap{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-faint); margin-top:5px;}
 
   .token-hero{ display:flex; align-items:baseline; gap:8px; margin-bottom:14px; }
-  .token-hero .num{ font-family:'Roboto Mono'; font-size:30px; font-weight:700; color:#B06000; }
-  .token-hero .unit{ font-size:12px; color:var(--text-secondary); }
+  .token-hero .num{ font-family:'Roboto Mono'; font-size:30px; font-weight:700; color:var(--yellow); }
 
-  .driver-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:9px 12px; border-radius:8px; background: var(--app-bg); margin-bottom:6px; font-size:12.5px;
-  }
+  .driver-row{ display:flex; align-items:center; justify-content:space-between; padding:9px 12px; border-radius:8px; background: var(--surface); border: 1px solid var(--border-soft); margin-bottom:6px; font-size:12.5px; }
   .driver-row.you{ background: var(--yellow-tint); border:1px solid #F5D87A; }
-  .driver-row .name{ font-weight:500; }
-  .driver-row .pts{ font-family:'Roboto Mono'; font-weight:700; color:#B06000; }
+  .driver-row .pts{ font-family:'Roboto Mono'; font-weight:700; color:var(--yellow); }
 
   .empty-note{ font-size:12px; color: var(--text-faint); font-style:italic; padding:10px 0; }
 
-  .feed-row{ display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px; }
-  .feed-row:last-child{ border-bottom:none; }
-  .feed-dot{ width:8px; height:8px; border-radius:50%; margin-top:4px; flex-shrink:0; }
-  .feed-row .time{ font-family:'Roboto Mono'; font-size:10.5px; color:var(--text-faint); }
-  .feed-row .msg{ color:var(--text-secondary); line-height:1.5; margin-top:1px; }
-  .feed-row .msg b{ color:var(--text); font-weight:600; }
+  .feed-row{ display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px; align-items: center; }
+  .feed-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .feed-row .msg{ color:var(--text-secondary); line-height:1.5; }
 
-  .leaflet-popup-content-wrapper{
-    border-radius: 12px !important;
-    box-shadow: var(--shadow-2) !important;
-    padding: 0 !important;
-  }
-  .leaflet-popup-content{ margin:0 !important; width:260px !important; }
-  .leaflet-popup-tip{ box-shadow: var(--shadow-1) !important; }
-  .popup-card{ font-family:'Roboto'; }
-  .popup-card .ph{
-    padding:14px 16px 10px; display:flex; align-items:flex-start; gap:10px;
-  }
-  .popup-card .pin-ic{
-    width:32px; height:32px; border-radius:50%; background:var(--red-tint); color:var(--red);
-    display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
-  }
-  .popup-card h4{ font-size:14px; font-weight:700; color:var(--text); }
-  .popup-card .meta{ font-size:11.5px; color:var(--text-secondary); margin-top:2px; }
-  .popup-card .pb{ padding: 0 16px 14px; font-size:12px; color:var(--text-secondary); line-height:1.5;}
-  .popup-card .pb b{ color:var(--text); }
+  .bot-trigger-fab { position: fixed; bottom: 296px; right: 16px; width: 48px; height: 48px; background: var(--blue); border-radius: 50%; box-shadow: var(--shadow-2); display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; z-index: 85; border: none; outline: none; display: none; }
 
-  .toast{
-    position:absolute; top:74px; left:50%; transform:translateX(-50%);
-    z-index:30; background:var(--surface); border-radius:10px; box-shadow:var(--shadow-2);
-    padding:12px 18px; display:flex; align-items:center; gap:10px; font-size:13px;
-    animation: toastIn .35s ease, toastOut .35s ease 2.5s forwards;
-  }
-  @keyframes toastIn{ from{opacity:0; transform:translate(-50%,-8px);} to{opacity:1; transform:translate(-50%,0);} }
-  @keyframes toastOut{ to{opacity:0; transform:translate(-50%,-6px);} }
-  .toast .tic{ width:24px; height:24px; border-radius:50%; background:var(--yellow-tint); color:#B06000; display:flex; align-items:center; justify-content:center; font-size:13px;}
-  .toast b{ color:#B06000; font-family:'Roboto Mono'; }
+  .app-floating-chat{ position: fixed; bottom: 356px; right: 16px; width: 360px; max-width: calc(100vw - 32px); height: 440px; max-height: calc(100vh - 420px); background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-2); z-index: 90; display: flex; flex-direction: column; overflow: hidden; transform: translateY(30px) scale(0.95); opacity: 0; pointer-events: none; border: 1px solid var(--border); }
+  .app-floating-chat.active{ pointer-events: auto; }
+  .chat-header{ background: var(--blue); color: white; padding: 14px; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .chat-close{ cursor: pointer; font-size: 18px; opacity: 0.8; }
+  .chat-messages{ flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: #FAFAFA; }
+  .chat-bubble.bot{ background: var(--border-soft); color: var(--text); align-self: flex-start; border-radius: 4px 16px 16px 16px; border: 1px solid var(--border); }
+  .chat-bubble.user{ background: var(--blue); color: #FFFFFF; align-self: flex-end; border-radius: 16px 4px 16px 16px; }
+  .chat-input-area{ display: flex; border-top: 1px solid var(--border-soft); background: var(--surface); padding: 8px; gap: 6px; align-items: center; }
+  .chat-input-area input{ flex: 1; border: none; padding: 0 14px; font-size: 13px; outline: none; background: #FAFAFA; border-radius: 18px; height: 38px; min-width: 0; }
+  .chat-send-btn{ border: none; background: var(--blue); color: #FFF; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .chat-send-btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .chat-input-area input:disabled{ opacity:.6; }
+  .chat-suggested{ display: flex; gap: 6px; padding: 8px; overflow-x: auto; background: var(--surface); border-top: 1px solid var(--border-soft); }
+  .chat-chip{ background: var(--blue-tint); color: var(--blue); padding: 6px 12px; border-radius: 14px; font-size: 11.5px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .chat-bubble.typing{ display:flex; align-items:center; gap:4px; padding:12px 14px; }
+  .chat-bubble.typing .td{ width:6px; height:6px; border-radius:50%; background: var(--text-faint); animation: typingBounce 1.1s infinite ease-in-out; }
+  .chat-bubble.typing .td:nth-child(2){ animation-delay: 0.15s; }
+  .chat-bubble.typing .td:nth-child(3){ animation-delay: 0.3s; }
+  @keyframes typingBounce{ 0%,60%,100%{ transform: translateY(0); opacity:.5; } 30%{ transform: translateY(-4px); opacity:1; } }
+  .chat-bubble.bot .cursor{ display:inline-block; width:2px; height:12px; background: var(--text-secondary); margin-left:2px; vertical-align:middle; animation: cursorBlink 0.8s step-end infinite; }
+  @keyframes cursorBlink{ 50%{ opacity:0; } }
+  .chat-header .chat-status-dot{ width:7px; height:7px; border-radius:50%; background:#4CC273; box-shadow: 0 0 0 0 rgba(76,194,115,.6); animation: liveDot 2s infinite; display:inline-block; margin-right:5px; }
 
-  .reset-btn{
-    position:absolute; top:12px; right:12px; z-index:20;
-    background:var(--surface); border-radius:8px; box-shadow:var(--shadow-1);
-    height:40px; padding:0 16px; font-size:13px; font-weight:500; color:var(--text-secondary);
-    border:none; cursor:pointer; display:flex; align-items:center; gap:6px;
-  }
-  .reset-btn:hover{ background:#F8F9FA; }
+  .toast{ position:absolute; top:74px; left:50%; transform:translateX(-50%); z-index:30; background:var(--surface); border-radius:10px; box-shadow:var(--shadow-2); padding:12px 18px; display:flex; align-items:center; gap:10px; font-size:13px; opacity: 0; width: max-content; max-width: 90vw; }
+  .toast b{ color:var(--yellow); font-family:'Roboto Mono'; }
 
-  .hint-chip{
-    position:absolute; left:50%; top:72px; transform:translateX(-50%); z-index:19;
-    background:rgba(32,33,36,0.92); color:#fff; font-size:12.5px; padding:9px 16px;
-    border-radius:20px; box-shadow:var(--shadow-1); transition:opacity .3s; pointer-events:none;
-  }
+  .hint-chip{ position:absolute; left:50%; top:72px; transform:translateX(-50%); z-index:19; background:rgba(28,27,31,0.95); color:#fff; font-size:12.5px; padding:9px 16px; border-radius:20px; box-shadow:var(--shadow-1); transition:opacity .3s; pointer-events:none; }
 
-  @media (max-width: 720px){
-    .search-pill{ width: 70vw; }
-    .live-pill{ display:none; }
-    .map-controls{ bottom: 254px; gap: 10px; }
-    .fab-hazard span.label{ display:none; }
-    .fab-hazard{ padding:0; width:48px; justify-content:center; bottom: 254px; right: 68px; }
-    .search-status{ max-width: 70vw; }
-  }
+  .auth-overlay{ position:fixed; inset:0; z-index:100; background: linear-gradient(135deg, #051622 0%, #1A1A2E 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 24px; gap: 20px; overflow-y: auto; }
+  .auth-card{ background: var(--surface); border-radius:16px; box-shadow: var(--shadow-2); width: 100%; max-width: 400px; padding: 32px; transform: scale(0.9); opacity: 0; margin: auto; }
 
-  :focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
+  .auth-chatbot-3d{ width: 100%; height: 140px; background: linear-gradient(135deg, #0B57D0 0%, #5c1ac3 100%); border-radius: 12px; margin-bottom: 20px; display: flex; flex-direction: column; padding: 14px; color: white; box-shadow: 0 12px 24px rgba(0,0,0,0.3); position: relative; border: 1px solid rgba(255,255,255,0.25); overflow: hidden; }
+  .auth-chatbot-marquee-box { flex: 1; overflow: hidden; position: relative; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 8px; border: 1px solid rgba(255,255,255,0.08); }
+  .auth-chatbot-scroller { position: absolute; left: 8px; right: 8px; font-family: 'Roboto Mono'; font-size: 11px; line-height: 1.5; color: #A3C7FF; }
 
-  /* ---- Auth overlay ---- */
-  .auth-overlay{
-    position:fixed; inset:0; z-index:100;
-    background: linear-gradient(135deg, #0B3C8C 0%, #1A73E8 55%, #4F9CF9 100%);
-    display:flex; align-items:center; justify-content:center;
-    padding: 24px;
-  }
-  .auth-card{
-    background: var(--surface); border-radius:16px; box-shadow: var(--shadow-2);
-    width: 100%; max-width: 380px; padding: 32px 28px 28px;
-  }
-  .auth-logo{ display:flex; align-items:center; gap:10px; margin-bottom: 6px; }
-  .auth-logo .mark{
-    width:36px; height:36px; border-radius:10px; background:var(--blue-tint); color:var(--blue);
-    display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
-  }
-  .auth-logo span{ font-size:18px; font-weight:700; }
-  .auth-card p.sub{ font-size:13px; color: var(--text-secondary); margin-bottom: 22px; }
-  .auth-field{ margin-bottom: 14px; }
+  .auth-logo{ display:flex; align-items:center; gap:10px; margin-bottom: 8px; }
+  .auth-logo .mark{ width:36px; height:36px; border-radius:10px; background:var(--blue-tint); color:var(--blue); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight: 700; }
+  .auth-logo span{ font-size:20px; font-weight:700; }
+  .auth-card p.sub{ font-size:13px; color: var(--text-secondary); margin-bottom: 24px; }
+  .auth-field{ margin-bottom: 16px; }
   .auth-field label{ font-size:12px; font-weight:500; color: var(--text-secondary); display:block; margin-bottom:6px; }
-  .auth-field input{
-    width:100%; height:44px; border:1px solid var(--border); border-radius:8px;
-    padding: 0 14px; font-size:14px; font-family:'Roboto'; color:var(--text); outline:none;
-    transition: border-color .15s;
-  }
-  .auth-field input:focus{ border-color: var(--blue); }
-  .auth-submit{
-    width:100%; height:44px; border:none; border-radius:8px; background: var(--blue); color:#fff;
-    font-size:14px; font-weight:500; cursor:pointer; margin-top: 6px; transition: background .15s;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-  }
-  .auth-submit:hover{ background: var(--blue-dark); }
-  .auth-submit:disabled{ opacity:.6; cursor:default; }
-  .auth-switch{ text-align:center; font-size:13px; color: var(--text-secondary); margin-top:18px; }
-  .auth-switch a{ color: var(--blue); cursor:pointer; font-weight:500; text-decoration:none; }
-  .auth-error{
-    background: var(--red-tint); color: var(--red); font-size:12.5px; border-radius:8px;
-    padding:10px 12px; margin-bottom: 14px; display:none;
-  }
+  .auth-field input, .auth-field select{ width:100%; height:44px; border:1px solid var(--border); border-radius:8px; padding: 0 14px; font-size:14px; font-family:'Roboto'; color:var(--text); outline:none; background: var(--surface); }
+  .auth-field-row{ display:flex; gap:10px; }
+  .auth-field-row .auth-field{ flex:1; }
+  .auth-submit{ width:100%; height:44px; border:none; border-radius:8px; background: var(--blue); color:#fff; font-size:14px; font-weight:500; cursor:pointer; margin-top: 8px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .auth-switch{ text-align:center; font-size:13px; color: var(--text-secondary); margin-top:16px; }
+  .auth-switch a{ color: var(--blue); cursor:pointer; font-weight:500; }
+  .auth-error{ background: var(--red-tint); color: var(--red); font-size:12.5px; border-radius:8px; padding:10px 12px; margin-bottom: 14px; display:none; }
   .auth-error.show{ display:block; }
-  .auth-spinner{
-    width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.4);
-    border-top-color:#fff; animation: spin .8s linear infinite; display:none;
-  }
-  .auth-submit.loading .auth-spinner{ display:inline-block; }
-  .auth-submit.loading .auth-label{ opacity:.85; }
+  .auth-spinner{ width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; animation: spin .8s linear infinite; display:none; }
+  .auth-section-label{ font-size:11px; font-weight:700; color: var(--text-faint); text-transform:uppercase; letter-spacing:.4px; margin: 18px 0 10px; }
 
-  .user-pill{
-    background: var(--surface); border-radius:24px; box-shadow: var(--shadow-1);
-    height:48px; padding: 0 8px 0 16px; display:flex; align-items:center; gap:10px;
-    font-size:13px; font-weight:500; color: var(--text);
-  }
-  .user-pill .avatar{
-    width:28px; height:28px; border-radius:50%; background: var(--blue); color:#fff;
-    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;
-  }
-  .user-pill button{
-    border:none; background:none; cursor:pointer; color: var(--text-faint); font-size:12px;
-    padding:6px 10px; border-radius:14px; transition: background .15s, color .15s;
-  }
-  .user-pill button:hover{ background: var(--app-bg); color: var(--text); }
+  .sync-status{ position:absolute; left:50%; top:128px; transform:translateX(-50%); z-index:19; font-size:11.5px; color: var(--text-faint); background: var(--surface); border-radius:14px; padding:5px 12px; box-shadow: var(--shadow-1); opacity:0; pointer-events:none; }
 
-  .sync-status{
-    position:absolute; left:50%; top:128px; transform:translateX(-50%); z-index:19;
-    font-size:11.5px; color: var(--text-faint); background: var(--surface); border-radius:14px;
-    padding:5px 12px; box-shadow: var(--shadow-1); opacity:0; transition: opacity .25s; pointer-events:none;
-  }
-  .sync-status.show{ opacity:1; }
-  .sync-status.error{ color: var(--red); }
+  .loading-screen{ position:fixed; inset:0; z-index:200; background: linear-gradient(135deg, #051622 0%, #1A1A2E 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 24px; }
+  .loading-title{ color:#fff; font-size:24px; font-weight:900; letter-spacing: 1px; margin-top: 10px; text-transform: uppercase; }
+  
+  /* Matrix Glitch Styling Area */
+  .glitch-container { position: relative; font-family: 'Roboto Mono', monospace; font-size: 42px; font-weight: 900; color: #FFFFFF; min-height: 56px; text-align: center; letter-spacing: -1px; }
+  .glitch-pct { position: relative; z-index: 2; display: inline-block; text-shadow: 0 0 15px rgba(11,87,208,0.9); }
+  .glitch-matrix-overlay { position: absolute; top: 110%; left: 50%; transform: translateX(-50%); font-size: 11px; color: #0B57D0; font-weight: bold; white-space: nowrap; opacity: 0.7; pointer-events: none; width: 320px; height: 18px; overflow: hidden; text-align: center; font-family: monospace; }
 
-  @media (max-width: 720px){
-    .auth-card{ padding: 26px 20px 22px; }
+  .loading-status{ font-family:'Roboto Mono', monospace; font-size:11.5px; color: #A3C7FF; letter-spacing: 0.6px; min-height: 16px; text-align:center; text-transform: uppercase; opacity: 0.8; }
+  .loading-bar-track{ width: 240px; height:5px; background: rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; border: 1px solid rgba(255,255,255,0.05); }
+  .loading-bar-fill{ height:100%; width:0%; background: linear-gradient(90deg, #0B57D0, #6750A4, #B3261E); border-radius:2px; }
+
+  /* Bitsync Footer Brand Callout */
+  .team-footer-brand { margin-top: 16px; font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700; color: #757575; letter-spacing: 3px; text-transform: uppercase; position: relative; opacity: 0.6; transition: color 0.3s; }
+  .team-footer-brand span { color: #0B57D0; }
+
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .matrix-3d-stage {
+    width: 120px;
+    height: 120px;
+    perspective: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .matrix-3d-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: matrixOrbit 8s infinite linear;
+  }
+  .matrix-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px dashed rgba(11, 87, 208, 0.45);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+  }
+  .matrix-ring::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px solid rgba(211, 227, 253, 0.2);
+    border-radius: 50%;
+  }
+  .matrix-ring:nth-child(1) {
+    transform: rotateX(70deg) rotateY(0deg) translateZ(0px);
+    border-color: var(--blue);
+    animation: pulseRing 2s infinite ease-in-out;
+  }
+  .matrix-ring:nth-child(2) {
+    transform: rotateX(70deg) rotateY(60deg) translateZ(0px);
+    border-color: var(--purple);
+    animation: pulseRing 2s infinite ease-in-out 0.6s;
+  }
+  .matrix-ring:nth-child(3) {
+    transform: rotateX(70deg) rotateY(-60deg) translateZ(0px);
+    border-color: #4CC273;
+    animation: pulseRing 2s infinite ease-in-out 1.2s;
+  }
+  .matrix-axis {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+    box-shadow: 0 0 12px var(--blue-tint);
+  }
+  .matrix-axis.x { width: 140px; height: 1px; transform: rotateY(0deg); }
+  .matrix-axis.y { width: 140px; height: 1px; transform: rotateZ(90deg); }
+  .matrix-axis.z { width: 140px; height: 1px; transform: rotateX(90deg); }
+  
+  .matrix-node {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #FFFFFF, 0 0 20px var(--blue);
+  }
+  .matrix-node:nth-child(7) { transform: translate3d(40px, 20px, 10px); }
+  .matrix-node:nth-child(8) { transform: translate3d(-30px, -40px, -20px); }
+  .matrix-node:nth-child(9) { transform: translate3d(-20px, 35px, 30px); }
+  .matrix-node:nth-child(10) { transform: translate3d(25px, -30px, -40px); }
+
+  @keyframes matrixOrbit {
+    0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+    100% { transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); }
+  }
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(1) rotateZ(0deg); opacity: 0.4; }
+    50% { transform: scale(1.12) rotateZ(180deg); opacity: 0.9; }
+  }
+
+  .account-panel{ position: fixed; top: 72px; right: 12px; z-index: 60; width: 320px; max-width: calc(100vw - 24px); background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-2); border: 1px solid var(--border); overflow: hidden; transform-origin: top right; transform: scale(0.95); opacity: 0; pointer-events: none; }
+  .account-panel.active{ pointer-events: auto; }
+  .account-head{ background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%); color:#fff; padding: 18px; display:flex; align-items:center; gap:12px; }
+  .account-head .big-avatar{ width:44px; height:44px; border-radius:50%; background: rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0; }
+  .account-head .who b{ display:block; font-size:14px; }
+  .account-head .who span{ font-size:11.5px; opacity:.85; }
+  .account-body{ padding: 16px 18px; }
+  .account-row{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid var(--border-soft); font-size:12.5px; }
+  .account-row:last-of-type{ border-bottom:none; }
+  .account-row .k{ color: var(--text-secondary); display:flex; align-items:center; gap:7px; }
+  .account-row .v{ font-weight:600; color: var(--text); text-align:right; }
+  .account-edit-btn{ width:100%; margin-top:14px; border:1px solid var(--border); background: var(--surface); color: var(--blue); font-weight:500; font-size:12.5px; padding:9px; border-radius:8px; cursor:pointer; }
+  .account-logout-btn{ width:100%; margin-top:8px; border:none; background: var(--red-tint); color: var(--red); font-weight:500; font-size:12.5px; padding:9px; border-radius:8px; cursor:pointer; }
+
+  @media (max-width: 768px){
+    .topbar { flex-wrap: wrap; gap: 8px; }
+    .search-pill { width: 100%; order: 1; }
+    .live-pill { order: 2; height: 38px; font-size: 11px; padding: 0 12px; }
+    .user-pill { order: 3; height: 38px; padding: 0 6px 0 12px; }
+    .account-panel { top: 115px; right: 12px; left: 12px; width: auto; }
+    .sidebar-panel { width: 100vw; }
+    .toast { top: 120px; }
   }
 </style>
 </head>
 <body>
 
+<div class="loading-screen" id="loadingScreen">
+  <div class="matrix-3d-stage">
+    <div class="matrix-3d-wrapper">
+      <div class="matrix-ring"></div>
+      <div class="matrix-ring"></div>
+      <div class="matrix-ring"></div>
+      <div class="matrix-axis x"></div>
+      <div class="matrix-axis y"></div>
+      <div class="matrix-axis z"></div>
+      <div class="matrix-node"></div>
+      <div class="matrix-node"></div>
+      <div class="matrix-node"></div>
+      <div class="matrix-node"></div>
+    </div>
+  </div>
+  <div class="loading-title" id="loadingTitleText">Co-Pilot Swarm</div>
+  
+  <!-- GSAP Advanced Glitch Counter Widget -->
+  <div class="glitch-container">
+     <div class="glitch-pct" id="glitchPercentText">00%</div>
+     <div class="glitch-matrix-overlay" id="glitchMatrixText"></div>
+  </div>
+
+  <div class="loading-bar-track"><div class="loading-bar-fill" id="loadingBarFill"></div></div>
+  <div class="loading-status mono" id="loadingStatus">Initializing mesh network…</div>
+  
+  <!-- Added BITSYNC Team Footer Branding -->
+  <div class="team-footer-brand" id="teamBrand">Powered by <span>BITSYNC</span></div>
+</div>
+
 <div id="map"></div>
 
-<div class="auth-overlay" id="authOverlay">
-  <div class="auth-card">
+<div class="auth-overlay" id="authOverlay" style="display:none;">
+  <div class="auth-card" id="authCard">
+    <div class="auth-chatbot-3d" id="loginBotBox">
+      <div class="auth-chatbot-header-label">📡 SWARM TELEMETRY STREAM</div>
+      <div class="auth-chatbot-marquee-box">
+        <div class="auth-chatbot-scroller" id="marqueeScroller">
+          &gt; SECURE SYSTEM INTEGRITY LOCK VERIFIED<br>
+          &gt; WAITING FOR INTEGRATED MESH HANDSHAKE<br>
+          &gt; OVERLAY RADAR MATRIX STATUS: STANDBY<br>
+          &gt; ALL VEHICLE CLUSTERS INITIALIZED NORMAL<br>
+          &gt; COMPILING EDGE GRAPH SEGMENTS...
+        </div>
+      </div>
+    </div>
+
     <div class="auth-logo"><div class="mark">⛯</div><span>Co-Pilot Swarm</span></div>
     <p class="sub" id="authSub">Sign in to track your hazard reports, EV stats and Safety Tokens.</p>
     <div class="auth-error" id="authError"></div>
@@ -401,6 +406,30 @@
         <label for="authPassword">Password</label>
         <input type="password" id="authPassword" autocomplete="current-password" placeholder="At least 6 characters" required minlength="6" />
       </div>
+
+      <div id="signupExtraFields" style="display:none;">
+        <div class="auth-section-label">Vehicle details</div>
+        <div class="auth-field">
+          <label for="authVehicleModel">Tata Model</label>
+          <select id="authVehicleModel">
+            <option value="">Select your Tata model</option>
+            <option>Tata Nexon EV</option>
+            <option>Tata Tiago EV</option>
+            <option>Tata Tigor EV</option>
+            <option>Tata Punch EV</option>
+            <option>Tata Curvv EV</option>
+            <option>Tata Nexon (ICE)</option>
+            <option>Tata Harrier</option>
+            <option>Tata Safari</option>
+            <option>Tata Altroz</option>
+          </select>
+        </div>
+        <div class="auth-field">
+          <label for="authPurchaseDate">Date of Purchase</label>
+          <input type="date" id="authPurchaseDate" />
+        </div>
+      </div>
+
       <button type="submit" class="auth-submit" id="authSubmit">
         <span class="auth-spinner"></span><span class="auth-label" id="authSubmitLabel">Log in</span>
       </button>
@@ -409,28 +438,63 @@
   </div>
 </div>
 
-<div class="sync-status" id="syncStatus">Synced</div>
+<button class="bot-trigger-fab" id="botTriggerFab">🤖</button>
 
-<div class="hint-chip" id="hintChip">Tap any car icon to simulate it hitting a hazard</div>
-
-<div class="topbar">
-  <div class="search-pill">
-    <div class="menu-icon"><span></span><span></span><span></span></div>
-    <input type="text" id="searchInput" placeholder="Search a city in India — try Bhubaneswar" autocomplete="off" />
-    <button class="search-btn" id="searchBtn" aria-label="Search" type="button">
-      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
+<div class="app-floating-chat" id="appFloatingChat">
+  <div class="chat-header">
+    <span><span class="chat-status-dot"></span>🤖 Aura AI <span style="opacity:.75; font-weight:500;">· online</span></span>
+    <span class="chat-close" id="closeFloatingChat">×</span>
   </div>
-  <div class="search-status" id="searchStatus"></div>
-  <div class="live-pill"><span class="live-dot"></span> Live · <b id="vehicleCount">12</b> vehicles</div>
-  <div class="user-pill" id="userPill" style="display:none;">
-    <div class="avatar" id="userAvatar">?</div>
-    <span id="userName">—</span>
-    <button id="logoutBtn" type="button">Log out</button>
+  <div class="chat-messages" id="appChatMessages">
+    <div class="chat-bubble bot">
+      Handshake verified. I am <b>Aura AI</b>, your real-time mesh diagnostic network copilot. Inquire about streaming node anomalies, active stress loops, or EV battery optimizations.
+    </div>
+  </div>
+  <div class="chat-suggested">
+    <span class="chat-chip" onclick="askAppAI('How do nodes synchronize telemetry routing?')">Mesh Sync</span>
+    <span class="chat-chip" onclick="askAppAI('Explain battery pre-conditioning thresholds.')">EV Engine</span>
+    <span class="chat-chip" onclick="askAppAI('Give me a live network structural health diagnostic statement.')">Live System Diagnostics</span>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" id="appChatInput" placeholder="Ask Aura about system parameters..." autocomplete="off" />
+    <button class="chat-send-btn" id="appChatSendBtn">➔</button>
   </div>
 </div>
 
-<button class="reset-btn" id="resetBtn">↺ Reset</button>
+<div class="sync-status" id="syncStatus">Synced</div>
+<div class="hint-chip" id="hintChip">Tap any car icon to simulate it hitting a hazard</div>
+
+<div class="topbar" id="topbar">
+  <div class="search-pill" id="searchPill">
+    <div class="menu-icon" id="menuToggleIcon"><span></span><span></span><span></span></div>
+    <input type="text" id="searchInput" placeholder="Search route zones..." autocomplete="off" />
+    <button class="search-btn" id="searchBtn" aria-label="Search" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="live-pill" id="livePill"><span class="live-dot"></span> Live · <b id="vehicleCount">42</b> nodes</div>
+  <div class="user-pill" id="userPill" style="display: none;">
+    <div class="avatar" id="userAvatar">?</div>
+    <span id="userName">—</span>
+  </div>
+</div>
+
+<div class="account-panel" id="accountPanel">
+  <div class="account-head">
+    <div class="big-avatar" id="accBigAvatar">?</div>
+    <div class="who">
+      <b id="accUserName">—</b>
+      <span>Co-Pilot Swarm Member</span>
+    </div>
+  </div>
+  <div class="account-body">
+    <div class="account-row"><span class="k"> Tata Model</span><span class="v" id="accModel">—</span></div>
+    <div class="account-row"><span class="k"> Date of Purchase</span><span class="v" id="accPurchaseDate">—</span></div>
+    <div class="account-row"><span class="k"> Safety Tokens</span><span class="v" id="accTokens">0 pts</span></div>
+    <button class="account-edit-btn" id="accEditBtn">Edit Vehicle Details</button>
+    <button class="account-logout-btn" id="accLogoutBtn">Log out</button>
+  </div>
+</div>
 
 <div class="fab-hazard" id="hazardFab">
   <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L1 21h22L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
@@ -438,6 +502,7 @@
 </div>
 
 <div class="map-controls" id="mapControls">
+  <button class="reset-btn" id="resetBtn">↺ Reset</button>
   <div class="ctrl-stack">
     <button class="ctrl-btn" id="zoomIn">+</button>
     <button class="ctrl-btn" id="zoomOut">–</button>
@@ -445,63 +510,72 @@
   <button class="ctrl-single" id="locateBtn">⌖</button>
 </div>
 
-<div class="sheet collapsed" id="sheet">
-  <div class="sheet-handle" id="sheetHandle"><div class="bar"></div></div>
-  <div class="sheet-summary" id="sheetSummary">
-    <div class="sheet-summary-row">
-      <div>
-        <h2>Co-Pilot Swarm</h2>
-        <p>3 connected features · tap to expand</p>
-      </div>
-      <div class="toggle-arrow">▲</div>
-    </div>
-    <div class="summary-stats">
-      <div class="sum-chip red"><span class="n" id="sumFlares">0</span><span class="l">Flares dropped</span></div>
-      <div class="sum-chip green"><span class="n" id="sumEv">0</span><span class="l">EVs pre-conditioned</span></div>
-      <div class="sum-chip yellow"><span class="n" id="sumTokens">0</span><span class="l">Tokens issued</span></div>
-    </div>
+<div class="sidebar-panel" id="sidebarPanel">
+  <span class="close-sidebar" id="closeSidebarBtn">×</span>
+  <div class="sidebar-header">
+    <h2>Co-Pilot Swarm</h2>
+    <p>Operational Fleet System Telemetry Metrics Matrix</p>
   </div>
 
-  <div class="sheet-body">
+  <div class="summary-stats">
+    <div class="sum-chip red"><span class="n" id="sumFlares">0</span><span class="l">Flares dropped</span></div>
+    <div class="sum-chip green"><span class="n" id="sumEv">0</span><span class="l">EVS optimized</span></div>
+    <div class="sum-chip yellow"><span class="n" id="sumTokens">0</span><span class="l">Tokens issued</span></div>
+  </div>
+
+  <div class="sidebar-body">
     <div class="tabs">
       <div class="tab active" data-tab="factory"><span class="dot" style="background:var(--blue)"></span>Factory Feedback</div>
       <div class="tab" data-tab="energy"><span class="dot" style="background:var(--green)"></span>EV Energy Saver</div>
       <div class="tab" data-tab="tokens"><span class="dot" style="background:var(--yellow)"></span>Safety Points</div>
-      <div class="tab" data-tab="feed"><span class="dot" style="background:var(--text-faint)"></span>Activity</div>
+      <div class="tab" data-tab="account"><span class="dot" style="background:var(--purple)"></span>My Account</div>
+      <div class="tab" data-tab="feed"><span class="dot" style="background:var(--text-faint)"></span>Activity Feed</div>
     </div>
 
     <div class="tab-panel active" id="panel-factory">
       <div class="feature-card">
         <h3><span class="icon-badge blue">⛯</span>Factory Feedback Loop</h3>
-        <p class="desc">Anonymized hazard reports stream back to the Tata Motors engineering team at the Pimpri plant — showing exactly where vehicles take the worst structural stress on this route.</p>
+        <p class="desc">Anonymized hazard reports stream back to the engineering team at the assembly plant — showing exactly where vehicles take the worst structural stress on this route.</p>
         <div class="metric-grid">
           <div class="metric-box"><div class="mv" id="dataPoints" style="color:var(--blue)">0</div><div class="ml">Reports sent</div></div>
           <div class="metric-box"><div class="mv" id="dataZones">0</div><div class="ml">Stress zones flagged</div></div>
         </div>
-        <div id="heatList"><div class="empty-note">No reports yet — simulate a hazard to see this populate.</div></div>
+        <div id="heatList"><div class="empty-note">No reports yet — vehicles automatically drop flares on route triggers.</div></div>
       </div>
     </div>
 
     <div class="tab-panel" id="panel-energy">
       <div class="feature-card">
-        <h3><span class="icon-badge green">⚡</span>EV Energy Saver</h3>
+        <h3><span class="icon-badge green"></span>EV Energy Saver</h3>
         <p class="desc">When an EV gets a hazard alert ahead, it pre-conditions its regenerative brakes and battery cooling — so the driver doesn't have to brake hard at the last second.</p>
         <div class="metric-grid">
-          <div class="metric-box"><div class="mv" id="evCount" style="color:var(--green)">0</div><div class="ml">EVs pre-conditioned</div></div>
+          <div class="metric-box"><div class="mv" id="evCount" style="color:var(--green)">0</div><div class="ml">EVS pre-conditioned</div></div>
           <div class="metric-box"><div class="mv" id="evRange" style="color:var(--green)">+0%</div><div class="ml">Avg. range recovered</div></div>
         </div>
-        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill" style="width:0%"></div></div>
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
         <div class="gauge-cap"><span>Efficiency vs. hard-brake baseline</span><span id="gaugeLabel">0%</span></div>
       </div>
     </div>
 
     <div class="tab-panel" id="panel-tokens">
       <div class="feature-card">
-        <h3><span class="icon-badge yellow">★</span>Safety Points</h3>
-        <p class="desc">Drivers who confirm a hazard alert as accurate earn Safety Tokens, redeemable for service or charging discounts at brand partner stations.</p>
+        <h3><span class="icon-badge yellow">★</span>Safety Points Board</h3>
+        <p class="desc">Real drivers running this sector earning Safety Tokens for validating structural hazards or manually logging verified route blocks.</p>
         <div class="token-hero"><span class="num" id="tokenTotal">0</span><span class="unit">tokens issued fleet-wide</span></div>
         <div class="driver-row you"><span class="name">★ You (Test Driver)</span><span class="pts" id="yourTokens">0 pts</span></div>
         <div id="driverList"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-account">
+      <div class="feature-card">
+        <h3><span class="icon-badge purple"></span>My Account &amp; Vehicle</h3>
+        <p class="desc">Your registered customer profile and vehicle ownership details for this Co-Pilot Swarm membership.</p>
+        <div class="metric-grid">
+          <div class="metric-box"><div class="mv" id="tabAccModel" style="color:var(--purple); font-size:13px;">—</div><div class="ml">Tata Model</div></div>
+          <div class="metric-box"><div class="mv" id="tabAccDate" style="color:var(--purple); font-size:13px;">—</div><div class="ml">Date of Purchase</div></div>
+        </div>
+        <button class="account-edit-btn" id="tabAccEditBtn">Edit Vehicle Details</button>
       </div>
     </div>
 
@@ -517,71 +591,36 @@
 (function(){
 "use strict";
 
-// ---------------------------------------------------------------------------
-// Backend API client + auth
-// ---------------------------------------------------------------------------
-
-// Point this at wherever server.js is running. Defaults to same host, port 4000.
-// Defaults to http://localhost:4000 regardless of how this page is loaded
-// (file://, a static server, etc.) — override with window.SWARM_API_BASE
-// if your backend runs somewhere else.
 const API_BASE = window.SWARM_API_BASE || 'http://localhost:4000';
 
 const Auth = {
-  token: null,
-  user: null,
-  STORAGE_KEY: 'swarm_auth_v1',
-
+  token: null, user: null,
   load(){
     try{
-      const raw = window.name && window.name.startsWith('SWARM_AUTH:')
-        ? window.name.slice('SWARM_AUTH:'.length)
-        : null;
-      if(raw){
-        const parsed = JSON.parse(raw);
-        this.token = parsed.token;
-        this.user = parsed.user;
-      }
-    }catch(e){ /* ignore */ }
+      const raw = window.name && window.name.startsWith('SWARM_AUTH:') ? window.name.slice('SWARM_AUTH:'.length) : null;
+      if(raw){ const parsed = JSON.parse(raw); this.token = parsed.token; this.user = parsed.user; }
+    }catch(e){}
   },
-  persist(){
-    try{
-      window.name = 'SWARM_AUTH:' + JSON.stringify({ token: this.token, user: this.user });
-    }catch(e){ /* ignore */ }
-  },
-  set(token, user){
-    this.token = token;
-    this.user = user;
-    this.persist();
-  },
-  clear(){
-    this.token = null;
-    this.user = null;
-    try{ window.name = ''; }catch(e){ /* ignore */ }
-  },
+  persist(){ try{ window.name = 'SWARM_AUTH:' + JSON.stringify({ token: this.token, user: this.user }); }catch(e){} },
+  set(token, user){ this.token = token; this.user = user; this.persist(); },
+  updateUser(patch){ this.user = Object.assign({}, this.user, patch); this.persist(); },
+  clear(){ this.token = null; this.user = null; try{ window.name = ''; }catch(e){} },
   get isAuthed(){ return !!this.token; }
 };
 
 async function apiRequest(path, { method='GET', body=null, auth=true } = {}){
   const headers = { 'Content-Type': 'application/json' };
   if(auth && Auth.token) headers['Authorization'] = 'Bearer ' + Auth.token;
-  const resp = await fetch(API_BASE + path, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined
-  });
-  let data = null;
-  try{ data = await resp.json(); }catch(e){ /* no body, e.g. 204 */ }
-  if(!resp.ok){
-    const err = new Error((data && data.error) || `Request failed (${resp.status})`);
-    err.status = resp.status;
-    throw err;
-  }
-  return data;
+  try {
+    const resp = await fetch(API_BASE + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    let data = null; try{ data = await resp.json(); }catch(e){}
+    if(!resp.ok){ throw new Error((data && data.error) || `Status ${resp.status}`); }
+    return data;
+  } catch(e) { throw e; }
 }
 
 const API = {
-  signup: (username, password) => apiRequest('/api/auth/signup', { method:'POST', auth:false, body:{ username, password } }),
+  signup: (username, password, profile) => apiRequest('/api/auth/signup', { method:'POST', auth:false, body:{ username, password, ...profile } }),
   login: (username, password) => apiRequest('/api/auth/login', { method:'POST', auth:false, body:{ username, password } }),
   me: () => apiRequest('/api/auth/me'),
   getState: () => apiRequest('/api/swarm/state'),
@@ -593,262 +632,375 @@ const API = {
 
 function showSyncStatus(msg, isError){
   const el = document.getElementById('syncStatus');
+  if(!el) return;
   el.textContent = msg;
   el.classList.toggle('error', !!isError);
-  el.classList.add('show');
-  clearTimeout(showSyncStatus._t);
-  showSyncStatus._t = setTimeout(()=> el.classList.remove('show'), 1800);
+  gsap.killTweensOf(el);
+  gsap.fromTo(el, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, onComplete: () => {
+    gsap.to(el, { y: -10, opacity: 0, duration: 0.3, delay: 1.5 });
+   }});
 }
 
-// Fire-and-forget persistence helpers: the UI updates optimistically and
-// instantly via the existing in-memory logic; these calls sync that activity
-// to the backend without blocking the simulation if the API is unreachable.
-function persistFlare(payload){
-  if(!Auth.isAuthed) return;
-  API.postFlare(payload).then(()=> showSyncStatus('Synced')).catch(()=> showSyncStatus('Sync failed — offline?', true));
-}
-function persistTokens(payload){
-  if(!Auth.isAuthed) return;
-  API.postTokens(payload).catch(()=> showSyncStatus('Sync failed — offline?', true));
-}
-function persistFeed(payload){
-  if(!Auth.isAuthed) return;
-  API.postFeed(payload).catch(()=> {/* feed sync errors are non-critical, stay quiet */});
+function showToast(html){
+  const t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = html; document.body.appendChild(t);
+  gsap.to(t, { opacity: 1, y: 10, duration: 0.2, onComplete: () => gsap.to(t, { opacity: 0, delay: 1.8, onComplete: ()=> t.remove() }) });
 }
 
-// ---------------------------------------------------------------------------
-// Auth UI
-// ---------------------------------------------------------------------------
+function persistFlare(payload){ if(Auth.isAuthed) API.postFlare(payload).then(()=> showSyncStatus('Synced')).catch(()=> showSyncStatus('Sync offline', true)); }
+function persistTokens(payload){ if(Auth.isAuthed) API.postTokens(payload).catch(()=> showSyncStatus('Sync offline', true)); }
+function persistFeed(payload){ if(Auth.isAuthed) API.postFeed(payload).catch(()=> {}); }
 
-const authOverlay = document.getElementById('authOverlay');
+const loadingScreen = document.getElementById('loadingScreen');
+const loadingBarFill = document.getElementById('loadingBarFill');
+const loadingStatus = document.getElementById('loadingStatus');
+const authOverlayEl = document.getElementById('authOverlay');
+const glitchPercentText = document.getElementById('glitchPercentText');
+const glitchMatrixText = document.getElementById('glitchMatrixText');
+const loadingTitleText = document.getElementById('loadingTitleText');
+const teamBrand = document.getElementById('teamBrand');
+
+const LOADING_STEPS = [
+  { target: 18, msg: 'Initializing mesh network…' },
+  { target: 38, msg: 'Establishing satellite uplink…' },
+  { target: 58, msg: 'Calibrating vehicle telemetry…' },
+  { target: 78, msg: 'Loading route segments…' },
+  { target: 100, msg: 'Compiling structural grid loops…' }
+];
+
+// GSAP High-Fidelity Loading Engine with Extreme Glitch Effects
+function runLoadingSequence(onDone){
+  const progressObj = { value: 0 };
+  const matrixChars = "01011010X█▓▒░⚡⛯📡🚗⚡";
+
+  // Continuous localized matrix text scrambling loop
+  const matrixInterval = setInterval(() => {
+    let str = "";
+    for(let k=0; k<22; k++) {
+      str += matrixChars[Math.floor(Math.random()*matrixChars.length)];
+    }
+    glitchMatrixText.textContent = `[ ${str} ]`;
+  }, 40);
+
+  // Periodic severe glitch spikes across elements
+  const glitchSpikeTimeline = gsap.timeline({ repeat: -1 });
+  glitchSpikeTimeline.to([glitchPercentText, loadingTitleText, teamBrand], {
+    x: () => rand(-15, 15),
+    y: () => rand(-5, 5),
+    skewX: () => rand(-25, 25),
+    filter: "hue-rotate(90deg) contrast(200%)",
+    duration: 0.06,
+    delay: () => rand(1.5, 3.5),
+    onComplete: () => {
+      gsap.set([glitchPercentText, loadingTitleText, teamBrand], { x: 0, y: 0, skewX: 0, filter: "none" });
+    }
+  });
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      clearInterval(matrixInterval);
+      glitchSpikeTimeline.kill();
+      
+      // Dramatic digital exit glitch collapse
+      gsap.timeline()
+        .to(loadingScreen, { clipPath: "inset(45% 0% 45% 0%)", duration: 0.15, ease: "power4.inOut" })
+        .to(loadingScreen, { 
+          opacity: 0, 
+          scaleY: 0.01,
+          duration: 0.25, 
+          ease: 'none', 
+          onComplete: () => {
+            loadingScreen.style.display = 'none';
+            onDone();
+          }
+        });
+    }
+  });
+
+  LOADING_STEPS.forEach((step, index) => {
+    const nextTarget = step.target;
+    const stepDuration = index === 0 ? 0.8 : rand(0.6, 1.2);
+
+    tl.to(progressObj, {
+      value: nextTarget,
+      duration: stepDuration,
+      ease: "power1.inOut",
+      onStart: () => {
+        loadingStatus.textContent = step.msg;
+        
+        // Random layout shake distortion on step change
+        if(index > 0) {
+          gsap.fromTo(glitchPercentText, 
+            { x: () => rand(-20, 20), skewX: () => rand(-30, 30), color: "#B3261E" }, 
+            { x: 0, skewX: 0, color: "#FFFFFF", duration: 0.12, ease: "rough" }
+          );
+          gsap.fromTo(loadingBarFill, { skewY: 10 }, { skewY: 0, duration: 0.1 });
+        }
+      },
+      onUpdate: () => {
+        const currentPct = Math.floor(progressObj.value);
+        
+        // Byte noise random value generation injection inside strings
+        if (currentPct < 100 && Math.random() < 0.12) {
+          glitchPercentText.textContent = Math.floor(rand(10, 99)) + "%";
+          glitchPercentText.style.transform = `skewX(${rand(-15,15)}deg) scale(${rand(0.9,1.1)})`;
+        } else {
+          glitchPercentText.textContent = String(currentPct).padStart(2, '0') + "%";
+          glitchPercentText.style.transform = "none";
+        }
+        
+        gsap.set(loadingBarFill, { width: progressObj.value + '%' });
+      }
+    });
+    
+    // Custom hold intervals mimicking asynchronous engine handshakes
+    if (index < LOADING_STEPS.length - 1) {
+      tl.to({}, { duration: rand(0.2, 0.4) });
+    }
+  });
+}
+
+const loginBotBox = document.getElementById('loginBotBox');
+const marqueeScroller = document.getElementById('marqueeScroller');
+
+gsap.to(".auth-overlay", {
+  background: "linear-gradient(135deg, #020b14 0%, #0f0c20 35%, #1b102f 70%, #4a0e4e 100%)",
+  duration: 8, repeat: -1, yoyo: true, ease: "linear"
+});
+
+gsap.to(loginBotBox, {
+  backgroundImage: "linear-gradient(135deg, #4a0e4e 0%, #0b57d0 100%)",
+  duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut"
+});
+
+function startMarqueeScroll() {
+  const scrollHeight = marqueeScroller.scrollHeight;
+  gsap.fromTo(marqueeScroller, { y: 120 }, { y: -scrollHeight, duration: 12, repeat: -1, ease: "none" });
+}
+startMarqueeScroll();
+
 const authForm = document.getElementById('authForm');
+const authCard = document.getElementById('authCard');
 const authUsername = document.getElementById('authUsername');
 const authPassword = document.getElementById('authPassword');
+const authVehicleModel = document.getElementById('authVehicleModel');
+const authPurchaseDate = document.getElementById('authPurchaseDate');
+const signupExtraFields = document.getElementById('signupExtraFields');
 const authSubmit = document.getElementById('authSubmit');
 const authSubmitLabel = document.getElementById('authSubmitLabel');
 const authError = document.getElementById('authError');
 const authSub = document.getElementById('authSub');
 const authSwitch = document.getElementById('authSwitch');
-const authSwitchLink = document.getElementById('authSwitchLink');
 const userPill = document.getElementById('userPill');
 const userAvatar = document.getElementById('userAvatar');
 const userName = document.getElementById('userName');
-const logoutBtn = document.getElementById('logoutBtn');
-
-let authMode = 'login'; // 'login' | 'signup'
 
 function setAuthMode(mode){
   authMode = mode;
-  if(mode === 'signup'){
-    authSubmitLabel.textContent = 'Create account';
-    authSub.textContent = 'Create an account to start tracking your swarm activity.';
-    authSwitch.innerHTML = 'Already have an account? <a id="authSwitchLink">Log in</a>';
-    authPassword.setAttribute('autocomplete','new-password');
-  } else {
-    authSubmitLabel.textContent = 'Log in';
-    authSub.textContent = 'Sign in to track your hazard reports, EV stats and Safety Tokens.';
-    authSwitch.innerHTML = 'New here? <a id="authSwitchLink">Create an account</a>';
-    authPassword.setAttribute('autocomplete','current-password');
-  }
-  document.getElementById('authSwitchLink').addEventListener('click', ()=>{
-    setAuthMode(authMode === 'login' ? 'signup' : 'login');
-  });
-  hideAuthError();
+  gsap.to(authCard, { opacity: 0.5, duration: 0.15, onComplete: () => {
+    if(mode === 'signup'){
+      authSubmitLabel.textContent = 'Create account';
+      authSub.textContent = 'Create an account to track your localized grid nodes and register your vehicle.';
+      authSwitch.innerHTML = 'Already registered? <a id="authSwitchLink">Log in</a>';
+      signupExtraFields.style.display = 'block';
+    } else {
+      authSubmitLabel.textContent = 'Log in';
+      authSub.textContent = 'Sign in to track your hazard reports, EV stats and Safety Tokens.';
+      authSwitch.innerHTML = 'New here? <a id="authSwitchLink">Create an account</a>';
+      signupExtraFields.style.display = 'none';
+    }
+    document.getElementById('authSwitchLink').addEventListener('click', ()=>{
+      setAuthMode(authMode === 'login' ? 'signup' : 'login');
+    });
+    authError.classList.remove('show');
+    gsap.to(authCard, { opacity: 1, duration: 0.2 });
+   }});
 }
-
-function showAuthError(msg){
-  authError.textContent = msg;
-  authError.classList.add('show');
-}
-function hideAuthError(){
-  authError.classList.remove('show');
-}
+let authMode = 'login';
+setAuthMode('login');
 
 authForm.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  hideAuthError();
-  const username = authUsername.value.trim();
-  const password = authPassword.value;
+  authError.classList.remove('show');
   authSubmit.disabled = true;
   authSubmit.classList.add('loading');
+
+  const userVal = authUsername.value.trim();
+  const passVal = authPassword.value;
+  const profile = authMode === 'signup' ? {
+    vehicleModel: authVehicleModel.value || 'Not specified',
+    purchaseDate: authPurchaseDate.value || ''
+  } : {};
+
   try{
-    const fn = authMode === 'signup' ? API.signup : API.login;
-    const data = await fn(username, password);
+    let data;
+    if(authMode === 'signup'){
+      data = await API.signup(userVal, passVal, profile);
+      data.user = Object.assign({}, data.user, profile);
+    } else {
+      data = await API.login(userVal, passVal);
+    }
     Auth.set(data.token, data.user);
+
+    showToast(authMode === 'signup'
+      ? `Welcome to the swarm, <b>${escapeHtml(userVal)}</b>!`
+      : `Welcome back, <b>${escapeHtml(userVal)}</b>!`);
+
     enterApp();
   }catch(err){
-    showAuthError(err.message || 'Something went wrong — try again.');
+    authError.textContent = err.message || 'Verification rejected.';
+    authError.classList.add('show');
+    gsap.fromTo(authCard, { x: -10 }, { x: 0, duration: 0.05, repeat: 4, yoyo: true });
   }finally{
     authSubmit.disabled = false;
     authSubmit.classList.remove('loading');
   }
 });
 
-logoutBtn.addEventListener('click', ()=>{
-  Auth.clear();
-  authOverlay.style.display = 'flex';
-  userPill.style.display = 'none';
-  setAuthMode('login');
-  authUsername.value = '';
-  authPassword.value = '';
-});
+function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-function enterApp(){
-  authOverlay.style.display = 'none';
-  userPill.style.display = 'flex';
-  userName.textContent = Auth.user.username;
-  userAvatar.textContent = Auth.user.username.slice(0,2).toUpperCase();
-  loadRemoteState();
+function doLogout(){
+  Auth.clear();
+  gsap.to(userPill, { opacity: 0, duration: 0.2, onComplete: () => { userPill.style.display = "none"; } });
+  document.getElementById('appFloatingChat').classList.remove('active');
+  document.getElementById('botTriggerFab').style.display = "none";
+  gsap.to("#appFloatingChat", { opacity: 0, y: 30, duration: 0.2 });
+  setSidebarExpanded(false);
+  setAccountPanelOpen(false);
+
+  authOverlayEl.style.display = 'flex';
+  gsap.fromTo(authCard, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1)" });
+  authUsername.value = ''; authPassword.value = ''; authVehicleModel.value = ''; authPurchaseDate.value = '';
 }
 
-setAuthMode('login');
+function enterApp(){
+  gsap.to(authCard, { scale: 0.9, opacity: 0, duration: 0.3, onComplete: () => {
+    authOverlayEl.style.display = 'none';
+    userPill.style.display = 'flex';
+    refreshAccountUI();
+    
+    // Orchestrated Entrance Sequence using GSAP
+    gsap.timeline()
+      .to("#topbar", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" })
+      .to("#mapControls", { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, "-=0.3")
+      .to("#hazardFab", { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.2)" }, "-=0.2")
+      .to(userPill, { opacity: 1, scale: 1, duration: 0.3 }, "-=0.2");
+
+    const robotFab = document.getElementById('botTriggerFab');
+    robotFab.style.display = "flex";
+    gsap.fromTo(robotFab, { scale: 0, rotation: -180 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.7)" });
+    loadRemoteState();
+   }});
+}
+
+function showAuthScreen(){
+  authOverlayEl.style.display = 'flex';
+  gsap.fromTo(authCard, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" });
+}
+
 Auth.load();
-if(Auth.isAuthed){
-  // Verify the token is still valid before trusting it
-  API.me().then(()=> enterApp()).catch(()=>{ Auth.clear(); });
-} 
+
+runLoadingSequence(() => {
+  if(Auth.isAuthed){ enterApp(); } else { showAuthScreen(); }
+});
+
+const accountPanel = document.getElementById('accountPanel');
+let accountPanelOpen = false;
+
+function fmtDate(iso){
+  if(!iso) return 'Not on file';
+  const d = new Date(iso + 'T00:00:00');
+  if(isNaN(d)) return iso;
+  return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function refreshAccountUI(){
+  const u = Auth.user || {};
+  const name = u.username || 'Operator';
+  const initials = name.slice(0,2).toUpperCase();
+  const model = u.vehicleModel || 'Not specified';
+  const purchaseDate = fmtDate(u.purchaseDate);
+
+  userAvatar.textContent = initials;
+  userName.textContent = name;
+
+  document.getElementById('accBigAvatar').textContent = initials;
+  document.getElementById('accUserName').textContent = name;
+  document.getElementById('accModel').textContent = model;
+  document.getElementById('accPurchaseDate').textContent = purchaseDate;
+  document.getElementById('accTokens').textContent = (tokenBalance ? tokenBalance.you : 0) + ' pts';
+
+  document.getElementById('tabAccModel').textContent = model;
+  document.getElementById('tabAccDate').textContent = purchaseDate;
+}
+
+function setAccountPanelOpen(open){
+  accountPanelOpen = open;
+  if(open){
+    accountPanel.classList.add('active');
+    gsap.fromTo(accountPanel, { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.22, ease: "power2.out" });
+  } else {
+    gsap.to(accountPanel, { scale: 0.92, opacity: 0, duration: 0.15, onComplete: () => accountPanel.classList.remove('active') });
+  }
+}
+
+userPill.addEventListener('click', (e) => {
+  e.stopPropagation();
+  refreshAccountUI();
+  setAccountPanelOpen(!accountPanelOpen);
+});
+document.addEventListener('click', (e) => {
+  if(accountPanelOpen && !accountPanel.contains(e.target) && !userPill.contains(e.target)) setAccountPanelOpen(false);
+});
+
+document.getElementById('accLogoutBtn').onclick = () => { setAccountPanelOpen(false); doLogout(); };
+
+function editVehicleDetails(){
+  const currentModel = (Auth.user && Auth.user.vehicleModel) || '';
+  const currentDate = (Auth.user && Auth.user.purchaseDate) || '';
+  const models = ["Tata Nexon EV","Tata Tiago EV","Tata Tigor EV","Tata Punch EV","Tata Curvv EV","Tata Nexon (ICE)","Tata Harrier","Tata Safari","Tata Altroz"];
+  const listStr = models.map((m,i)=>`${i+1}. ${m}`).join('\n');
+  const choice = prompt(`Select your Tata model (enter the number):\n${listStr}`, '');
+  let newModel = currentModel;
+  const idx = parseInt(choice, 10);
+  if(!isNaN(idx) && idx >= 1 && idx <= models.length) newModel = models[idx-1];
+  const newDate = prompt('Date of purchase (YYYY-MM-DD):', currentDate) || currentDate;
+  Auth.updateUser({ vehicleModel: newModel, purchaseDate: newDate });
+  refreshAccountUI();
+  showToast('Vehicle details updated.');
+}
+document.getElementById('accEditBtn').onclick = editVehicleDetails;
+document.getElementById('tabAccEditBtn').onclick = editVehicleDetails;
 
 const ROUTE = [
-  [18.6020, 73.7890],
-  [18.6065, 73.7935],
-  [18.6098, 73.7978],
-  [18.6135, 73.8015],
-  [18.6170, 73.8050],
-  [18.6190, 73.8075],
-  [18.6210, 73.8095],
-  [18.6230, 73.8108],
-  [18.6261, 73.8122]
+  [18.6020, 73.7890], [18.6065, 73.7935], [18.6098, 73.7978],
+  [18.6135, 73.8015], [18.6170, 73.8050], [18.6190, 73.8075],
+  [18.6210, 73.8095], [18.6230, 73.8108], [18.6261, 73.8122]
 ];
 
-const map = L.map('map', {
-  zoomControl: false,
-  attributionControl: true
-}).setView([18.613, 73.802], 14);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([18.613, 73.802], 14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
 document.getElementById('zoomIn').onclick = ()=> map.zoomIn();
 document.getElementById('zoomOut').onclick = ()=> map.zoomOut();
 document.getElementById('locateBtn').onclick = ()=> map.flyTo([18.613,73.802], 14);
 
-const QUICK_CITIES = {
-  "bhubaneswar": [20.2961, 85.8245, 12],
-  "cuttack": [20.4625, 85.8830, 12],
-  "mumbai": [19.0760, 72.8777, 11],
-  "delhi": [28.6139, 77.2090, 11],
-  "new delhi": [28.6139, 77.2090, 11],
-  "bengaluru": [12.9716, 77.5946, 11],
-  "bangalore": [12.9716, 77.5946, 11],
-  "chennai": [13.0827, 80.2707, 11],
-  "kolkata": [22.5726, 88.3639, 11],
-  "hyderabad": [17.3850, 78.4867, 11],
-  "ahmedabad": [23.0225, 72.5714, 11],
-  "jaipur": [26.9124, 75.7873, 12],
-  "lucknow": [26.8467, 80.9462, 12],
-  "nagpur": [21.1458, 79.0882, 12],
-  "indore": [22.7196, 75.8577, 12],
-  "surat": [21.1702, 72.8311, 12],
-  "patna": [25.5941, 85.1376, 12],
-  "bhopal": [23.2599, 77.4126, 12],
-  "visakhapatnam": [17.6868, 83.2185, 12],
-  "guwahati": [26.1445, 91.7362, 12],
-  "coimbatore": [11.0168, 76.9558, 12],
-  "chandigarh": [30.7333, 76.7794, 12],
-  "kochi": [9.9312, 76.2673, 12],
-  "pune": [18.613, 73.802, 14],
-  "pimpri": [18.6260, 73.8121, 14],
-  "pimpri-chinchwad": [18.6260, 73.8121, 14]
-};
-
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
-const searchStatus = document.getElementById('searchStatus');
-
-function showSearchStatus(msg, isError){
-  searchStatus.textContent = msg;
-  searchStatus.classList.toggle('error', !!isError);
-  searchStatus.classList.add('show');
-  clearTimeout(showSearchStatus._t);
-  showSearchStatus._t = setTimeout(()=> searchStatus.classList.remove('show'), 3200);
-}
-
-function setSearchLoading(isLoading){
-  searchBtn.classList.toggle('loading', isLoading);
-}
-
-async function runSearch(){
-  const q = searchInput.value.trim();
-  if(!q){ return; }
-  hideHint();
-
-  const key = q.toLowerCase();
-  if(QUICK_CITIES[key]){
-    const [lat,lng,zoom] = QUICK_CITIES[key];
-    map.flyTo([lat,lng], zoom);
-    showSearchStatus(`Showing ${q}`);
-    return;
-  }
-
-  setSearchLoading(true);
-  try{
-    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=in&q=${encodeURIComponent(q)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
-    if(!resp.ok) throw new Error('lookup failed');
-    const results = await resp.json();
-    if(results && results.length){
-      const lat = parseFloat(results[0].lat);
-      const lng = parseFloat(results[0].lon);
-      map.flyTo([lat,lng], 12);
-      showSearchStatus(`Showing ${results[0].display_name.split(',').slice(0,2).join(', ')}`);
-    } else {
-      showSearchStatus(`Couldn't find "${q}" — try a city or place name`, true);
-    }
-  } catch(err){
-    showSearchStatus(`Search is unreachable right now — try a major city name`, true);
-  } finally {
-    setSearchLoading(false);
-  }
-}
-
-searchBtn.addEventListener('click', runSearch);
-searchInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); runSearch(); } });
-
-const routeLine = L.polyline(ROUTE, { color:'#1A73E8', weight:6, opacity:0.85, lineCap:'round', lineJoin:'round' }).addTo(map);
-L.polyline(ROUTE, { color:'#FFFFFF', weight:9, opacity:0.5 }).addTo(map).bringToBack();
-
-const plantIcon = L.divIcon({
-  className:'', html: `<div style="width:30px;height:30px;border-radius:50%;background:#1A73E8;border:3px solid white;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">🏭</div>`,
-  iconSize:[30,30], iconAnchor:[15,15]
-});
-L.marker(ROUTE[ROUTE.length-1], {icon: plantIcon, zIndexOffset: 100})
-  .addTo(map)
-  .bindPopup(`<div class="popup-card"><div class="ph"><div class="pin-ic" style="background:#E8F0FE;color:#1A73E8;">🏭</div><div><h4>Tata Motors — Pimpri Plant</h4><div class="meta">Engineering &amp; assembly</div></div></div><div class="pb">Structural stress reports from the swarm are routed here for next-gen suspension design.</div></div>`);
-
-function totalRouteLength(){
-  let len=0;
-  for(let i=0;i<ROUTE.length-1;i++){
-    len += map.distance(ROUTE[i], ROUTE[i+1]);
-  }
-  return len;
-}
-const ROUTE_LEN = totalRouteLength();
+const routeLine = L.polyline(ROUTE, { color:'#1A73E8', weight:6, opacity:0.85 }).addTo(map);
+const ROUTE_LEN = (() => {
+  let len=0; for(let i=0;i<ROUTE.length-1;i++){ len += map.distance(ROUTE[i], ROUTE[i+1]); } return len;
+})();
 
 function pointAtFraction(f){
-  f = ((f % 1) + 1) % 1;
-  let target = f * ROUTE_LEN;
-  let acc = 0;
+  f = ((f % 1) + 1) % 1; let target = f * ROUTE_LEN; let acc = 0;
   for(let i=0;i<ROUTE.length-1;i++){
     const segLen = map.distance(ROUTE[i], ROUTE[i+1]);
     if(acc + segLen >= target || i === ROUTE.length-2){
       const segT = segLen===0 ? 0 : (target-acc)/segLen;
-      const lat = lerp(ROUTE[i][0], ROUTE[i+1][0], segT);
-      const lng = lerp(ROUTE[i][1], ROUTE[i+1][1], segT);
-      const bearing = Math.atan2(ROUTE[i+1][1]-ROUTE[i][1], ROUTE[i+1][0]-ROUTE[i][0]) * 180/Math.PI;
-      return {lat, lng, bearing};
+      return {
+        lat: lerp(ROUTE[i][0], ROUTE[i+1][0], segT),
+        lng: lerp(ROUTE[i][1], ROUTE[i+1][1], segT),
+        bearing: Math.atan2(ROUTE[i+1][1]-ROUTE[i][1], ROUTE[i+1][0]-ROUTE[i][0]) * 180/Math.PI
+      };
     }
     acc += segLen;
   }
@@ -856,497 +1008,376 @@ function pointAtFraction(f){
 }
 
 function offsetLatLng(lat, lng, bearingDeg, metersRight){
-  const R = 6378137;
-  const perpRad = (bearingDeg + 90) * Math.PI/180;
-  const dLat = (metersRight * Math.cos(perpRad)) / R * (180/Math.PI);
-  const dLng = (metersRight * Math.sin(perpRad)) / (R * Math.cos(lat*Math.PI/180)) * (180/Math.PI);
-  return [lat + dLat, lng + dLng];
+  const R = 6378137, perpRad = (bearingDeg + 90) * Math.PI/180;
+  return [
+    lat + ((metersRight * Math.cos(perpRad)) / R * (180/Math.PI)),
+    lng + ((metersRight * Math.sin(perpRad)) / (R * Math.cos(lat*Math.PI/180)) * (180/Math.PI))
+  ];
 }
-
 function lerp(a,b,t){ return a + (b-a)*t; }
 
-const NAMES = ["A. Sharma","R. Iyer","M. Khan","P. Nair","S. Verma","D. Gupta","T. Singh","K. Reddy","J. Das","V. Rao","N. Joshi","B. Patel"];
-const ZONES = ["NH-60 KM 2.1","Spine Road Junction","Telco Road Bend","NH-60 KM 4.6","Pimpri Flyover Approach","KSB Chowk Stretch"];
+const NAMES = ["A. Sharma","R. Iyer","M. Khan","P. Nair","S. Verma","D. Gupta","T. Singh","K. Reddy","M. Joshi","G. Rao","J. Das","P. Patel"];
+const ZONES = ["NH-60 KM 2.1","Spine Road Junction","Telco Road Bend","NH-60 KM 4.6"];
 
-function rand(min,max){ return min + Math.random()*(max-min); }
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+let vehicles = [], nextId = 1, stressZones = {}, evStats = { count:0, rangeSum:0 }, tokenBalance = { you:0, total:0 }, driverTokens = {}, stats = { flares:0 };
+const carColors = { normal:'#5F6368', ev:'#146C2E', warned:'#B3261E', you:'#B06000' };
 
-let vehicles = [];
-let nextId = 1;
-let stressZones = {};
-let evStats = { count:0, rangeSum:0 };
-let tokenBalance = { you:0, total:0 };
-let driverTokens = {};
-let stats = { flares:0 };
-
-const carColors = { normal:'#5F6368', ev:'#1E8E3E', warned:'#EA4335', you:'#F9AB00' };
-
-function carIconSize(){
-  const z = map.getZoom();
-  if(z >= 13) return 22;
-  if(z >= 10) return 15;
-  if(z >= 7)  return 10;
-  return 6;
-}
-
-function carDivIcon(color, isYou, sizeOverride){
-  const size = sizeOverride || carIconSize();
-  const showStar = isYou && size >= 14;
-  const border = size >= 14 ? 2 : 1;
+function carDivIcon(color){
+  const size = 14;
   return L.divIcon({
     className:'',
-    html: `<div style="
-        width:${size}px;height:${size}px;border-radius:50% 50% 50% ${size>=14?4:50}%;
-        background:${color}; transform: rotate(${size>=14?-45:0}deg);
-        border:${border}px solid white; box-shadow:0 1px 3px rgba(0,0,0,.4);
-        display:flex; align-items:center; justify-content:center;
-      ">${showStar? '<span style="transform:rotate(45deg);font-size:10px;">★</span>':''}</div>`,
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.4);"></div>`,
     iconSize:[size,size], iconAnchor:[size/2,size/2]
   });
 }
 
-function refreshVehicleIconSizes(){
-  vehicles.forEach(v=>{
-    if(v.state==='normal' || v.state==='reported'){
-      v.marker.setIcon(carDivIcon(v.isYou? carColors.you : (v.isEV? carColors.ev: carColors.normal), v.isYou));
-    } else if(v.state==='warned'){
-      v.marker.setIcon(carDivIcon(carColors.warned, v.isYou));
-    }
-  });
-  nationalVehicles.forEach(nv=>{
-    nv.marker.setIcon(carDivIcon(nv.isEV? carColors.ev : carColors.normal, false));
-  });
-}
-
 function makeVehicle(idx){
-  const isEV = Math.random() < 0.45;
-  const dir = idx % 2 === 0 ? 1 : -1;
+  const isEV = Math.random() < 0.45, dir = idx % 2 === 0 ? 1 : -1;
   const v = {
-    id: nextId++,
-    name: pick(NAMES),
-    f: Math.random(),
-    dir: dir,
-    laneOffset: dir===1 ? rand(4,9) : -rand(4,9),
-    speed: rand(0.0000045, 0.0000075),
-    speedMul: 1,
-    isEV: isEV,
-    isYou: false,
-    state: 'normal',
-    warnedTimer: 0,
-    marker: null
+    id: nextId++, name: pick(NAMES), f: Math.random(), dir: dir,
+    laneOffset: dir===1 ? rand(3,6) : -rand(3,6), speed: rand(0.0000050, 0.0000090),
+    speedMul: 1, isEV: isEV, isYou: false, state: 'normal', warnedTimer: 0, marker: null
   };
-  const pos = pointAtFraction(v.f);
-  const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
-  v.marker = L.marker(ll, { icon: carDivIcon(carColors.normal, false), zIndexOffset: 50 }).addTo(map);
-  v.marker.on('click', ()=> onVehicleClick(v));
+  const pos = pointAtFraction(v.f), ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+  v.marker = L.marker(ll, { icon: carDivIcon(carColors.normal) }).addTo(map).on('click', ()=> onVehicleClick(v));
   return v;
-}
-
-const INDIA_CITIES = [
-  {name:"Bhubaneswar", lat:20.2961, lng:85.8245},
-  {name:"Mumbai", lat:19.0760, lng:72.8777},
-  {name:"Delhi", lat:28.6139, lng:77.2090},
-  {name:"Bengaluru", lat:12.9716, lng:77.5946},
-  {name:"Chennai", lat:13.0827, lng:80.2707},
-  {name:"Kolkata", lat:22.5726, lng:88.3639},
-  {name:"Hyderabad", lat:17.3850, lng:78.4867},
-  {name:"Ahmedabad", lat:23.0225, lng:72.5714},
-  {name:"Jaipur", lat:26.9124, lng:75.7873},
-  {name:"Lucknow", lat:26.8467, lng:80.9462},
-  {name:"Nagpur", lat:21.1458, lng:79.0882},
-  {name:"Indore", lat:22.7196, lng:75.8577},
-  {name:"Surat", lat:21.1702, lng:72.8311},
-  {name:"Patna", lat:25.5941, lng:85.1376},
-  {name:"Bhopal", lat:23.2599, lng:77.4126},
-  {name:"Visakhapatnam", lat:17.6868, lng:83.2185},
-  {name:"Guwahati", lat:26.1445, lng:91.7362},
-  {name:"Coimbatore", lat:11.0168, lng:76.9558},
-  {name:"Chandigarh", lat:30.7333, lng:76.7794},
-  {name:"Kochi", lat:9.9312, lng:76.2673}
-];
-
-let nationalVehicles = [];
-
-function initNationalFleet(){
-  nationalVehicles.forEach(nv=> map.removeLayer(nv.marker));
-  nationalVehicles = [];
-  INDIA_CITIES.forEach(city=>{
-    const carsHere = Math.floor(rand(3,7));
-    for(let i=0;i<carsHere;i++){
-      const lat = city.lat + rand(-0.18, 0.18);
-      const lng = city.lng + rand(-0.18, 0.18);
-      const isEV = Math.random() < 0.4;
-      const marker = L.marker([lat,lng], {
-        icon: carDivIcon(isEV? carColors.ev : carColors.normal, false),
-        zIndexOffset: 10,
-        interactive: false
-      }).addTo(map);
-      nationalVehicles.push({ city: city.name, lat, lng, isEV, marker, driftSeed: Math.random()*1000 });
-    }
-  });
-}
-
-function driftNationalFleet(t){
-  nationalVehicles.forEach(nv=>{
-    const dlat = Math.sin(t*0.0002 + nv.driftSeed) * 0.0006;
-    const dlng = Math.cos(t*0.00017 + nv.driftSeed) * 0.0006;
-    nv.marker.setLatLng([nv.lat + dlat, nv.lng + dlng]);
-  });
 }
 
 function initVehicles(){
   vehicles.forEach(v=> map.removeLayer(v.marker));
   vehicles = [];
-  for(let i=0;i<12;i++) vehicles.push(makeVehicle(i));
-  vehicles[0].isYou = true;
-  vehicles[0].name = "You (Test Driver)";
-  vehicles[0].marker.setIcon(carDivIcon(carColors.you, true));
+  for(let i=0;i<42;i++) vehicles.push(makeVehicle(i));
+  vehicles[0].isYou = true; vehicles[0].name = "You (Test Driver)";
+  vehicles[0].marker.setIcon(carDivIcon(carColors.you));
 }
+function updateVehicleCount(){ document.getElementById('vehicleCount').textContent = vehicles.length; }
+function rand(min,max){ return min + Math.random()*(max-min); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-let activeRings = [];
-
-function onVehicleClick(v){
-  if(v.state !== 'normal') return;
-  dropFlare(v);
-}
-
-document.getElementById('hazardFab').addEventListener('click', ()=>{
-  const candidates = vehicles.filter(v=>v.state==='normal');
-  if(candidates.length===0) return;
-  dropFlare(pick(candidates));
-});
-
-function hazardPinIcon(){
-  return L.divIcon({
-    className:'',
-    html: `<div style="position:relative;width:34px;height:44px;">
-        <svg viewBox="0 0 34 44" width="34" height="44">
-          <path d="M17 0C7.6 0 0 7.6 0 17c0 12 17 27 17 27s17-15 17-27C34 7.6 26.4 0 17 0z" fill="#EA4335"/>
-          <circle cx="17" cy="17" r="7" fill="white"/>
-        </svg>
-        <div style="position:absolute;top:8px;left:0;width:34px;text-align:center;font-size:13px;">⚠</div>
-      </div>`,
-    iconSize:[34,44], iconAnchor:[17,44]
-  });
-}
+const HAZARD_REPAIR_MS = 12000;
+let hazardTimers = [];
 
 function dropFlare(v){
-  const pos = pointAtFraction(v.f);
-  const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
-  const zone = pick(ZONES);
+  const pos = pointAtFraction(v.f), ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset), zone = pick(ZONES);
+  stats.flares++; document.getElementById('sumFlares').textContent = stats.flares;
+  gsap.fromTo("#sumFlares", { scale: 1.4, color: "#B3261E" }, { scale: 1, color: "#B3261E", duration: 0.3, ease: "bounce.out" });
 
-  stats.flares++;
-  document.getElementById('sumFlares').textContent = stats.flares;
-
-  const pin = L.marker(ll, { icon: hazardPinIcon(), zIndexOffset: 200 }).addTo(map);
-  pin.bindPopup(`<div class="popup-card"><div class="ph"><div class="pin-ic">⚠</div><div><h4>Digital Flare</h4><div class="meta">${zone}</div></div></div><div class="pb">Reported by <b>${v.name}</b> · pothole hazard · broadcasting to vehicles within 500m.</div></div>`).openPopup();
-
-  const circle = L.circle(ll, {
-    radius: 1, color:'#EA4335', weight:1.5, fillColor:'#EA4335', fillOpacity:0.12, opacity:0.55
-  }).addTo(map);
-
+  const circle = L.circle(ll, { radius: 1, color:'#B3261E', fillColor:'#B3261E', fillOpacity:0.15 }).addTo(map);
   let r = 1;
-  const targetR = 500;
-  const growInterval = setInterval(()=>{
-    r += 40;
-    circle.setRadius(r);
-    if(r >= targetR){
-      clearInterval(growInterval);
-      warnNearby(ll, v);
-    }
-  }, 18);
-
-  setTimeout(()=>{
-    map.removeLayer(pin);
-  }, 6000);
-  setTimeout(()=>{
-    let op = 0.12;
-    const fade = setInterval(()=>{
-      op -= 0.012;
-      if(op<=0){ clearInterval(fade); map.removeLayer(circle); return; }
-      circle.setStyle({ fillOpacity: Math.max(0,op), opacity: Math.max(0,op*4.5) });
-    }, 60);
-  }, 3500);
-
-  logFeed('factory','red', `<b>${v.name}</b> dropped a Digital Flare near <b>${zone}</b> — pothole detected.`);
+  const grow = setInterval(()=>{
+    r += 40; circle.setRadius(r);
+    if(r >= 500){ clearInterval(grow); warnNearby(ll, v); setTimeout(()=> map.removeLayer(circle), 3000); }
+  }, 20);
 
   stressZones[zone] = (stressZones[zone]||0)+1;
-  document.getElementById('dataPoints').textContent = Object.values(stressZones).reduce((a,b)=>a+b,0);
+  document.getElementById('dataPoints').textContent = Object.values(stressZones).reduce((a, b)=>a+b,0);
   document.getElementById('dataZones').textContent = Object.keys(stressZones).length;
   renderHeat();
-  logFeed('factory','blue', `Stress reading for <b>${zone}</b> queued for the Tata Motors engineering feed.`);
 
-  persistFlare({
-    vehicleName: v.name,
-    zone: zone,
-    lat: ll[0],
-    lng: ll[1],
-    isEV: !!v.isEV
-  });
+  const reportType = Math.random() < 0.5 ? "manually flagged a pothole" : "triggered vertical suspension telemetry alarm";
+  logFeed('factory','red', `<b>${v.name}</b> ${reportType} at ${zone}.`);
+
+  showToast(`<b>Hazard reported at ${zone}</b> — be careful out there. <span style="opacity:.7">– Team Tata</span>`);
 
   awardTokens(v.name, 15, v.isYou);
 
-  v.state = 'reported';
-  setTimeout(()=>{ if(v.state==='reported') v.state='normal'; }, 1200);
+  const repairTimer = setTimeout(() => {
+    logFeed('factory','green', ` Hazard at <b>${zone}</b> has been repaired — route clear.`);
+    showToast(` <b>Hazard at ${zone} repaired.</b> Route is clear again. <span style="opacity:.7">– Team Tata</span>`);
+    hazardTimers = hazardTimers.filter(t => t !== repairTimer);
+  }, HAZARD_REPAIR_MS);
+  hazardTimers.push(repairTimer);
 }
 
 function warnNearby(originLatLng, source){
-  let count = 0;
   vehicles.forEach(v=>{
     if(v.id === source.id) return;
-    const pos = pointAtFraction(v.f);
-    const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
-    const dist = map.distance(originLatLng, ll);
-    if(dist < 500){
-      count++;
-      v.state = 'warned';
-      v.speedMul = 0.4;
-      v.warnedTimer = 5.5;
-      v.marker.setIcon(carDivIcon(carColors.warned, v.isYou));
-      if(v.isEV){
-        preConditionEV(v);
+    const pos = pointAtFraction(v.f), ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+    if(map.distance(originLatLng, ll) < 500){
+      v.state = 'warned'; v.speedMul = 0.3; v.warnedTimer = 5.0;
+      v.marker.setIcon(carDivIcon(carColors.warned));
+      if(v.isEV) {
+        evStats.count++; document.getElementById('evCount').textContent = evStats.count;
+        document.getElementById('sumEv').textContent = evStats.count;
+        
+        const newPct = Math.min(100, evStats.count * 5);
+        document.getElementById('evRange').textContent = `+${(evStats.count * 0.4).toFixed(1)}%`;
+        document.getElementById('gaugeLabel').textContent = `${newPct}%`;
+        gsap.to("#gaugeFill", { width: newPct + '%', duration: 0.6, ease: "power2.out" });
       }
     }
   });
-  if(count>0){
-    updateVehicleCount();
-    logFeed('factory','red', `${count} nearby vehicle${count>1?'s':''} received the alert and slowed in advance.`);
+}
+
+const appChatMessages = document.getElementById('appChatMessages');
+const appChatInput = document.getElementById('appChatInput');
+const appChatSendBtn = document.getElementById('appChatSendBtn');
+const appFloatingChat = document.getElementById('appFloatingChat');
+const botTriggerFab = document.getElementById('botTriggerFab');
+let appChatBusy = false;
+
+window.askAppAI = function(question){
+  if(!question || appChatBusy) return;
+  appChatBusy = true;
+  appChatSendBtn.disabled = true;
+  appChatInput.disabled = true;
+
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble user';
+  userBubble.innerHTML = `${question}`;
+  appChatMessages.appendChild(userBubble);
+  appChatMessages.scrollTop = appChatMessages.scrollHeight;
+
+  const typingBubble = document.createElement('div');
+  typingBubble.className = 'chat-bubble bot typing';
+  typingBubble.innerHTML = '<span class="td"></span><span class="td"></span><span class="td"></span>';
+  appChatMessages.appendChild(typingBubble);
+  gsap.from(typingBubble, { opacity: 0, y: 5, duration: 0.15 });
+  appChatMessages.scrollTop = appChatMessages.scrollHeight;
+
+  fetchAuraReply(question).then(reply => {
+    typingBubble.remove();
+    const botBubble = document.createElement('div');
+    botBubble.className = 'chat-bubble bot';
+    appChatMessages.appendChild(botBubble);
+    streamTextIntoBubble(botBubble, reply);
+  });
+};
+
+async function fetchAuraReply(question){
+  const warnedCount = vehicles.filter(v => v.state === 'warned').length;
+  const evCount = vehicles.filter(v => v.isEV).length;
+  const reportsTotal = document.getElementById('dataPoints').textContent;
+  const zonesTotal = document.getElementById('dataZones').textContent;
+  const tokensTotal = document.getElementById('tokenTotal').textContent;
+  const evPreconditioned = document.getElementById('evCount').textContent;
+  const topZone = Object.entries(stressZones).sort((a,b)=>b[1]-a[1])[0];
+  const u = Auth.user || {};
+
+  const telemetryContext = `Live swarm telemetry snapshot:
+- Active nodes on route: ${vehicles.length}
+- EVs in fleet: ${evCount} (${evPreconditioned} pre-conditioned this session)
+- Nodes currently under hazard throttling: ${warnedCount}
+- Hazard reports logged this session: ${reportsTotal}
+- Distinct stress zones flagged: ${zonesTotal}
+- Top stress zone: ${topZone ? `${topZone[0]} (${topZone[1]} reports)` : 'none yet'}
+- Safety tokens issued fleet-wide: ${tokensTotal}
+- Current driver: ${u.username || 'Operator'}, vehicle: ${u.vehicleModel || 'unspecified'}, purchased: ${u.purchaseDate || 'unspecified'}`;
+
+  const systemPrompt = `You are Aura AI, the onboard diagnostic copilot for the Co-Pilot Swarm autonomous fleet network. You answer questions about mesh sync, EV battery/thermal pre-conditioning, hazard stress zones, and safety tokens. Stay in character as a fleet telemetry AI. Be concise (2-4 sentences). Ground every answer in the live telemetry snapshot provided below — cite the actual numbers, don't invent different ones. You may use simple <b>bold</b> HTML tags to emphasize key numbers, but no other HTML or markdown.
+
+${telemetryContext}`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [{ role: "user", content: question }]
+      })
+    });
+    const data = await response.json();
+    const text = (data.content || [])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('\n')
+      .trim();
+    if(text) return text;
+    throw new Error('Empty response');
+  }catch(err){
+    console.warn('Aura AI live call failed, using local fallback:', err);
+    return buildAuraReply(question.toLowerCase());
   }
 }
 
-function preConditionEV(v){
-  evStats.count++;
-  const recovered = rand(8,18);
-  evStats.rangeSum += recovered;
-  document.getElementById('evCount').textContent = evStats.count;
-  document.getElementById('sumEv').textContent = evStats.count;
-  const avg = evStats.rangeSum/evStats.count;
-  document.getElementById('evRange').textContent = '+'+avg.toFixed(1)+'%';
-  const pct = Math.min(100, avg*4);
-  document.getElementById('gaugeFill').style.width = pct+'%';
-  document.getElementById('gaugeLabel').textContent = pct.toFixed(0)+'%';
-  const msg = `<b>${v.name}'s EV</b> pre-conditioned brakes &amp; battery cooling ahead of the hazard.`;
-  logFeed('energy','green', msg);
-  if(Auth.isAuthed){
-    persistFlare({
-      vehicleName: v.name,
-      zone: 'EV pre-conditioning event',
-      isEV: true,
-      evRangeRecovered: recovered
-    });
+function streamTextIntoBubble(bubble, html){
+  const tokens = html.match(/<[^>]+>|[^<]+/g) || [html];
+  let plainBuffer = '';
+  let idx = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+
+  function renderChunk(){
+    bubble.innerHTML = plainBuffer;
+    bubble.appendChild(cursor);
+    appChatMessages.scrollTop = appChatMessages.scrollHeight;
   }
+
+  function step(){
+    if(idx >= tokens.length){
+      cursor.remove();
+      appChatBusy = false;
+      appChatSendBtn.disabled = false;
+      appChatInput.disabled = false;
+      appChatInput.focus();
+      return;
+    }
+    const tok = tokens[idx++];
+    if(tok.startsWith('<')){
+      plainBuffer += tok;
+      renderChunk();
+      requestAnimationFrame(step);
+    } else {
+      const words = tok.split(/(\s+)/);
+      let w = 0;
+      (function streamWords(){
+        if(w >= words.length){ requestAnimationFrame(step); return; }
+        plainBuffer += words[w++];
+        renderChunk();
+        setTimeout(streamWords, 16 + Math.random()*26);
+       })();
+    }
+  }
+  step();
 }
+
+function buildAuraReply(match){
+  const warnedCount = vehicles.filter(v => v.state === 'warned').length;
+  const evCount = vehicles.filter(v => v.isEV).length;
+  const reportsTotal = document.getElementById('dataPoints').textContent;
+  const zonesTotal = document.getElementById('dataZones').textContent;
+  const tokensTotal = document.getElementById('tokenTotal').textContent;
+  const topZone = Object.entries(stressZones).sort((a,b)=>b[1]-a[1])[0];
+
+  if(match.includes('mesh') || match.includes('sync')){
+    return `<b>Aura AI · Mesh Sync:</b> Proximity channels are cycling coordinate tables every 250ms via mesh radio frames. Right now <b>${vehicles.length} nodes</b> are on this segment, with <b>${warnedCount} actively throttled</b> after a recent hazard broadcast.`;
+  }
+  if(match.includes('thermal') || match.includes('ev') || match.includes('conditioning') || match.includes('battery')){
+    return `<b>Aura AI · EV Thermal Analysis:</b> Of the <b>${vehicles.length} nodes</b> tracked, <b>${evCount} are EVS</b>, and <b>${document.getElementById('evCount').textContent} have been pre-conditioned</b> so far this session.`;
+  }
+  if(match.includes('diagnostic') || match.includes('health') || match.includes('system')){
+    return `<b>Aura AI · Live Diagnostic:</b> ${reportsTotal} reports logged across ${zonesTotal} hazard stress zone(s), with ${tokensTotal} safety tokens issued fleet-wide. ${topZone ? `Highest-stress segment: <b>${topZone[0]}</b>.` : 'No stress hotspots yet.'}`;
+  }
+  if(match.includes('zone') || match.includes('hotspot') || match.includes('stress')){
+    return topZone ? `<b>Aura AI · Stress Zones:</b> <b>${topZone[0]}</b> leads with ${topZone[1]} report(s).` : `<b>Aura AI · Stress Zones:</b> No stress zones flagged yet this session.`;
+  }
+  if(match.includes('token') || match.includes('point') || match.includes('reward')){
+    return `<b>Aura AI · Safety Points:</b> ${tokensTotal} tokens issued fleet-wide. Drivers earn +15 tokens per verified hazard report.`;
+  }
+  return `I've parsed your query against the live fleet stream graph. There are currently <b>${vehicles.length} active nodes</b>, <b>${warnedCount} under hazard throttling</b>, and <b>${reportsTotal} reports</b> logged this session.`;
+}
+
+appChatSendBtn.onclick = () => { const txt = appChatInput.value.trim(); if(txt){ askAppAI(txt); appChatInput.value = ''; } };
+appChatInput.onkeydown = (e) => { if(e.key === 'Enter'){ const txt = appChatInput.value.trim(); if(txt){ askAppAI(txt); appChatInput.value = ''; } } };
+
+botTriggerFab.onclick = () => {
+  if(!appFloatingChat.classList.contains('active')){
+    appFloatingChat.classList.add('active');
+    gsap.fromTo(appFloatingChat, { opacity: 0, y: 30, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power2.out" });
+  } else {
+    appFloatingChat.classList.remove('active');
+    gsap.to(appFloatingChat, { opacity: 0, y: 30, scale: 0.95, duration: 0.2 });
+  }
+};
+document.getElementById('closeFloatingChat').onclick = () => {
+  appFloatingChat.classList.remove('active');
+  gsap.to(appFloatingChat, { opacity: 0, y: 30, scale: 0.95, duration: 0.2 });
+};
 
 function awardTokens(name, amount, isYou){
-  driverTokens[name] = (driverTokens[name]||0)+amount;
-  tokenBalance.total += amount;
-  document.getElementById('tokenTotal').textContent = tokenBalance.total;
+  driverTokens[name] = (driverTokens[name]||0) + amount;
+  tokenBalance.total += amount; document.getElementById('tokenTotal').textContent = tokenBalance.total;
   document.getElementById('sumTokens').textContent = tokenBalance.total;
+  
+  gsap.fromTo("#sumTokens", { scale: 1.4, color: "#B06000" }, { scale: 1, color: "inherit", duration: 0.4, ease: "back.out(2)" });
+  
   if(isYou){
-    tokenBalance.you += amount;
-    document.getElementById('yourTokens').textContent = tokenBalance.you+' pts';
-    showToast(amount);
+    tokenBalance.you += amount; document.getElementById('yourTokens').textContent = tokenBalance.you+' pts';
+    showToast(`Token Added: <b>+${amount}</b>`);
+    if(accountPanelOpen) refreshAccountUI();
   }
   renderDrivers();
-  logFeed('tokens','yellow', `<b>${name}</b> earned <b>+${amount} Safety Tokens</b> for a verified hazard report.`);
-  persistTokens({ driverName: name, amount: amount, isYou: !!isYou, reason: 'verified hazard report' });
 }
 
 function renderDrivers(){
-  const list = document.getElementById('driverList');
+  const list = document.getElementById('driverList'); if(!list) return;
   const entries = Object.entries(driverTokens).filter(([n])=>n!=="You (Test Driver)").sort((a,b)=>b[1]-a[1]).slice(0,5);
-  if(entries.length===0){ list.innerHTML = '<div class="empty-note">No other driver activity yet.</div>'; return; }
-  list.innerHTML = entries.map(([n,p])=>`<div class="driver-row"><span class="name">${n}</span><span class="pts">${p} pts</span></div>`).join('');
+  if(entries.length===0){ list.innerHTML = '<div class="empty-note">No driver tokens logged yet. Network active...</div>'; return; }
+  list.innerHTML = entries.map(([n,p])=>`<div class="driver-row"><span class="name">🚗 Driver ${n}</span><span class="pts">${p} pts</span></div>`).join('');
 }
-
 function renderHeat(){
-  const list = document.getElementById('heatList');
-  const entries = Object.entries(stressZones).sort((a,b)=>b[1]-a[1]);
-  if(entries.length===0){ list.innerHTML = '<div class="empty-note">No reports yet — simulate a hazard to see this populate.</div>'; return; }
-  const max = Math.max(...entries.map(e=>e[1]));
-  list.innerHTML = entries.map(([z,c])=>`
-    <div class="heat-row">
-      <span class="heat-name">${z}</span>
-      <span class="heat-track"><span class="heat-fill" style="width:${(c/max)*100}%"></span></span>
-      <span class="heat-count">${c}</span>
-    </div>
-  `).join('');
+  const list = document.getElementById('heatList'); if(!list) return;
+  list.innerHTML = Object.entries(stressZones).map(([z,c])=>`<div class="heat-row"><span class="heat-name">${z}</span><span class="heat-track"><span class="heat-fill" style="width:60%; background:var(--blue)"></span></span><span class="heat-count">${c}</span></div>`).join('');
+}
+function onVehicleClick(v){ if(v.state === 'normal') dropFlare(v); }
+document.getElementById('hazardFab').onclick = () => { if(vehicles.length) dropFlare(pick(vehicles)); };
+function logFeed(group, color, html){
+  const feed = document.getElementById('feedList'); if(!feed) return;
+  const dotColor = color === 'red' ? 'var(--red)' : color === 'green' ? 'var(--green)' : color === 'yellow' ? 'var(--yellow)' : 'var(--blue)';
+  const row = document.createElement('div'); row.className = 'feed-row';
+  row.innerHTML = `<span class="feed-dot" style="background:${dotColor}; margin-right:8px;"></span><div class="msg">${html}</div>`;
+  feed.insertBefore(row, feed.firstChild);
+  
+  gsap.from(row, { opacity: 0, x: -15, duration: 0.35, ease: "power2.out" });
 }
 
-function showToast(amount){
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.innerHTML = `<span class="tic">★</span> Safety Token earned — <b>+${amount}</b>`;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(), 2900);
+let sidebarExpanded = false;
+const sidebarPanel = document.getElementById('sidebarPanel');
+
+function setSidebarExpanded(expand){
+  sidebarExpanded = expand;
+  gsap.to(sidebarPanel, { x: expand ? "0%" : "-100%", duration: 0.4, ease: "power2.out" });
 }
 
-const feedList = document.getElementById('feedList');
-let simSeconds = 0;
-function logFeed(group, color, html, skipPersist){
-  const colorMap = { red:'#EA4335', blue:'#1A73E8', green:'#1E8E3E', yellow:'#F9AB00' };
-  const row = document.createElement('div');
-  row.className = 'feed-row';
-  const time = new Date(simSeconds*1000).toISOString().substr(11,8);
-  row.innerHTML = `<span class="feed-dot" style="background:${colorMap[color]}"></span><div><div class="time">${time}</div><div class="msg">${html}</div></div>`;
-  feedList.insertBefore(row, feedList.firstChild);
-  while(feedList.children.length>50) feedList.removeChild(feedList.lastChild);
-  if(!skipPersist){
-    persistFeed({ group, color, message: html });
-  }
-}
+document.getElementById('menuToggleIcon').onclick = (e) => {
+  e.stopPropagation();
+  setSidebarExpanded(!sidebarExpanded);
+};
+document.getElementById('closeSidebarBtn').onclick = (e) => {
+  e.stopPropagation();
+  setSidebarExpanded(false);
+};
 
-const sheet = document.getElementById('sheet');
-const sheetSummary = document.getElementById('sheetSummary');
-const mapControls = document.getElementById('mapControls');
-const hazardFab = document.getElementById('hazardFab');
-
-function setSheetExpanded(expanded){
-  sheet.classList.toggle('expanded', expanded);
-  sheet.classList.toggle('collapsed', !expanded);
-}
-sheetSummary.addEventListener('click', ()=> setSheetExpanded(!sheet.classList.contains('expanded')));
-document.getElementById('sheetHandle').addEventListener('click', ()=> setSheetExpanded(!sheet.classList.contains('expanded')));
-
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click', (e)=>{
+document.querySelectorAll('.tab').forEach(el => {
+  el.onclick = (e) => {
     e.stopPropagation();
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
-    if(!sheet.classList.contains('expanded')) setSheetExpanded(true);
-  });
+    el.classList.add('active');
+    document.getElementById('panel-'+el.dataset.tab).classList.add('active');
+    if(el.dataset.tab === 'account') refreshAccountUI();
+  };
 });
 
-document.getElementById('resetBtn').addEventListener('click', resetSim);
+document.getElementById('resetBtn').onclick = () => {
+  setAccountPanelOpen(false);
+  hazardTimers.forEach(t => clearTimeout(t)); hazardTimers = [];
+  initVehicles(); updateVehicleCount(); stats.flares = 0; stressZones = {}; evStats.count = 0;
+  document.getElementById('sumFlares').textContent = '0'; document.getElementById('sumEv').textContent = '0';
+  document.getElementById('sumTokens').textContent = '0'; document.getElementById('dataPoints').textContent = '0';
+  document.getElementById('dataZones').textContent = '0'; gsap.to("#gaugeFill", { width: '0%' });
+  renderHeat(); renderDrivers();
+  showToast('Swarm state reset.');
+};
 
-function resetSim(){
-  initVehicles();
-  initNationalFleet();
-  updateVehicleCount();
-  stats = { flares:0 };
-  stressZones = {};
-  evStats = { count:0, rangeSum:0 };
-  tokenBalance = { you:0, total:0 };
-  driverTokens = {};
-  feedList.innerHTML = '';
-  simSeconds = 0;
-  document.getElementById('sumFlares').textContent = '0';
-  document.getElementById('sumEv').textContent = '0';
-  document.getElementById('sumTokens').textContent = '0';
-  document.getElementById('dataPoints').textContent = '0';
-  document.getElementById('dataZones').textContent = '0';
-  document.getElementById('evCount').textContent = '0';
-  document.getElementById('evRange').textContent = '+0%';
-  document.getElementById('gaugeFill').style.width = '0%';
-  document.getElementById('gaugeLabel').textContent = '0%';
-  document.getElementById('tokenTotal').textContent = '0';
-  document.getElementById('yourTokens').textContent = '0 pts';
-  renderHeat();
-  renderDrivers();
-  document.getElementById('hintChip').style.opacity = '1';
-  logFeed('factory','blue', 'Simulation reset — fleet re-deployed nationwide.', true);
-  map.flyTo([18.613,73.802], 14);
-  if(Auth.isAuthed){
-    API.resetState().then(()=> showSyncStatus('Reset synced')).catch(()=> showSyncStatus('Reset sync failed', true));
+async function loadRemoteState() { }
+
+initVehicles(); updateVehicleCount(); renderDrivers();
+
+setInterval(() => {
+  if (Auth.isAuthed) {
+    const activeCandidates = vehicles.filter(v => v.state === 'normal' && !v.isYou);
+    if (activeCandidates.length > 0) {
+      dropFlare(pick(activeCandidates));
+    }
   }
-}
-
-// Pull this user's previously saved swarm activity from the backend and
-// repopulate the dashboard (flares/zones, EV stats, tokens, feed) so a
-// returning driver sees their history instead of starting from zero.
-async function loadRemoteState(){
-  try{
-    const state = await API.getState();
-
-    stats.flares = state.flares.total;
-    stressZones = Object.assign({}, state.flares.stressZones);
-    document.getElementById('sumFlares').textContent = stats.flares;
-    document.getElementById('dataPoints').textContent = Object.values(stressZones).reduce((a,b)=>a+b,0);
-    document.getElementById('dataZones').textContent = Object.keys(stressZones).length;
-    renderHeat();
-
-    evStats.count = state.ev.count;
-    evStats.rangeSum = state.ev.avgRangeRecovered * state.ev.count;
-    document.getElementById('evCount').textContent = evStats.count;
-    document.getElementById('sumEv').textContent = evStats.count;
-    document.getElementById('evRange').textContent = '+'+state.ev.avgRangeRecovered.toFixed(1)+'%';
-    const pct = Math.min(100, state.ev.avgRangeRecovered*4);
-    document.getElementById('gaugeFill').style.width = pct+'%';
-    document.getElementById('gaugeLabel').textContent = pct.toFixed(0)+'%';
-
-    tokenBalance.total = state.tokens.total;
-    tokenBalance.you = state.tokens.you;
-    document.getElementById('tokenTotal').textContent = tokenBalance.total;
-    document.getElementById('sumTokens').textContent = tokenBalance.total;
-    document.getElementById('yourTokens').textContent = tokenBalance.you+' pts';
-    driverTokens = {};
-    state.tokens.leaderboard.forEach(row => { driverTokens[row.name] = row.pts; });
-    renderDrivers();
-
-    feedList.innerHTML = '';
-    state.feed.slice().reverse().forEach(ev => {
-      logFeed(ev.group, ev.color, ev.message, true);
-    });
-
-    showSyncStatus('Loaded saved activity');
-  }catch(err){
-    showSyncStatus('Could not load saved activity', true);
-  }
-}
-
-initVehicles();
-initNationalFleet();
-renderHeat();
-renderDrivers();
-updateVehicleCount();
-logFeed('factory','blue', `Swarm online — ${vehicles.length + nationalVehicles.length} vehicles connected nationwide.`, true);
-
-function updateVehicleCount(){
-  document.getElementById('vehicleCount').textContent = vehicles.length + nationalVehicles.length;
-}
+}, 7000);
 
 let lastTime = performance.now();
-function tick(now){
-  const dt = Math.min(0.05, (now-lastTime)/1000);
-  lastTime = now;
-  simSeconds += dt;
-
+function step(now){
+  const dt = Math.min(0.05, (now-lastTime)/1000); lastTime = now;
   vehicles.forEach(v=>{
     v.f += v.speed * v.speedMul * v.dir;
-    v.f = ((v.f % 1)+1)%1;
-
-    if(v.warnedTimer>0){
-      v.warnedTimer -= dt;
-      if(v.warnedTimer<=0){
-        v.state='normal';
-        v.speedMul=1;
-        v.marker.setIcon(carDivIcon(v.isYou? carColors.you : (v.isEV? carColors.ev: carColors.normal), v.isYou));
-      }
-    }
-
-    const pos = pointAtFraction(v.f);
-    const ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
+    if(v.warnedTimer > 0){ v.warnedTimer -= dt; if(v.warnedTimer <= 0){ v.state = 'normal'; v.speedMul = 1; v.marker.setIcon(carDivIcon(v.isYou? carColors.you : carColors.normal)); } }
+    const pos = pointAtFraction(v.f), ll = offsetLatLng(pos.lat, pos.lng, pos.bearing, v.laneOffset);
     v.marker.setLatLng(ll);
   });
-
-  driftNationalFleet(now);
-
-  requestAnimationFrame(tick);
+  requestAnimationFrame(step);
 }
-requestAnimationFrame(tick);
-
-map.on('zoomend', refreshVehicleIconSizes);
-
-function hideHint(){ document.getElementById('hintChip').style.opacity='0'; }
-map.on('click', hideHint);
-
-setInterval(()=>{
-  const candidates = vehicles.filter(v=>v.state==='normal' && !v.isYou);
-  if(candidates.length===0) return;
-  if(Math.random()<0.5) dropFlare(pick(candidates));
-}, 6000);
+requestAnimationFrame(step);
 })();
 </script>
 </body>
