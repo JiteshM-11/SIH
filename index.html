@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Co-Pilot Swarm - Autonomous Fleet Network</title>
+<title>Co-Pilot Swarm - EV Battery Health &amp; SecondLife Passport Network</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -371,7 +371,7 @@
   </div>
 
   <div class="loading-bar-track"><div class="loading-bar-fill" id="loadingBarFill"></div></div>
-  <div class="loading-status mono" id="loadingStatus">Initializing mesh network…</div>
+  <div class="loading-status mono" id="loadingStatus">Initializing battery telemetry mesh…</div>
   
   <!-- Added BITSYNC Team Footer Branding -->
   <div class="team-footer-brand" id="teamBrand">Powered by <span>BITSYNC</span></div>
@@ -382,7 +382,7 @@
 <div class="auth-overlay" id="authOverlay" style="display:none;">
   <div class="auth-card" id="authCard">
     <div class="auth-chatbot-3d" id="loginBotBox">
-      <div class="auth-chatbot-header-label">📡 SWARM TELEMETRY STREAM</div>
+      <div class="auth-chatbot-header-label">📡 BATTERY TELEMETRY STREAM</div>
       <div class="auth-chatbot-marquee-box">
         <div class="auth-chatbot-scroller" id="marqueeScroller">
           &gt; SECURE SYSTEM INTEGRITY LOCK VERIFIED<br>
@@ -395,7 +395,7 @@
     </div>
 
     <div class="auth-logo"><div class="mark">⛯</div><span>Co-Pilot Swarm</span></div>
-    <p class="sub" id="authSub">Sign in to track your hazard reports, EV stats and Safety Tokens.</p>
+    <p class="sub" id="authSub">Sign in to track your battery diagnostics, SoH stats and Safety Tokens.</p>
     <div class="auth-error" id="authError"></div>
     <form id="authForm">
       <div class="auth-field">
@@ -447,13 +447,13 @@
   </div>
   <div class="chat-messages" id="appChatMessages">
     <div class="chat-bubble bot">
-      Handshake verified. I am <b>Aura AI</b>, your real-time mesh diagnostic network copilot. Inquire about streaming node anomalies, active stress loops, or EV battery optimizations.
+      Handshake verified. I am <b>Aura AI</b>, your real-time battery health diagnostic copilot. Inquire about streaming node anomalies, active degradation risk zones, or EV battery pre-conditioning.
     </div>
   </div>
   <div class="chat-suggested">
     <span class="chat-chip" onclick="askAppAI('How do nodes synchronize telemetry routing?')">Mesh Sync</span>
     <span class="chat-chip" onclick="askAppAI('Explain battery pre-conditioning thresholds.')">EV Engine</span>
-    <span class="chat-chip" onclick="askAppAI('Give me a live network structural health diagnostic statement.')">Live System Diagnostics</span>
+    <span class="chat-chip" onclick="askAppAI('Give me a live battery health diagnostic statement.')">Live System Diagnostics</span>
   </div>
   <div class="chat-input-area">
     <input type="text" id="appChatInput" placeholder="Ask Aura about system parameters..." autocomplete="off" />
@@ -462,12 +462,12 @@
 </div>
 
 <div class="sync-status" id="syncStatus">Synced</div>
-<div class="hint-chip" id="hintChip">Tap any car icon to simulate it hitting a hazard</div>
+<div class="hint-chip" id="hintChip">Tap any car icon to simulate a battery risk event</div>
 
 <div class="topbar" id="topbar">
   <div class="search-pill" id="searchPill">
     <div class="menu-icon" id="menuToggleIcon"><span></span><span></span><span></span></div>
-    <input type="text" id="searchInput" placeholder="Search route zones..." autocomplete="off" />
+    <input type="text" id="searchInput" placeholder="Search battery zones..." autocomplete="off" />
     <button class="search-btn" id="searchBtn" aria-label="Search" type="button">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
@@ -498,7 +498,7 @@
 
 <div class="fab-hazard" id="hazardFab">
   <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L1 21h22L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
-  <span class="label">Simulate hazard</span>
+  <span class="label">Simulate battery event</span>
 </div>
 
 <div class="map-controls" id="mapControls">
@@ -518,7 +518,7 @@
   </div>
 
   <div class="summary-stats">
-    <div class="sum-chip red"><span class="n" id="sumFlares">0</span><span class="l">Flares dropped</span></div>
+    <div class="sum-chip red"><span class="n" id="sumFlares">0</span><span class="l">Risk flags issued</span></div>
     <div class="sum-chip green"><span class="n" id="sumEv">0</span><span class="l">EVS optimized</span></div>
     <div class="sum-chip yellow"><span class="n" id="sumTokens">0</span><span class="l">Tokens issued</span></div>
   </div>
@@ -534,33 +534,33 @@
 
     <div class="tab-panel active" id="panel-factory">
       <div class="feature-card">
-        <h3><span class="icon-badge blue">⛯</span>Factory Feedback Loop</h3>
-        <p class="desc">Anonymized hazard reports stream back to the engineering team at the assembly plant — showing exactly where vehicles take the worst structural stress on this route.</p>
+        <h3><span class="icon-badge blue">⛯</span>Battery Health Feedback Loop</h3>
+        <p class="desc">Anonymized battery diagnostic reports stream back to the engineering team at the assembly plant — showing exactly which packs and cells take the worst degradation stress across the fleet.</p>
         <div class="metric-grid">
-          <div class="metric-box"><div class="mv" id="dataPoints" style="color:var(--blue)">0</div><div class="ml">Reports sent</div></div>
-          <div class="metric-box"><div class="mv" id="dataZones">0</div><div class="ml">Stress zones flagged</div></div>
+          <div class="metric-box"><div class="mv" id="dataPoints" style="color:var(--blue)">0</div><div class="ml">Diagnostics sent</div></div>
+          <div class="metric-box"><div class="mv" id="dataZones">0</div><div class="ml">Degradation zones flagged</div></div>
         </div>
-        <div id="heatList"><div class="empty-note">No reports yet — vehicles automatically drop flares on route triggers.</div></div>
+        <div id="heatList"><div class="empty-note">No diagnostics yet — vehicles automatically log battery risk flags on charge/discharge triggers.</div></div>
       </div>
     </div>
 
     <div class="tab-panel" id="panel-energy">
       <div class="feature-card">
         <h3><span class="icon-badge green"></span>EV Energy Saver</h3>
-        <p class="desc">When an EV gets a hazard alert ahead, it pre-conditions its regenerative brakes and battery cooling — so the driver doesn't have to brake hard at the last second.</p>
+        <p class="desc">When an EV detects an early battery degradation risk, it pre-conditions its thermal management and charging profile — so the pack stays within safe limits before it becomes critical.</p>
         <div class="metric-grid">
           <div class="metric-box"><div class="mv" id="evCount" style="color:var(--green)">0</div><div class="ml">EVS pre-conditioned</div></div>
-          <div class="metric-box"><div class="mv" id="evRange" style="color:var(--green)">+0%</div><div class="ml">Avg. range recovered</div></div>
+          <div class="metric-box"><div class="mv" id="evRange" style="color:var(--green)">+0%</div><div class="ml">Avg. SOH recovered</div></div>
         </div>
         <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
-        <div class="gauge-cap"><span>Efficiency vs. hard-brake baseline</span><span id="gaugeLabel">0%</span></div>
+        <div class="gauge-cap"><span>Efficiency vs. unmanaged charging baseline</span><span id="gaugeLabel">0%</span></div>
       </div>
     </div>
 
     <div class="tab-panel" id="panel-tokens">
       <div class="feature-card">
         <h3><span class="icon-badge yellow">★</span>Safety Points Board</h3>
-        <p class="desc">Real drivers running this sector earning Safety Tokens for validating structural hazards or manually logging verified route blocks.</p>
+        <p class="desc">Real drivers running this sector earning Safety Tokens for validating battery risk flags or manually logging verified diagnostic checks.</p>
         <div class="token-hero"><span class="num" id="tokenTotal">0</span><span class="unit">tokens issued fleet-wide</span></div>
         <div class="driver-row you"><span class="name">★ You (Test Driver)</span><span class="pts" id="yourTokens">0 pts</span></div>
         <div id="driverList"></div>
@@ -805,7 +805,7 @@ function setAuthMode(mode){
       signupExtraFields.style.display = 'block';
     } else {
       authSubmitLabel.textContent = 'Log in';
-      authSub.textContent = 'Sign in to track your hazard reports, EV stats and Safety Tokens.';
+      authSub.textContent = 'Sign in to track your battery diagnostics, SoH stats and Safety Tokens.';
       authSwitch.innerHTML = 'New here? <a id="authSwitchLink">Create an account</a>';
       signupExtraFields.style.display = 'none';
     }
@@ -1017,7 +1017,7 @@ function offsetLatLng(lat, lng, bearingDeg, metersRight){
 function lerp(a,b,t){ return a + (b-a)*t; }
 
 const NAMES = ["A. Sharma","R. Iyer","M. Khan","P. Nair","S. Verma","D. Gupta","T. Singh","K. Reddy","M. Joshi","G. Rao","J. Das","P. Patel"];
-const ZONES = ["NH-60 KM 2.1","Spine Road Junction","Telco Road Bend","NH-60 KM 4.6"];
+const ZONES = ["Cell Group A2","BMS Module B4","Charging Port C1","Pack Segment D3"];
 
 let vehicles = [], nextId = 1, stressZones = {}, evStats = { count:0, rangeSum:0 }, tokenBalance = { you:0, total:0 }, driverTokens = {}, stats = { flares:0 };
 const carColors = { normal:'#5F6368', ev:'#146C2E', warned:'#B3261E', you:'#B06000' };
@@ -1074,16 +1074,16 @@ function dropFlare(v){
   document.getElementById('dataZones').textContent = Object.keys(stressZones).length;
   renderHeat();
 
-  const reportType = Math.random() < 0.5 ? "manually flagged a pothole" : "triggered vertical suspension telemetry alarm";
+  const reportType = Math.random() < 0.5 ? "manually flagged a battery anomaly" : "triggered a thermal/voltage telemetry alarm";
   logFeed('factory','red', `<b>${v.name}</b> ${reportType} at ${zone}.`);
 
-  showToast(`<b>Hazard reported at ${zone}</b> — be careful out there. <span style="opacity:.7">– Team Tata</span>`);
+  showToast(`<b>Battery risk flagged at ${zone}</b> — monitor charging closely. <span style="opacity:.7">– Team Tata</span>`);
 
   awardTokens(v.name, 15, v.isYou);
 
   const repairTimer = setTimeout(() => {
-    logFeed('factory','green', ` Hazard at <b>${zone}</b> has been repaired — route clear.`);
-    showToast(` <b>Hazard at ${zone} repaired.</b> Route is clear again. <span style="opacity:.7">– Team Tata</span>`);
+    logFeed('factory','green', ` Risk flag at <b>${zone}</b> has been cleared — cell within safe parameters.`);
+    showToast(` <b>Risk at ${zone} cleared.</b> Battery parameters normalized. <span style="opacity:.7">– Team Tata</span>`);
     hazardTimers = hazardTimers.filter(t => t !== repairTimer);
   }, HAZARD_REPAIR_MS);
   hazardTimers.push(repairTimer);
@@ -1157,14 +1157,14 @@ async function fetchAuraReply(question){
   const telemetryContext = `Live swarm telemetry snapshot:
 - Active nodes on route: ${vehicles.length}
 - EVs in fleet: ${evCount} (${evPreconditioned} pre-conditioned this session)
-- Nodes currently under hazard throttling: ${warnedCount}
-- Hazard reports logged this session: ${reportsTotal}
-- Distinct stress zones flagged: ${zonesTotal}
-- Top stress zone: ${topZone ? `${topZone[0]} (${topZone[1]} reports)` : 'none yet'}
+- Nodes currently under battery risk throttling: ${warnedCount}
+- Battery diagnostics logged this session: ${reportsTotal}
+- Distinct degradation zones flagged: ${zonesTotal}
+- Top degradation zone: ${topZone ? `${topZone[0]} (${topZone[1]} reports)` : 'none yet'}
 - Safety tokens issued fleet-wide: ${tokensTotal}
 - Current driver: ${u.username || 'Operator'}, vehicle: ${u.vehicleModel || 'unspecified'}, purchased: ${u.purchaseDate || 'unspecified'}`;
 
-  const systemPrompt = `You are Aura AI, the onboard diagnostic copilot for the Co-Pilot Swarm autonomous fleet network. You answer questions about mesh sync, EV battery/thermal pre-conditioning, hazard stress zones, and safety tokens. Stay in character as a fleet telemetry AI. Be concise (2-4 sentences). Ground every answer in the live telemetry snapshot provided below — cite the actual numbers, don't invent different ones. You may use simple <b>bold</b> HTML tags to emphasize key numbers, but no other HTML or markdown.
+  const systemPrompt = `You are Aura AI, the onboard diagnostic copilot for the Co-Pilot Swarm EV battery health network. You answer questions about mesh sync, EV battery/thermal pre-conditioning, battery degradation risk zones, and safety tokens. Stay in character as a fleet telemetry AI. Be concise (2-4 sentences). Ground every answer in the live telemetry snapshot provided below — cite the actual numbers, don't invent different ones. You may use simple <b>bold</b> HTML tags to emphasize key numbers, but no other HTML or markdown.
 
 ${telemetryContext}`;
 
@@ -1243,21 +1243,21 @@ function buildAuraReply(match){
   const topZone = Object.entries(stressZones).sort((a,b)=>b[1]-a[1])[0];
 
   if(match.includes('mesh') || match.includes('sync')){
-    return `<b>Aura AI · Mesh Sync:</b> Proximity channels are cycling coordinate tables every 250ms via mesh radio frames. Right now <b>${vehicles.length} nodes</b> are on this segment, with <b>${warnedCount} actively throttled</b> after a recent hazard broadcast.`;
+    return `<b>Aura AI · Mesh Sync:</b> Proximity channels are cycling coordinate tables every 250ms via mesh radio frames. Right now <b>${vehicles.length} nodes</b> are on this segment, with <b>${warnedCount} actively throttled</b> after a recent battery risk broadcast.`;
   }
   if(match.includes('thermal') || match.includes('ev') || match.includes('conditioning') || match.includes('battery')){
     return `<b>Aura AI · EV Thermal Analysis:</b> Of the <b>${vehicles.length} nodes</b> tracked, <b>${evCount} are EVS</b>, and <b>${document.getElementById('evCount').textContent} have been pre-conditioned</b> so far this session.`;
   }
   if(match.includes('diagnostic') || match.includes('health') || match.includes('system')){
-    return `<b>Aura AI · Live Diagnostic:</b> ${reportsTotal} reports logged across ${zonesTotal} hazard stress zone(s), with ${tokensTotal} safety tokens issued fleet-wide. ${topZone ? `Highest-stress segment: <b>${topZone[0]}</b>.` : 'No stress hotspots yet.'}`;
+    return `<b>Aura AI · Live Diagnostic:</b> ${reportsTotal} reports logged across ${zonesTotal} battery degradation zone(s), with ${tokensTotal} safety tokens issued fleet-wide. ${topZone ? `Highest-risk segment: <b>${topZone[0]}</b>.` : 'No degradation hotspots yet.'}`;
   }
-  if(match.includes('zone') || match.includes('hotspot') || match.includes('stress')){
-    return topZone ? `<b>Aura AI · Stress Zones:</b> <b>${topZone[0]}</b> leads with ${topZone[1]} report(s).` : `<b>Aura AI · Stress Zones:</b> No stress zones flagged yet this session.`;
+  if(match.includes('zone') || match.includes('hotspot') || match.includes('stress') || match.includes('degradation')){
+    return topZone ? `<b>Aura AI · Degradation Zones:</b> <b>${topZone[0]}</b> leads with ${topZone[1]} report(s).` : `<b>Aura AI · Degradation Zones:</b> No degradation zones flagged yet this session.`;
   }
   if(match.includes('token') || match.includes('point') || match.includes('reward')){
-    return `<b>Aura AI · Safety Points:</b> ${tokensTotal} tokens issued fleet-wide. Drivers earn +15 tokens per verified hazard report.`;
+    return `<b>Aura AI · Safety Points:</b> ${tokensTotal} tokens issued fleet-wide. Drivers earn +15 tokens per verified diagnostic report.`;
   }
-  return `I've parsed your query against the live fleet stream graph. There are currently <b>${vehicles.length} active nodes</b>, <b>${warnedCount} under hazard throttling</b>, and <b>${reportsTotal} reports</b> logged this session.`;
+  return `I've parsed your query against the live fleet stream graph. There are currently <b>${vehicles.length} active nodes</b>, <b>${warnedCount} under battery risk throttling</b>, and <b>${reportsTotal} diagnostics</b> logged this session.`;
 }
 
 appChatSendBtn.onclick = () => { const txt = appChatInput.value.trim(); if(txt){ askAppAI(txt); appChatInput.value = ''; } };
