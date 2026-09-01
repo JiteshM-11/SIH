@@ -53,14 +53,13 @@ a{color:inherit}
 .btn-danger{background:transparent;color:var(--red);border-color:rgba(226,102,77,.5)}
 .btn-danger:hover{background:rgba(226,102,77,.12)}
 
-/* ---------- HERO w/ animated EV battery-production background ---------- */
+
 .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero-scrim{position:absolute;inset:0;background:
     linear-gradient(180deg,rgba(10,14,22,.55) 0%, rgba(10,14,22,.35) 35%, rgba(10,14,22,.9) 100%),
     radial-gradient(ellipse at 30% 30%, rgba(193,122,62,.25), transparent 60%);}
 
-/* production-line background scene (CSS/SVG loop — no stock-footage licensing risk) */
 .plant-scene{position:absolute;inset:0;background:#0A0F18;overflow:hidden}
 .plant-scene svg{width:100%;height:100%}
 .belt-cell{animation:beltMove 7s linear infinite}
@@ -80,14 +79,11 @@ a{color:inherit}
   .belt-cell,.arm-swing,.spark,.belt-track,.glow-pulse{animation:none}
 }
 
-/* ---------- reveal utility (GSAP-driven) ---------- */
 [data-reveal]{opacity:0}
 
-/* ---------- lazy-loaded images (fade + blur-up effect) ---------- */
 .lazy-img{opacity:0;filter:blur(14px);transition:opacity .6s ease, filter .8s ease;background:#161F30;object-fit:cover}
 .lazy-img.loaded{opacity:1;filter:blur(0)}
 
-/* ---------- YouTube embed space ---------- */
 .watch{background:var(--bg)}
 .yt-embed{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0A0F18;cursor:pointer}
 .yt-embed .yt-thumb{position:absolute;inset:0;width:100%;height:100%}
@@ -96,18 +92,15 @@ a{color:inherit}
 .yt-embed:hover .yt-play{transform:translate(-50%,-50%) scale(1.08);background:var(--gold)}
 .yt-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
-/* ---------- PRODUCTION SCROLL STORY ---------- */
 .storyline{background:var(--bg);position:relative}
 .story-pin{max-width:1160px;margin:0 auto;padding:96px 32px 60px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;min-height:70vh}
 .story-stage{position:absolute;bottom:18px;left:18px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--amber-lt);z-index:2}
 
-/* ---------- production visual images ---------- */
 .story-visual{position:relative;aspect-ratio:1/1;background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
 .story-visual img{position:absolute;inset:0;width:100%;height:100%}
 .story-progress{position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,.08)}
 .story-progress-fill{height:100%;width:25%;background:var(--green);transition:width .5s ease}
 
-/* ---------- format & partner photos ---------- */
 .format-photo{width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:16px}
 .partner-photo{width:100%;height:170px;object-fit:cover;border-radius:12px;margin-bottom:18px}
 .story-steps{display:flex;flex-direction:column;gap:0}
@@ -117,7 +110,6 @@ a{color:inherit}
 .story-step h4{font-size:19px;color:var(--cream);margin-bottom:6px}
 .story-step p{color:var(--text-dim);font-size:13.5px}
 
-/* ---------- PARTNERS / MANUFACTURERS PAGE ---------- */
 .partners{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .partner-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
 .partner-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px}
@@ -136,13 +128,11 @@ a{color:inherit}
 .scroll-cue span{width:1px;height:28px;background:var(--text-dim);display:block;animation:cueMove 1.8s ease-in-out infinite}
 @keyframes cueMove{0%,100%{opacity:.2}50%{opacity:1}}
 
-/* ---------- WHY ---------- */
 .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:36px}
 .why-item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px}
 .why-tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber-lt);border:1px solid var(--amber);border-radius:20px;padding:3px 10px;margin-bottom:14px}
 .why-item p{color:var(--text-dim);font-size:14.5px}
 
-/* ---------- PILLARS ---------- */
 .pillar-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
 .pillar-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:30px;position:relative;overflow:hidden}
 .pillar-stamp{position:absolute;top:20px;right:22px;font-family:var(--mono);font-size:11px;letter-spacing:2px;padding:4px 9px;border-radius:20px;border:1px solid var(--line)}
@@ -155,7 +145,6 @@ a{color:inherit}
 .pillar-list li{padding-left:16px;position:relative}
 .pillar-list li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--amber-lt)}
 
-/* ---------- DISTINCTION ---------- */
 .distinction{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .split-lines--light{color:var(--cream)}
 .distinction-sub{max-width:640px;color:var(--text-dim);margin-top:14px;font-size:15px}
@@ -163,8 +152,6 @@ a{color:inherit}
 .stamp-card{flex:1;min-width:240px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:30px}
 .stamp-svg{width:140px;margin:0 auto 16px}
 .stamp-card p{color:var(--text-dim);font-size:13.5px}
-
-/* ---------- PROTOTYPE ---------- */
 .prototype-inner{max-width:1160px;margin:0 auto;padding:96px 32px;display:grid;grid-template-columns:1fr 420px;gap:50px;align-items:center}
 .prototype-copy{color:var(--text-dim);margin-top:16px;font-size:15px;max-width:440px}
 .prototype-points{list-style:none;margin:26px 0 0;padding:0;display:flex;flex-direction:column;gap:14px}
@@ -188,14 +175,12 @@ a{color:inherit}
 .app-value{font-family:var(--mono);font-size:12px;color:var(--cream)}
 .app-btn{width:100%;margin-top:6px;background:var(--amber-lt);color:#1a1305;border:none;border-radius:10px;padding:12px;font-weight:600;font-size:13.5px;cursor:pointer}
 
-/* ---------- FORMATS ---------- */
 .format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
 .format-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center}
 .format-icon{color:var(--amber-lt);width:40px;margin:0 auto 14px}
 .format-card h3{font-size:16px;margin-bottom:6px}
 .format-card p{color:var(--text-dim);font-size:12.5px}
 
-/* ---------- CTA / FOOTER ---------- */
 .cta-inner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:26px}
 .footer{border-top:1px solid var(--line);background:var(--bg-2)}
 .footer-inner{display:flex;flex-direction:column;gap:14px}
@@ -203,7 +188,6 @@ a{color:inherit}
 .footer-disclaimer{color:var(--text-dim);font-size:13px;max-width:640px}
 .footer-copy{color:var(--text-dim);font-size:12px}
 
-/* ---------- MODALS ---------- */
 .modal-overlay{position:fixed;inset:0;background:rgba(6,9,15,.72);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
 .modal-overlay.open{display:flex}
 .modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px;width:100%;max-width:420px;position:relative}
@@ -217,11 +201,8 @@ a{color:inherit}
 .modal-switch{margin-top:18px;font-size:13px;color:var(--text-dim);text-align:center}
 .modal-switch button{background:none;border:none;color:var(--amber-lt);cursor:pointer;font-size:13px;text-decoration:underline}
 
-/* ---------- TOAST ---------- */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--panel);border:1px solid var(--line);color:var(--cream);padding:14px 18px;border-radius:10px;font-size:13.5px;max-width:320px;box-shadow:0 20px 40px rgba(0,0,0,.4);z-index:400;opacity:0;transform:translateY(12px);transition:opacity .25s ease, transform .25s ease}
 .toast.show{opacity:1;transform:translateY(0)}
-
-/* ---------- TERMINAL BOOT OVERLAY ---------- */
 .terminal-overlay{position:fixed;inset:0;background:rgba(6,9,15,.9);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
 .terminal-overlay.open{display:flex}
 .terminal{width:100%;max-width:560px;background:#0A0F18;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6)}
@@ -316,17 +297,75 @@ a{color:inherit}
 .donut-legend-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text)}
 .donut-legend-item .sw{width:9px;height:9px;border-radius:50%}
 
+.factor{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.factor:last-child{border-bottom:none}
+.factor-name{color:var(--text-dim)}
+.factor-desc{color:var(--cream);text-align:right}
+.badge{font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:5px 12px;border-radius:20px;display:inline-block}
+.badge.estimated{background:rgba(226,163,61,.15);color:var(--gold);border:1px solid rgba(226,163,61,.4)}
+.badge.certified{background:rgba(47,191,143,.15);color:var(--green);border:1px solid rgba(47,191,143,.4)}
+.badge-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.passport-id{font-family:var(--mono);color:var(--text-dim);font-size:13px}
+.charge-window{font-size:14px;line-height:1.7}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;color:var(--text-dim);font-family:var(--mono);font-size:11px;text-transform:uppercase}
+tbody td{padding:12px 8px;border-bottom:1px dashed var(--line)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+.empty-state{color:var(--text-dim);font-size:13.5px;text-align:center;padding:30px 10px}
+.upload-drop{border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;cursor:pointer;transition:.15s ease}
+.upload-drop:hover,.upload-drop.drag{border-color:var(--amber-lt);background:rgba(226,161,100,.05)}
+.upload-drop input{display:none}
+.log-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.log-item{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:14px}
+.log-item .meta{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:6px}
+.dash-search{position:relative}
+.search-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;z-index:20;display:none;box-shadow:0 20px 40px rgba(0,0,0,.4);max-height:260px;overflow-y:auto}
+.search-results.open{display:block}
+.search-results div{padding:8px 10px;border-radius:7px;font-size:13px;cursor:pointer}
+.search-results div:hover{background:rgba(255,255,255,.06)}
+.btn-danger{background:transparent;color:var(--red);border-color:rgba(226,102,77,.5)}
+.btn-danger:hover{background:rgba(226,102,77,.12)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);display:inline-block}
+#inspectionForm input[type="text"]{background:var(--bg-2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px 12px;font-size:14px;font-family:var(--body);width:100%}
+#inspectionForm input[type="text"]:focus,#inspectionForm select:focus{outline:2px solid var(--amber-lt);outline-offset:1px}
+.dash-nav-toggle{display:none;align-items:center;justify-content:center;gap:8px;width:100%;background:transparent;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:13px;cursor:pointer;font-family:inherit}
+.dash-sidebar-inner{display:flex;flex-direction:column;gap:18px}
 @media (max-width:1100px){
   .dash-shell{grid-template-columns:1fr}
-  .dash-sidebar{display:none}
+  .dash-sidebar{position:sticky;top:0;z-index:15;border-right:none;border-bottom:1px solid var(--line);padding:14px 16px}
+  .dash-nav-toggle{display:flex}
+  .dash-sidebar-inner{display:none}
+  .dash-sidebar.nav-open .dash-sidebar-inner{display:flex}
+  .dash-nav{max-height:60vh}
   .stat-grid{grid-template-columns:repeat(3,1fr)}
   .dash-charts{grid-template-columns:1fr}
+  .dash-main{padding:18px 18px 48px}
+}
+@media (max-width:760px){
+  .dash-topbar{flex-direction:column;align-items:stretch}
+  .dash-search{min-width:0}
+  .dash-topbar-actions{justify-content:flex-start}
+  .tb-user span{display:none}
+  .dash-h1{font-size:26px}
+  table{display:block;overflow-x:auto;white-space:nowrap}
 }
 @media (max-width:640px){
   .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-head-row{align-items:flex-start}
+  .dash-head-actions{width:100%}
+  .dash-head-actions .btn,.dash-head-actions .tb-pill{flex:1;justify-content:center;text-align:center}
+  .alert-banner{flex-direction:column;align-items:stretch}
+  .alert-banner .btn-danger{width:100%}
+  .chart-panel{padding:18px}
+  .modal{padding:26px}
+}
+@media (max-width:420px){
+  .stat-grid{grid-template-columns:1fr}
+  .dash-topbar-actions .tb-pill span.pill-label{display:none}
 }
 
-/* ---------- CERTIFICATE / VERIFIED WEBPAGE ---------- */
 .cert-page{display:none;position:fixed;inset:0;z-index:300;background:radial-gradient(ellipse at 50% 0%, #16321f, #0E1420 60%);overflow-y:auto}
 .cert-page.open{display:block}
 .cert-close{position:fixed;top:20px;right:24px;background:none;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;z-index:2}
@@ -847,110 +886,118 @@ a{color:inherit}
   });
 </script>
 
- <!-- ===== FORMATS ===== -->
+<!-- ============ FORMATS ============ -->
 <section class="formats" id="formats">
   <div class="section-inner">
     <p class="kicker">Built for what's actually on the road</p>
     <h2 class="split-lines">Every major format, one passport standard.</h2>
     <div class="format-grid">
-      <!-- Cylindrical -->
       <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Lithium-Ionen-Accumulator.jpg?width=500" alt="Cylindrical lithium-ion cells" loading="lazy" />
+        <img class="format-photo lazy-img" data-src="https://commons.wikimedia.org/wiki/Special:FilePath/Lithium-Ionen-Accumulator.jpg?width=500" alt="Cylindrical lithium-ion cells">
         <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="6" y="4" width="28" height="52" rx="14" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="14" y="0" width="12" height="6" rx="2" fill="currentColor"/></svg></div>
         <h3>Cylindrical</h3>
         <p>18650, 21700, 4680 and other round‑cell formats</p>
       </div>
-      <!-- Prismatic -->
+
       <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Felix-car-batteries-full.jpg?width=500" alt="Prismatic EV battery pack" loading="lazy" />
+        <img class="format-photo lazy-img" data-src="https://commons.wikimedia.org/wiki/Special:FilePath/Felix-car-batteries-full.jpg?width=500" alt="Prismatic EV battery pack">
         <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="4" y="6" width="32" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="14" y="0" width="12" height="8" fill="currentColor"/></svg></div>
         <h3>Prismatic</h3>
         <p>Rigid rectangular cells common in modular EV packs</p>
       </div>
-      <!-- Pouch -->
+
       <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Liion-18650-AA-battery.jpg?width=500" alt="Lithium-ion cell close-up" loading="lazy" />
+        <img class="format-photo lazy-img" data-src="https://commons.wikimedia.org/wiki/Special:FilePath/Liion-18650-AA-battery.jpg?width=500" alt="Lithium-ion cell close-up">
         <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="2" y="8" width="36" height="46" rx="6" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="10" y1="0" x2="10" y2="10" stroke="currentColor" stroke-width="2.2"/><line x1="30" y1="0" x2="30" y2="10" stroke="currentColor" stroke-width="2.2"/></svg></div>
         <h3>Pouch</h3>
         <p>Flexible laminate cells used across compact EV platforms</p>
       </div>
-      <!-- Solid -->
+
       <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNxR9siotUAOSwJ2Be7sBvy_7bObolTe3WYLNKp-KcOg&s=10" alt="Solid state battery" loading="lazy" />
+        <img class="format-photo lazy-img" data-src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNxR9siotUAOSwJ2Be7sBvy_7bObolTe3WYLNKp-KcOg&s=10" alt="Lithium-ion cell close-up">
         <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="2" y="8" width="36" height="46" rx="6" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="10" y1="0" x2="10" y2="10" stroke="currentColor" stroke-width="2.2"/><line x1="30" y1="0" x2="30" y2="10" stroke="currentColor" stroke-width="2.2"/></svg></div>
         <h3>Solid</h3>
         <p>Flexible laminate cells used across compact EV platforms</p>
       </div>
-      <!-- LFP -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/LiFePO4.jpg?width=800" alt="Lithium Iron Phosphate cell" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="4" y="8" width="32" height="46" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 24 L20 16 L28 24 M20 16 L20 38" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <h3>LFP</h3>
-        <p>High thermal stability and ultra-long cycle life chemistries</p>
-      </div>
-      <!-- Sodium-Ion -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Sodium_ion_2.5_Ah_cells.jpg?width=800" alt="Sodium-ion battery cells" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="6" y="6" width="28" height="48" rx="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="20" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 30 L23 30" stroke="currentColor" stroke-width="2"/></svg></div>
-        <h3>Sodium-Ion</h3>
-        <p>Abundant raw material alternative for affordable urban EVs</p>
-      </div>
-      <!-- Blade -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/IAA_Summit_2023%2C_Munich_%28P1110715%29.jpg?width=900" alt="Blade battery cell structure" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="2" y="16" width="36" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="8" y1="16" x2="8" y2="44" stroke="currentColor" stroke-width="1.5"/><line x1="16" y1="16" x2="16" y2="44" stroke="currentColor" stroke-width="1.5"/><line x1="24" y1="16" x2="24" y2="44" stroke="currentColor" stroke-width="1.5"/><line x1="32" y1="16" x2="32" y2="44" stroke="currentColor" stroke-width="1.5"/></svg></div>
-        <h3>Blade</h3>
-        <p>Ultra-thin elongated cells serving as structural pack members</p>
-      </div>
-      <!-- Cell-to-Pack -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Felix-car-batteries-full.jpg?width=900" alt="Cell-to-Pack battery structure" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="3" y="10" width="34" height="40" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 24 L37 24 M3 36 L37 36 M15 10 L15 50 M25 10 L25 50" stroke="currentColor" stroke-width="1.5"/></svg></div>
-        <h3>Cell-to-Pack</h3>
-        <p>Moduleless design integrating cells directly into the chassis</p>
-      </div>
-      <!-- NMC / NCA -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvzKsqtx8ijWe4LiG9DrfC34ddeloP_dU06tFuKJcMzQ&s=10" alt="NMC Battery Module" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="6" y="8" width="28" height="48" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M14 20 L26 20 M20 14 L20 26 M14 38 L26 38" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></div>
-        <h3>NMC / NCA</h3>
-        <p>High energy density formulations for maximum range performance</p>
-      </div>
-      <!-- Flow Cell -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80" alt="Flow battery liquid system" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="4" y="10" width="14" height="38" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="22" y="10" width="14" height="38" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M18 24 L22 24 M18 34 L22 34" stroke="currentColor" stroke-width="2"/></svg></div>
-        <h3>Flow Cell</h3>
-        <p>Liquid electrolyte systems tailored for stationary depot storage</p>
-      </div>
-      <!-- Solid Polymer -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNxR9siotUAOSwJ2Be7sBvy_7bObolTe3WYLNKp-KcOg&s=10" alt="Solid State Matrix" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="4" y="8" width="32" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="4" y1="22" x2="36" y2="22" stroke="currentColor" stroke-width="2.2"/><line x1="4" y1="38" x2="36" y2="38" stroke="currentColor" stroke-width="2.2"/></svg></div>
-        <h3>Solid Polymer</h3>
-        <p>Non-flammable solid ceramic or polymer matrix architectures</p>
-      </div>
-      <!-- Coin / Button -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/CR2032.jpg?width=800" alt="Coin Battery" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><circle cx="20" cy="30" r="16" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="20" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-        <h3>Coin / Button</h3>
-        <p>Compact energy sources powering wireless BMS sensor nodes</p>
-      </div>
-      <!-- Swappable Pack -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=600&q=80" alt="Swappable battery station" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><rect x="6" y="10" width="28" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 22 L20 14 L28 22 M20 14 L20 32 M12 38 L28 38" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <h3>Swappable Pack</h3>
-        <p>Standardized modular bricks built for automated station exchange</p>
-      </div>
-      <!-- Supercapacitor -->
-      <div class="format-card" data-reveal>
-        <img class="format-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Supercapacitor_-_ultracapacitor_products_of_SECH_SA.jpg?width=900" alt="Supercapacitors" loading="lazy" />
-        <div class="format-icon"><svg viewBox="0 0 40 60"><line x1="8" y1="12" x2="32" y2="12" stroke="currentColor" stroke-width="2.2"/><line x1="8" y1="48" x2="32" y2="48" stroke="currentColor" stroke-width="2.2"/><line x1="20" y1="12" x2="20" y2="26" stroke="currentColor" stroke-width="2.2"/><line x1="20" y1="34" x2="20" y2="48" stroke="currentColor" stroke-width="2.2"/><line x1="10" y1="26" x2="30" y2="26" stroke="currentColor" stroke-width="2.2"/><line x1="10" y1="34" x2="30" y2="34" stroke="currentColor" stroke-width="2.2"/></svg></div>
-        <h3>Supercapacitor</h3>
-        <p>High-power density hybrid units for rapid surge acceleration</p>
-      </div>
+      <!-- 1. LFP (Lithium Iron Phosphate) -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH8vVr1b8wbOHndtoqqFxfmjjaqUy6ce_WjNPFiRRPsqNFH247R-vvHc0&s=10" alt="Lithium Iron Phosphate cell" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="4" y="8" width="32" height="46" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 24 L20 16 L28 24 M20 16 L20 38" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">LFP</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">High thermal stability and ultra-long cycle life chemistries</p>
+</div>
+
+<!-- 2. Sodium-Ion -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTh4n1b9GZYqRVpuvdpv2xUPLu7oUwduMrYAMxE0wQQqkmwWMUzLMe3Moc&s=10" alt="Sodium-ion battery cell" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="6" y="6" width="28" height="48" rx="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="20" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M17 30 L23 30" stroke="currentColor" stroke-width="2"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Sodium-Ion</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Abundant raw material alternative for affordable urban EVs</p>
+</div>
+
+<!-- 3. Blade Battery -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqjnOELtZ2xlYEJXHchGL4kfoZw1IrPORKqJjvMfdpm-SADO0aM2h0mQ&s=10" alt="Blade battery cell structure" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="2" y="16" width="36" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="8" y1="16" x2="8" y2="44" stroke="currentColor" stroke-width="1.5"/><line x1="16" y1="16" x2="16" y2="44" stroke="currentColor" stroke-width="1.5"/><line x1="24" y1="16" x2="24" y2="44" stroke="currentColor" stroke-width="1.5"/><line x1="32" y1="16" x2="32" y2="44" stroke="currentColor" stroke-width="1.5"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Blade</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Ultra-thin elongated cells serving as structural pack members</p>
+</div>
+
+<!-- 4. Cell-to-Pack -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWoOSpUDSzj3yBiB4Fq3Cr-kaT0SwgDc6XncudYWw0Sg&s=10" alt="Cell-to-Pack battery structure" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="3" y="10" width="34" height="40" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 24 L37 24 M3 36 L37 36 M15 10 L15 50 M25 10 L25 50" stroke="currentColor" stroke-width="1.5"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Cell-to-Pack</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Moduleless design integrating cells directly into the chassis</p>
+</div>
+
+<!-- 5. NMC / NCA -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_HUgugE405sdtdmaC4lZvAU1M3bn1jYDkQUduwQqz83PvsV8akJ12bBo&s=10" alt="NMC Battery Module" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="6" y="8" width="28" height="48" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M14 20 L26 20 M20 14 L20 26 M14 38 L26 38" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">NMC / NCA</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">High energy density formulations for maximum range performance</p>
+</div>
+
+<!-- 6. Flow Cell -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN_VO9X5gn80hbUpzwrn3pU9eVKwJv59DZ_JyDWIcpdavCLrANUSPhwus&s=10" alt="Flow battery liquid system" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="4" y="10" width="14" height="38" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="22" y="10" width="14" height="38" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M18 24 L22 24 M18 34 L22 34" stroke="currentColor" stroke-width="2"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Flow Cell</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Liquid electrolyte systems tailored for stationary depot storage</p>
+</div>
+
+<!-- 7. Solid Polymer -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/All-Solid-State_Battery.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original" alt="Solid State Matrix" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="4" y="8" width="32" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="4" y1="22" x2="36" y2="22" stroke="currentColor" stroke-width="2.2"/><line x1="4" y1="38" x2="36" y2="38" stroke="currentColor" stroke-width="2.2"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Solid Polymer</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Non-flammable solid ceramic or polymer matrix architectures</p>
+</div>
+
+<!-- 8. Coin / Button -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://cdn.sparkfun.com/r/600-600/assets/parts/2/6/4/338-Coin-Cell-Battery-20mm-Feature.jpg" alt="Coin Battery" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><circle cx="20" cy="30" r="16" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="20" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Coin / Button</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Compact energy sources powering wireless BMS sensor nodes</p>
+</div>
+
+<!-- 9. Swappable Pack -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIwrTtm-doKKkiBjeNq_oozAA1LemxdwMXAZOKQN1jgYfV7MJkRelaiir9&s=10" alt="Swappable battery station" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><rect x="6" y="10" width="28" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 22 L20 14 L28 22 M20 14 L20 32 M12 38 L28 38" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Swappable Pack</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">Standardized modular bricks built for automated station exchange</p>
+</div>
+
+<!-- 10. Supercapacitor -->
+<div class="format-card" data-reveal style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px; background: #0d1527; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;">
+  <img class="format-photo" src="https://www.skeletontech.com/hs-fs/hubfs/Skeleton-supercapacitor-components.jpg?width=600&height=268&name=Skeleton-supercapacitor-components.jpg" alt="Supercapacitors" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; display: block;" />
+  <div class="format-icon" style="color: #e59849; margin-bottom: 12px; height: 48px;"><svg viewBox="0 0 40 60" style="height: 100%; width: auto;"><line x1="8" y1="12" x2="32" y2="12" stroke="currentColor" stroke-width="2.2"/><line x1="8" y1="48" x2="32" y2="48" stroke="currentColor" stroke-width="2.2"/><line x1="20" y1="12" x2="20" y2="26" stroke="currentColor" stroke-width="2.2"/><line x1="20" y1="34" x2="20" y2="48" stroke="currentColor" stroke-width="2.2"/><line x1="10" y1="26" x2="30" y2="26" stroke="currentColor" stroke-width="2.2"/><line x1="10" y1="34" x2="30" y2="34" stroke="currentColor" stroke-width="2.2"/></svg></div>
+  <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: #ffffff; font-weight: 600;">Supercapacitor</h3>
+  <p style="margin: 0; font-size: 0.88rem; color: #8e9bb0; line-height: 1.4;">High-power density hybrid units for rapid surge acceleration</p>
+</div>
     </div>
   </div>
 </section>
@@ -960,11 +1007,13 @@ a{color:inherit}
   <div class="dash-shell">
 
     <!-- SIDEBAR -->
- <aside class="dash-sidebar">
+ <aside class="dash-sidebar" id="dashSidebar">
   <div class="dash-brand">
     <div class="dash-brand-icon"></div>
     <div class="dash-brand-text"><b>ElectricEdge</b><span>EV LIFECYCLE AI</span></div>
   </div>
+  <button class="dash-nav-toggle" id="dashNavToggle" aria-expanded="false">☰ Menu</button>
+  <div class="dash-sidebar-inner">
   <button class="dash-add-btn" id="dashAddBattery">+ Add Battery</button>
 
   <nav class="dash-nav">
@@ -972,7 +1021,7 @@ a{color:inherit}
     <a class="dash-nav-item" data-panel="batteries"><span class="left">Batteries</span><span class="dash-nav-badge neutral" id="navBatteriesCount">1</span></a>
     <a class="dash-nav-item" data-panel="health"><span class="left">Battery Health</span></a>
     <a class="dash-nav-item" data-panel="safety"><span class="left">Safety Center</span><span class="dash-nav-badge" id="navSafetyCount">0</span></a>
-    <a class="dash-nav-item" data-panel="damage"><span class="left">Damage &amp; Inspection</span></a>
+    <a class="dash-nav-item" data-panel="damage"><span class="left">Damage &amp; Inspection</span><span class="dash-nav-badge neutral" id="navDamageCount">0</span></a>
     <a class="dash-nav-item" data-panel="degradation"><span class="left">Degradation</span></a>
     <a class="dash-nav-item" data-panel="predictions"><span class="left">AI Predictions</span></a>
     <a class="dash-nav-item" data-panel="charging"><span class="left">Charging Analysis</span></a>
@@ -983,6 +1032,7 @@ a{color:inherit}
     <a class="dash-nav-item" data-panel="reports"><span class="left">Reports &amp; Export</span></a>
     <a class="dash-nav-item" data-panel="uploads"><span class="left">Data Uploads</span></a>
   </nav>
+  </div>
 </aside>
 
     <!-- MAIN -->
@@ -992,14 +1042,15 @@ a{color:inherit}
   <div class="dash-topbar">
     <div class="dash-search">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" placeholder="Search Battery ID, Serial, VIN, or Chemistry..." aria-label="Search" />
+      <input type="text" id="searchInput" placeholder="Search Battery ID, Serial, VIN, or Chemistry..." aria-label="Search" autocomplete="off" />
       <kbd>Ctrl + K</kbd>
+      <div class="search-results" id="searchResults"></div>
     </div>
     <div class="dash-topbar-actions">
-      <a href="#top" class="tb-pill">Landing Page</a>
-      <span class="tb-pill">Scan Battery</span>
-      <button class="tb-pill" id="downloadPdfBtn">Export Report</button>
-      <span class="tb-pill live"><span class="pulse-dot"></span> Live BMS</span>
+      <a href="#top" class="tb-pill"><span class="pill-label">Landing Page</span></a>
+      <button class="tb-pill" id="scanBatteryBtn"><span class="pill-label">📷 Scan Battery</span></button>
+      <button class="tb-pill" id="downloadPdfBtn"><span class="pill-label">Export Report</span></button>
+      <span class="tb-pill live" id="liveBmsPill"><span class="pulse-dot"></span> <span class="pill-label">Live BMS</span></span>
       <div class="tb-user">
         <div class="tb-user-avatar" id="tbAvatar">E</div>
         <div>
@@ -1018,7 +1069,7 @@ a{color:inherit}
       <div>
         <div class="dash-badges">
           <span class="badge-tag">FLEET OPERATIONAL DASHBOARD</span>
-          <span class="badge-tag dim">Live CAN Telemetry Synced</span>
+          <span class="badge-tag dim" id="syncStatus">Live CAN Telemetry Synced</span>
         </div>
         <h1 class="dash-h1">EV Fleet Battery Intelligence</h1>
         <p class="dash-h1-sub" id="dashWelcome">
@@ -1027,8 +1078,8 @@ a{color:inherit}
       </div>
       <div class="dash-head-actions">
         <button class="btn btn-solid" id="dashAddBattery2">+ Add Battery</button>
-        <button class="tb-pill">Scan QR / Tag</button>
-        <button class="tb-pill" id="downloadPdfBtn2">Export Fleet Summary</button>
+        <button class="tb-pill" id="scanQrBtn2">▦ Scan QR / Tag</button>
+        <button class="tb-pill" id="downloadPdfBtn2">📄 Export Fleet Summary</button>
       </div>
     </div>
 
@@ -1136,7 +1187,7 @@ a{color:inherit}
             <h4>State of Health (SOH) Distribution</h4>
             <p>Fleet pack count segmented by remaining capacity retention</p>
           </div>
-          <span class="chart-total">1 Total</span>
+          <span class="chart-total" id="sohChartTotal">1 Total</span>
         </div>
         <svg id="sohBarChart" viewBox="0 0 400 220" style="width:100%;height:220px"></svg>
       </div>
@@ -1154,35 +1205,25 @@ a{color:inherit}
     </div>
 
   </div>
-</main><!-- /panel-overview -->
 
       <!-- ===== Batteries panel ===== -->
       <div class="dash-panel" id="panel-batteries">
-        <div class="dash-head-row"><div><h1 class="dash-h1">Batteries</h1><p class="dash-h1-sub">Every pack registered to your account.</p></div></div>
+        <div class="dash-head-row">
+          <div><h1 class="dash-h1">Batteries</h1><p class="dash-h1-sub">Every pack registered to your account. Click a row to make it the active battery across the dashboard.</p></div>
+          <div class="dash-head-actions"><button class="btn btn-solid" id="dashAddBattery3">+ Add Battery</button></div>
+        </div>
         <div class="chart-panel">
-          <table style="width:100%;border-collapse:collapse;font-size:13.5px">
-            <thead><tr style="text-align:left;color:var(--text-dim);font-family:var(--mono);font-size:11px;text-transform:uppercase">
-              <th style="padding:10px 8px;border-bottom:1px solid var(--line)">Passport ID</th>
-              <th style="padding:10px 8px;border-bottom:1px solid var(--line)">Format</th>
-              <th style="padding:10px 8px;border-bottom:1px solid var(--line)">SoH</th>
-              <th style="padding:10px 8px;border-bottom:1px solid var(--line)">Safety</th>
-              <th style="padding:10px 8px;border-bottom:1px solid var(--line)">Purchased</th>
-            </tr></thead>
-            <tbody><tr id="batteriesRow">
-              <td style="padding:12px 8px;border-bottom:1px dashed var(--line);font-family:var(--mono)" id="btPassportId">—</td>
-              <td style="padding:12px 8px;border-bottom:1px dashed var(--line)" id="btFormat">—</td>
-              <td style="padding:12px 8px;border-bottom:1px dashed var(--line);color:var(--green)" id="btSoh">—</td>
-              <td style="padding:12px 8px;border-bottom:1px dashed var(--line)" id="btSafety">—</td>
-              <td style="padding:12px 8px;border-bottom:1px dashed var(--line)" id="btDate">—</td>
-            </tr></tbody>
+          <table>
+            <thead><tr><th>Passport ID</th><th>Format</th><th>SoH</th><th>Safety</th><th>Purchased</th><th></th></tr></thead>
+            <tbody id="batteriesTableBody"></tbody>
           </table>
         </div>
       </div>
 
       <!-- ===== Battery Health panel ===== -->
       <div class="dash-panel" id="panel-health">
-        <div class="dash-head-row"><div><h1 class="dash-h1">Battery Health</h1><p class="dash-h1-sub">State of health, cycling and degradation factors, explained.</p></div></div>
-        <div class="dash-row" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="dash-head-row"><div><h1 class="dash-h1">Battery Health</h1><p class="dash-h1-sub">State of health, cycling and degradation factors for <span id="healthBatteryName">—</span>.</p></div></div>
+        <div class="dash-charts">
           <div class="chart-panel">
             <h4 style="margin-bottom:14px">Degradation factors</h4>
             <div class="factor"><span class="factor-name">Fast‑charge frequency</span><span class="factor-desc" id="hFast">—</span></div>
@@ -1206,6 +1247,7 @@ a{color:inherit}
         <div class="chart-panel" style="margin-bottom:20px">
           <div class="badge-row"><span class="badge estimated" id="safetyStatusBadge">—</span></div>
           <p id="safetyAlertText" style="color:var(--text-dim);font-size:13.5px;margin-top:10px">—</p>
+          <button class="btn btn-outline" style="margin-top:14px" id="acknowledgeAlertBtn">Acknowledge alert</button>
         </div>
         <div class="chart-panel">
           <p class="dcard-label" style="margin-bottom:10px">Recommended safe charging window</p>
@@ -1215,10 +1257,24 @@ a{color:inherit}
 
       <!-- ===== Damage & Inspection panel ===== -->
       <div class="dash-panel" id="panel-damage">
-        <div class="dash-head-row"><div><h1 class="dash-h1">Damage &amp; Inspection</h1><p class="dash-h1-sub">Physical condition reports for this pack.</p></div></div>
+        <div class="dash-head-row"><div><h1 class="dash-h1">Damage &amp; Inspection</h1><p class="dash-h1-sub">Physical condition reports for the active battery.</p></div></div>
         <div class="chart-panel">
-          <p style="color:var(--text-dim);font-size:13.5px">No damage reports have been logged for this battery yet. Inspection records — punctures, swelling, connector corrosion, coolant leaks — will appear here once submitted.</p>
-          <button class="btn btn-outline" style="margin-top:16px" onclick="showToast('Inspection logging isn\'t wired up in this preview.')">+ Log an inspection</button>
+          <form id="inspectionForm" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <label style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-dim)">Issue type
+              <select id="inspType" style="background:var(--bg-2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px 12px;font-size:14px">
+                <option>Visual inspection — no issues</option>
+                <option>Swelling</option>
+                <option>Connector corrosion</option>
+                <option>Coolant leak</option>
+                <option>Physical puncture / impact</option>
+              </select>
+            </label>
+            <label style="flex:2;min-width:200px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-dim)">Notes
+              <input type="text" id="inspNotes" placeholder="Optional notes">
+            </label>
+            <button class="btn btn-outline" type="submit">+ Log inspection</button>
+          </form>
+          <div class="log-list" id="inspectionList"></div>
         </div>
       </div>
 
@@ -1229,6 +1285,7 @@ a{color:inherit}
           <div class="chart-panel"><p class="stat-label">Current state of health</p><p class="stat-value green" id="degSoh" style="margin-top:8px">—</p><p class="stat-note" style="margin-top:8px">Estimated from telemetry, not lab‑certified</p></div>
           <div class="chart-panel"><p class="stat-label">Remaining useful life</p><p class="stat-value" id="degRul" style="margin-top:8px">—</p><p class="stat-note" style="margin-top:8px">Full‑equivalent cycles until end‑of‑life threshold</p></div>
         </div>
+        <div class="chart-panel"><h4 style="margin-bottom:14px">Capacity fade over time</h4><svg id="degradationChart" viewBox="0 0 600 220" style="width:100%;height:220px"></svg></div>
       </div>
 
       <!-- ===== AI Predictions panel ===== -->
@@ -1240,6 +1297,7 @@ a{color:inherit}
           <div class="factor"><span class="factor-name">Projected RUL</span><span class="factor-desc" id="predRul">—</span></div>
           <div class="factor"><span class="factor-name">Confidence band</span><span class="factor-desc">±4.5% (model estimate)</span></div>
         </div>
+        <div class="chart-panel"><h4 style="margin-bottom:14px">12‑month SoH forecast</h4><svg id="predictionChart" viewBox="0 0 600 220" style="width:100%;height:220px"></svg></div>
       </div>
 
       <!-- ===== Charging Analysis panel ===== -->
@@ -1277,6 +1335,7 @@ a{color:inherit}
           <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
             <button class="btn btn-outline" id="viewCertPageBtn">View verification page</button>
             <button class="btn btn-solid" id="downloadPdfBtn3">Download passport (PDF)</button>
+            <button class="btn btn-ghost" id="certifyBtn">Simulate certified lab test</button>
           </div>
         </div>
       </div>
@@ -1298,16 +1357,21 @@ a{color:inherit}
         <div class="dash-head-row"><div><h1 class="dash-h1">Reports &amp; Export</h1><p class="dash-h1-sub">Download this battery's passport and fleet summary.</p></div></div>
         <div class="chart-panel" style="display:flex;gap:12px;flex-wrap:wrap">
           <button class="btn btn-solid" id="downloadPdfBtn4">📄 Download passport (PDF)</button>
-          <button class="btn btn-outline" onclick="showToast('CSV export isn\'t wired up in this preview.')">⬇ Export raw telemetry (CSV)</button>
+          <button class="btn btn-outline" id="exportCsvBtn">⬇ Export raw telemetry (CSV)</button>
+          <button class="btn btn-outline" id="exportFleetCsvBtn">⬇ Export fleet summary (CSV)</button>
         </div>
       </div>
 
       <!-- ===== Data Uploads panel ===== -->
       <div class="dash-panel" id="panel-uploads">
-        <div class="dash-head-row"><div><h1 class="dash-h1">Data Uploads</h1><p class="dash-h1-sub">Bring in telemetry logs or lab results.</p></div></div>
+        <div class="dash-head-row"><div><h1 class="dash-h1">Data Uploads</h1><p class="dash-h1-sub">Bring in telemetry logs or lab results to refresh this battery's record.</p></div></div>
         <div class="chart-panel">
-          <p style="color:var(--text-dim);font-size:13.5px;margin-bottom:14px">Upload a CAN log, CSV export, or certified lab report to refresh this battery's record.</p>
-          <input type="file" onchange="showToast('File received — processing isn\'t wired up in this preview.')">
+          <div class="upload-drop" id="uploadDrop">
+            <p style="color:var(--cream);margin-bottom:6px">Drop a CSV telemetry log here, or click to browse</p>
+            <p style="color:var(--text-dim);font-size:12.5px">Expected columns: soh,cycles,temp,fast_pct — first data row is used.</p>
+            <input type="file" id="uploadInput" accept=".csv,.txt">
+          </div>
+          <div class="log-list" id="uploadLog"></div>
         </div>
       </div>
 
@@ -1441,6 +1505,44 @@ a{color:inherit}
   </div>
 </div>
 
+<!-- ============ ADD BATTERY MODAL ============ -->
+<div class="modal-overlay" id="addBatteryOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="addBatteryTitle">
+    <button class="modal-close" data-close>&times;</button>
+    <p class="kicker kicker--modal">Register a pack</p>
+    <h3 id="addBatteryTitle">Add a battery</h3>
+    <form id="addBatteryForm">
+      <label>Nickname<input type="text" required placeholder="e.g. Home car, Spare pack" id="battNickname"></label>
+      <label>EV battery type
+        <select required id="battType2">
+          <option value="" disabled selected>Select battery type</option>
+          <option value="Cylindrical — Li-ion (NMC)">Cylindrical — Li‑ion (NMC)</option>
+          <option value="Cylindrical — Li-ion (LFP)">Cylindrical — Li‑ion (LFP)</option>
+          <option value="Prismatic — Li-ion">Prismatic — Li‑ion</option>
+          <option value="Pouch — Li-ion">Pouch — Li‑ion</option>
+          <option value="Solid-state (prototype)">Solid‑state (prototype)</option>
+        </select>
+      </label>
+      <label>Date of purchase<input type="date" required id="purchaseDate2"></label>
+      <button type="submit" class="btn btn-solid btn-block">Add battery</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ SCAN MODAL ============ -->
+<div class="modal-overlay" id="scanOverlay">
+  <div class="modal" role="dialog" aria-modal="true" style="text-align:center">
+    <button class="modal-close" data-close>&times;</button>
+    <p class="kicker kicker--modal">Scanning</p>
+    <h3>Reading battery tag…</h3>
+    <div style="padding:30px 0">
+      <div style="width:70px;height:70px;border:4px solid var(--line);border-top-color:var(--green);border-radius:50%;margin:0 auto;animation:spin 0.9s linear infinite"></div>
+    </div>
+    <p style="color:var(--text-dim);font-size:13px">Simulating a QR / NFC tag scan against the fleet database.</p>
+  </div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
 <!-- ============ TERMINAL BOOT OVERLAY ============ -->
 <div class="terminal-overlay" id="terminalOverlay">
   <div class="terminal">
@@ -1453,27 +1555,64 @@ a{color:inherit}
 <div class="cert-page" id="certPage">
   <button class="cert-close" id="certClose">Close ✕</button>
   <div class="cert-inner">
-    <svg viewBox="0 0 200 200" class="cert-stamp"><circle cx="100" cy="100" r="86" fill="none" stroke="#2FBF8F" stroke-width="4"/><circle cx="100" cy="100" r="76" fill="none" stroke="#2FBF8F" stroke-width="1.5"/><text x="100" y="92" text-anchor="middle" fill="#2FBF8F" font-family="IBM Plex Mono, monospace" font-size="17" letter-spacing="2">CERTIFIED</text><text x="100" y="114" text-anchor="middle" fill="#2FBF8F" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1">ACCREDITED LAB TEST</text></svg>
-    <h2>This passport is verified</h2>
-    <p>An accredited lab result has been locked to this record. It can no longer be edited by field estimates.</p>
+    <svg viewBox="0 0 200 200" class="cert-stamp"><circle cx="100" cy="100" r="86" fill="none" stroke="#2FBF8F" stroke-width="4"/><circle cx="100" cy="100" r="76" fill="none" stroke="#2FBF8F" stroke-width="1.5"/><text x="100" y="92" text-anchor="middle" fill="#2FBF8F" font-family="IBM Plex Mono, monospace" font-size="17" letter-spacing="2" id="certStampText">ESTIMATED</text><text x="100" y="114" text-anchor="middle" fill="#2FBF8F" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1" id="certStampSub">FROM FIELD DATA</text></svg>
+    <h2 id="certHeadline">This passport is estimated</h2>
+    <p id="certSub">Values are derived from telemetry, not an accredited lab. Run a certified test to lock this record.</p>
     <div class="cert-card">
       <div class="cert-line"><span>Passport ID</span><span id="certId" style="font-family:var(--mono)">—</span></div>
       <div class="cert-line"><span>Owner</span><span id="certOwner">—</span></div>
       <div class="cert-line"><span>Battery format</span><span id="certFormat">—</span></div>
       <div class="cert-line"><span>Verified state of health</span><span id="certSoh">—</span></div>
-      <div class="cert-line"><span>Issued by</span><span>CellPass Certified Labs Network</span></div>
+      <div class="cert-line"><span>Issued by</span><span id="certIssuer">Field telemetry (unverified)</span></div>
     </div>
     <div id="certQr" class="cert-qr"></div>
   </div>
 </div>
 
 <script>
-/* ---------------- state ---------------- */
-let session = null;         // {name,email,batteryType,purchaseDate,passportId}
-let verification = 'estimated';
-let metrics = null;
-
+/* =======================================================================
+   ElectricEdge / CellPass dashboard — full functionality, multi-battery,
+   wired to every control in the markup. No dead buttons.
+   ======================================================================= */
 const $ = id => document.getElementById(id);
+
+let session = null;          // {name, email}
+let batteries = [];          // array of battery objects
+let activeBatteryId = null;
+let inspections = {};        // batteryId -> [{type, notes, date}]
+let uploadLogs = [];         // [{name, date, summary}]
+
+/* ---------------- helpers ---------------- */
+function uid(prefix){ return prefix + '-' + Math.random().toString(36).slice(2, 8); }
+function seededRand(seed){ let x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function computeMetrics(batt){
+  const seed = (batt.email + batt.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) || 42;
+  const ageDays = Math.max(1, Math.round((Date.now() - new Date(batt.purchaseDate || '2024-01-01')) / 86400000));
+  const soh = batt.overrideSoh != null ? batt.overrideSoh : Math.max(58, Math.round(100 - ageDays/22 - seededRand(seed)*6));
+  const cycles = batt.overrideCycles != null ? batt.overrideCycles : Math.round(ageDays / 1.6);
+  const temp = batt.overrideTemp != null ? batt.overrideTemp : Math.round(24 + seededRand(seed*2)*10);
+  const fast = batt.overrideFast != null ? batt.overrideFast : Math.round(seededRand(seed*3)*40);
+  const rul = Math.max(80, Math.round(3200 - cycles*1.4));
+  const safety = soh > 85 ? 'Low risk' : soh > 70 ? 'Monitor' : 'Elevated risk';
+  const atRisk = safety === 'Elevated risk' && !batt.alertAcknowledged ? 1 : 0;
+  const secondLife = soh < 75 ? 1 : 0;
+  return { soh, cycles, rul, temp, fast, safety, atRisk, secondLife, ageDays };
+}
+function activeBattery(){ return batteries.find(b => b.id === activeBatteryId) || batteries[0]; }
+
+/* ---------------- toast ---------------- */
+let toastTimer = null;
+function showToast(msg, kind){
+  let el = document.querySelector('.toast');
+  if(!el){ el = document.createElement('div'); el.className = 'toast'; document.body.appendChild(el); }
+  el.className = 'toast' + (kind ? ' ' + kind : '');
+  el.textContent = msg;
+  requestAnimationFrame(()=> el.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('show'), 3200);
+}
 
 /* ---------------- modal open/close ---------------- */
 function openModal(id){ $(id).classList.add('open'); }
@@ -1481,91 +1620,48 @@ function closeModal(id){ $(id).classList.remove('open'); }
 $('openLogin').onclick = ()=>openModal('loginOverlay');
 $('openSignup').onclick = ()=>openModal('signupOverlay');
 $('heroSignup').onclick = ()=>openModal('signupOverlay');
-$('ctaSignup').onclick = ()=>openModal('signupOverlay');
+if($('ctaSignup')) $('ctaSignup').onclick = ()=>openModal('signupOverlay');
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick = ()=>{
-  closeModal('loginOverlay'); closeModal('signupOverlay');
+  b.closest('.modal-overlay').classList.remove('open');
 });
 document.querySelectorAll('[data-switch-to]').forEach(b=>b.onclick=()=>{
   closeModal('loginOverlay'); closeModal('signupOverlay');
   openModal(b.dataset.switchTo === 'signup' ? 'signupOverlay' : 'loginOverlay');
 });
-[$('loginOverlay'), $('signupOverlay')].forEach(ov=>{
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
   ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('open'); });
 });
 
-/* ---------------- terminal boot sequence ---------------- */
-function typeLines(lines, done){
-  const body = $('terminalBody');
-  body.innerHTML = '';
-  $('terminalOverlay').classList.add('open');
-  let i = 0;
-  function next(){
-    if(i >= lines.length){
-      body.innerHTML += '<span class="terminal-cursor"></span>';
-      setTimeout(()=>{ $('terminalOverlay').classList.remove('open'); done(); }, 500);
-      return;
-    }
-    const [text, cls, delay] = lines[i];
-    const line = document.createElement('div');
-    line.className = cls || '';
-    line.textContent = text;
-    body.appendChild(line);
-    i++;
-    setTimeout(next, delay || 350);
-  }
-  next();
-}
-
-function bootAndLogin(userData) {
-  // 1. Create the success popup element with inline HTML & CSS
+/* ---------------- terminal boot sequence + login success toast ---------------- */
+function bootAndLogin(userData, isNewAccount){
   const popup = document.createElement('div');
   popup.id = 'loginSuccessToast';
   popup.innerHTML = `
     <div style="
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #131822;
-      color: #10B981;
+      position: fixed; top: 20px; right: 20px; z-index: 99999;
+      display: flex; align-items: center; gap: 10px;
+      background: #131822; color: #10B981;
       border: 1px solid rgba(16, 185, 129, 0.4);
-      padding: 12px 20px;
-      border-radius: 8px;
+      padding: 12px 20px; border-radius: 8px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.15);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-    ">
+      font-size: 14px; font-weight: 600; letter-spacing: 0.2px;">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 6L9 17l-5-5"/>
       </svg>
-      <span>Successfully Logged In</span>
-    </div>
-  `;
-
+      <span>${isNewAccount ? 'Account created — welcome!' : 'Successfully Logged In'}</span>
+    </div>`;
   document.body.appendChild(popup);
-
-  // 2. Animate entry using GSAP
-  gsap.fromTo(popup.firstElementChild, 
-    { opacity: 0, y: -20, scale: 0.95 }, 
+  gsap.fromTo(popup.firstElementChild,
+    { opacity: 0, y: -20, scale: 0.95 },
     { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: 'power2.out' }
   );
-
-  // 3. Dismiss popup, close overlays, and finish login
   setTimeout(() => {
     gsap.to(popup.firstElementChild, {
-      opacity: 0,
-      y: -10,
-      duration: 0.25,
-      ease: 'power2.in',
+      opacity: 0, y: -10, duration: 0.25, ease: 'power2.in',
       onComplete: () => {
         popup.remove();
-        closeModal('loginOverlay');
-        closeModal('signupOverlay');
+        closeModal('loginOverlay'); closeModal('signupOverlay');
         completeLogin(userData);
       }
     });
@@ -1576,343 +1672,399 @@ function bootAndLogin(userData) {
 $('loginForm').addEventListener('submit', e=>{
   e.preventDefault();
   const email = $('loginEmail').value;
-  const data = session || {
-    name: email.split('@')[0],
-    email,
-    batteryType: 'Cylindrical — Li‑ion (NMC)',
-    purchaseDate: '2024-03-12',
-  };
-  bootAndLogin(data);
+  session = { name: email.split('@')[0], email };
+  bootAndLogin(session, false);
 });
 
 $('signupForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const data = {
-    name: $('signupName').value,
-    email: $('signupEmail').value,
-    batteryType: $('batteryType').value,
-    purchaseDate: $('purchaseDate').value,
-  };
-  bootAndLogin(data);
+  const name = $('signupName').value;
+  const email = $('signupEmail').value;
+  session = { name, email };
+  const type = $('batteryType').value || 'Cylindrical — Li-ion (NMC)';
+  const purchaseDate = $('purchaseDate').value || '2024-03-12';
+  addBattery('Primary pack', type, purchaseDate, email, name);
+  bootAndLogin(session, true);
 });
 
-/* ---------------- deterministic mock metrics ---------------- */
-function seededRand(seed){
-  let x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-}
-function buildMetrics(userData){
-  const seed = userData.email.split('').reduce((a,c)=>a+c.charCodeAt(0),0) || 42;
-  const ageDays = Math.max(1, Math.round((Date.now() - new Date(userData.purchaseDate || '2024-01-01')) / 86400000));
-  const soh = Math.max(68, Math.round(100 - ageDays/22 - seededRand(seed)*6));
-  const cycles = Math.round(ageDays / 1.6);
-  const rul = Math.max(120, Math.round(3200 - cycles*1.4));
-  const temp = Math.round(24 + seededRand(seed*2)*10);
-  const fast = Math.round(seededRand(seed*3)*40);
-  const safety = soh > 85 ? 'Low risk' : soh > 70 ? 'Monitor' : 'Elevated risk';
-  const atRisk = safety === 'Elevated risk' ? 1 : 0;
-  const secondLife = soh < 75 ? 1 : 0;
-  const passportId = 'CP-' + (10000 + (seed*ageDays)%89999);
-  return { soh, cycles, rul, temp, fast, safety, atRisk, secondLife, passportId, ageDays };
-}
-
-/* ---------------- login completion / dashboard render ---------------- */
 function completeLogin(userData){
   session = userData;
-  metrics = buildMetrics(userData);
-  verification = 'estimated';
-
+  if(batteries.length === 0){
+    addBattery('Primary pack', 'Cylindrical — Li-ion (NMC)', '2024-03-12', userData.email, userData.name);
+  }
   $('loggedOutActions').style.display = 'none';
   $('loggedInActions').style.display = 'flex';
   $('navUserName').textContent = userData.name;
-
-  renderDashboard();
   $('dashboard').classList.add('open');
-  document.getElementById('dashboard').scrollIntoView({behavior:'smooth'});
+  renderAll();
+  $('dashboard').scrollIntoView({behavior:'smooth'});
+  showToast('Welcome, ' + userData.name + '!', 'ok');
 }
 
-function renderDashboard(){
-  const initial = (session.name || session.email || '?').trim().charAt(0).toUpperCase();
+$('goDashboard').onclick = ()=>{
+  if(!session) return openModal('loginOverlay');
+  $('dashboard').scrollIntoView({behavior:'smooth'});
+};
+$('logoutBtn').onclick = ()=>{
+  session = null; batteries = []; activeBatteryId = null; inspections = {}; uploadLogs = [];
+  $('loggedOutActions').style.display = 'flex';
+  $('loggedInActions').style.display = 'none';
+  $('dashboard').classList.remove('open');
+  window.scrollTo({top:0, behavior:'smooth'});
+  showToast('Logged out');
+};
+if($('phoneViewPassport')) $('phoneViewPassport').onclick = ()=>{
+  if(!session) return openModal('loginOverlay');
+  $('dashboard').scrollIntoView({behavior:'smooth'});
+};
+if($('dashVideoLanding')) $('dashVideoLanding').onclick = ()=> $('top').scrollIntoView({behavior:'smooth'});
 
-  $('dashWelcome').textContent = `Welcome back, ${session.name || session.email} · passport ${metrics.passportId} · live telemetry from your ${session.batteryType}.`;
-  $('tbAvatar').textContent = initial;
-  $('tbUserName').textContent = session.name;
-  $('tbFleetName').textContent = `${session.batteryType} · Owner Fleet`;
-
-  $('statPacks').textContent = '1';
-  $('statSoh').textContent = metrics.soh + '%';
-  $('statRul').textContent = metrics.rul;
-  $('statSafetyIndex').textContent = (metrics.atRisk ? 0 : 100) + '%';
-  $('statRisk').textContent = metrics.atRisk;
-  $('statSecondLife').textContent = metrics.secondLife;
-
-  $('navBatteriesCount').textContent = '1';
-  $('navSafetyCount').textContent = metrics.atRisk;
-  $('navSecondLifeCount').textContent = metrics.secondLife;
-
-  const riskCard = $('statRiskCard');
-  const alertBanner = $('alertBanner');
-  if(metrics.atRisk > 0){
-    riskCard.classList.add('risk');
-    alertBanner.style.display = 'flex';
-    $('alertHeadline').textContent = '1 Battery Pack Requires Immediate Attention';
-    $('alertDesc').innerHTML = `Elevated risk detected on <b>${metrics.passportId}</b> — state of health has dropped to ${metrics.soh}% with ${metrics.fast}% fast‑charge frequency.`;
-  } else {
-    riskCard.classList.remove('risk');
-    alertBanner.style.display = 'none';
-  }
-
-  // ---- Passport panel ----
-  $('passportBadge').textContent = verification.toUpperCase();
-  $('passportBadge').className = 'badge ' + verification;
-  $('passportIdText').textContent = metrics.passportId;
-  $('ppOwner').textContent = session.name;
-  $('ppFormat').textContent = session.batteryType;
-  $('ppDate').textContent = session.purchaseDate;
-  $('ppSoh').textContent = metrics.soh + '%';
-
-  // ---- Batteries panel ----
-  $('btPassportId').textContent = metrics.passportId;
-  $('btFormat').textContent = session.batteryType;
-  $('btSoh').textContent = metrics.soh + '%';
-  $('btSafety').textContent = metrics.safety;
-  $('btDate').textContent = session.purchaseDate;
-
-  // ---- Battery Health panel ----
-  const fastNote = metrics.fast > 25 ? 'higher than recommended, adds heat stress' : 'within a healthy range';
-  $('hFast').textContent = metrics.fast + '% of sessions — ' + fastNote;
-  $('hDod').textContent = 'Mostly partial cycles — gentle on capacity fade';
-  $('hFull').textContent = (metrics.ageDays % 5) + 'h/week average — keep below 2h where possible';
-  $('hCal').textContent = Math.round(metrics.ageDays / 30) + ' months in service';
-  $('hSoh').textContent = metrics.soh + '%';
-  $('hCycles').textContent = metrics.cycles;
-  $('hTemp').textContent = metrics.temp + '°C';
-  $('hAge').textContent = Math.round(metrics.ageDays / 30) + ' months';
-
-  // ---- Safety panel ----
-  $('safetyStatusBadge').textContent = metrics.safety;
-  $('safetyStatusBadge').className = 'badge ' + (metrics.atRisk ? 'estimated' : 'certified');
-  $('safetyAlertText').textContent = metrics.atRisk
-    ? `Elevated risk detected — state of health has dropped to ${metrics.soh}% with ${metrics.fast}% fast‑charge frequency. Reduce fast charging and schedule an inspection.`
-    : 'No active safety alerts. Cell balance, thermal readings and fast‑charge frequency are all within normal range.';
-  const chargeWindowText = 'Charge to 80% for daily use · charge to 100% only before long trips · avoid fast‑charging below 10% state of charge';
-  $('safetyChargeWindow').textContent = chargeWindowText;
-
-  // ---- Degradation panel ----
-  $('degSoh').textContent = metrics.soh + '%';
-  $('degRul').textContent = metrics.rul + ' cycles';
-
-  // ---- AI Predictions panel ----
-  $('predSoh12').textContent = Math.max(60, metrics.soh - 5) + '% (est.)';
-  $('predRul').textContent = Math.max(80, metrics.rul - 300) + ' cycles (est.)';
-
-  // ---- Charging Analysis panel ----
-  $('chgFast').textContent = metrics.fast + '% of sessions';
-  $('chgWindow').textContent = chargeWindowText;
-
-  // ---- Recommendations panel ----
-  $('recFast').textContent = metrics.fast > 25
-    ? `Fast charging is used in ${metrics.fast}% of sessions — try to bring this down to reduce heat stress.`
-    : `Fast‑charge frequency (${metrics.fast}%) is already in a healthy range — keep it up.`;
-  $('recLab').textContent = metrics.soh < 80
-    ? 'Schedule a certified lab test now — SoH has dropped below 80%.'
-    : 'Schedule a certified lab test to convert this estimate into a verified passport entry.';
-
-  // ---- Second Life panel ----
-  $('secondLifeText').textContent = metrics.secondLife
-    ? `This battery is flagged for second‑life routing — SoH (${metrics.soh}%) has fallen below the reuse‑in‑vehicle threshold. It's still a strong candidate for stationary storage (BESS) reuse.`
-    : `Not yet eligible for second‑life routing — SoH (${metrics.soh}%) is still within the in‑vehicle service range.`;
-
-  // ---- Recycling panel ----
-  $('recyclingText').textContent = `Chemistry: ${session.batteryType}. Based on current health and format, this pack's estimated recoverable materials include lithium, nickel/cobalt or iron‑phosphate depending on chemistry, and copper/aluminum current collectors. A certified teardown assessment is required before final routing.`;
-
-  drawSohBarChart(metrics.soh);
-  drawChemDonut(session.batteryType);
+/* ---------------- add battery ---------------- */
+function addBattery(nickname, type, purchaseDate, email, ownerName){
+  const seed = Math.floor(Math.random()*90000)+10000;
+  const batt = {
+    id: uid('batt'),
+    nickname: nickname || type,
+    type, purchaseDate: purchaseDate || '2024-01-01',
+    email: email || session.email, ownerName: ownerName || session.name,
+    passportId: 'CP-' + seed,
+    verification: 'estimated',
+    alertAcknowledged: false,
+  };
+  batteries.push(batt);
+  activeBatteryId = batt.id;
+  return batt;
 }
+['dashAddBattery','dashAddBattery2','dashAddBattery3'].forEach(id=>{
+  const el = $(id);
+  if(el) el.onclick = ()=>{
+    if(!session) return openModal('loginOverlay');
+    openModal('addBatteryOverlay');
+  };
+});
+$('addBatteryForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const batt = addBattery($('battNickname').value, $('battType2').value, $('purchaseDate2').value, session.email, session.name);
+  closeModal('addBatteryOverlay');
+  e.target.reset();
+  switchPanel('batteries');
+  renderAll();
+  showToast(`Added "${batt.nickname}" — passport ${batt.passportId} issued.`, 'ok');
+});
 
-/* ---------------- toast ---------------- */
-let toastTimer = null;
-function showToast(msg){
-  let el = document.querySelector('.toast');
-  if(!el){
-    el = document.createElement('div');
-    el.className = 'toast';
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  requestAnimationFrame(()=> el.classList.add('show'));
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> el.classList.remove('show'), 3200);
-}
-
-/* ---------------- sidebar panel switching ---------------- */
+/* ---------------- sidebar panel switching (incl. mobile toggle) ---------------- */
 function switchPanel(key){
   document.querySelectorAll('.dash-nav-item').forEach(i=>i.classList.remove('active'));
   const navItem = document.querySelector(`.dash-nav-item[data-panel="${key}"]`);
   if(navItem) navItem.classList.add('active');
   document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('active'));
-  const target = document.getElementById('panel-'+key);
+  const target = $('panel-'+key);
   if(target) target.classList.add('active');
   $('dashboard').scrollIntoView({behavior:'smooth'});
+  const sidebar = $('dashSidebar');
+  if(sidebar && sidebar.classList.contains('nav-open')){
+    sidebar.classList.remove('nav-open');
+    $('dashNavToggle').setAttribute('aria-expanded','false');
+  }
 }
-
-/* ---------------- lightweight SVG charts (no extra deps) ---------------- */
-function drawSohBarChart(soh){
-  const svg = $('sohBarChart');
-  if(!svg) return;
-  const buckets = [
-    { label:'<70%', color:'#E2664D' },
-    { label:'70–80%', color:'#E2A33D' },
-    { label:'80–90%', color:'#2FBF8F' },
-    { label:'90%+', color:'#4FD8B8' },
-  ];
-  let activeIdx = soh >= 90 ? 3 : soh >= 80 ? 2 : soh >= 70 ? 1 : 0;
-  const w = 400, h = 220, padB = 34, padT = 10, barW = 56, gap = 34;
-  const maxV = 1;
-  let svgContent = `<line x1="30" y1="${h-padB}" x2="${w-10}" y2="${h-padB}" stroke="#2A3245" stroke-width="1"/>`;
-  buckets.forEach((b,i)=>{
-    const v = i === activeIdx ? 1 : 0;
-    const barH = v ? (h - padB - padT) : 4;
-    const x = 40 + i*(barW+gap);
-    const y = h - padB - barH;
-    svgContent += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="8" fill="${b.color}" opacity="${v?0.95:0.25}"/>`;
-    svgContent += `<text x="${x+barW/2}" y="${h-padB+18}" text-anchor="middle" fill="#8C96AA" font-size="11" font-family="IBM Plex Mono, monospace">${b.label}</text>`;
-    if(v){ svgContent += `<text x="${x+barW/2}" y="${y-8}" text-anchor="middle" fill="#E7DFCB" font-size="12" font-family='Space Grotesk, sans-serif' font-weight="700">1</text>`; }
-  });
-  svg.innerHTML = svgContent;
-}
-
-function drawChemDonut(batteryType){
-  const svg = $('chemDonutChart');
-  const legend = $('chemLegend');
-  if(!svg || !legend) return;
-  const map = [
-    { key:'NMC', match:'NMC', color:'#2FBF8F' },
-    { key:'LFP', match:'LFP', color:'#E2A164' },
-    { key:'Prismatic', match:'Prismatic', color:'#7C9CF2' },
-    { key:'Pouch', match:'Pouch', color:'#E2A33D' },
-    { key:'Solid‑state', match:'Solid', color:'#E2664D' },
-  ];
-  let active = map.find(m => (batteryType||'').includes(m.match)) || { key:'Li‑ion', color:'#2FBF8F' };
-
-  const r = 80, cx = 100, cy = 100, sw = 24;
-  const circumference = 2*Math.PI*r;
-  svg.innerHTML = `
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#22293A" stroke-width="${sw}"/>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${active.color}" stroke-width="${sw}"
-      stroke-dasharray="${circumference}" stroke-dashoffset="0" transform="rotate(-90 ${cx} ${cy})"/>
-    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#E7DFCB" font-size="15" font-family="Space Grotesk, sans-serif" font-weight="700">100%</text>
-    <text x="${cx}" y="${cy+16}" text-anchor="middle" fill="#8C96AA" font-size="10" font-family="IBM Plex Mono, monospace">${active.key}</text>
-  `;
-  legend.innerHTML = `<div class="donut-legend-item"><span class="sw" style="background:${active.color}"></span>${batteryType || active.key}</div>`;
-}
-
-$('goDashboard').onclick = ()=>{
-  if(!session) return openModal('loginOverlay');
-  document.getElementById('dashboard').scrollIntoView({behavior:'smooth'});
-};
-$('logoutBtn').onclick = ()=>{
-  session = null; metrics = null; verification = 'estimated';
-  $('loggedOutActions').style.display = 'flex';
-  $('loggedInActions').style.display = 'none';
-  $('dashboard').classList.remove('open');
-  window.scrollTo({top:0, behavior:'smooth'});
-};
-$('phoneViewPassport').onclick = ()=>{
-  if(!session) return openModal('loginOverlay');
-  document.getElementById('dashboard').scrollIntoView({behavior:'smooth'});
-};
-$('dashAddBattery').onclick = ()=>{ if(!session) return openModal('loginOverlay'); showToast('You already have one battery registered — multi‑battery accounts are coming soon.'); };
-$('dashAddBattery2').onclick = ()=>{ if(!session) return openModal('loginOverlay'); showToast('You already have one battery registered — multi‑battery accounts are coming soon.'); };
-$('dashVideoLanding').onclick = ()=> document.getElementById('top').scrollIntoView({behavior:'smooth'});
-$('openSafetyCenter').onclick = ()=> switchPanel('safety');
 document.querySelectorAll('.dash-nav-item').forEach(item=>{
   item.addEventListener('click', ()=> switchPanel(item.dataset.panel));
 });
-document.querySelectorAll('.dash-topbar-actions .tb-pill').forEach(pill=>{
-  if(pill.id) return; // real buttons already have their own handlers
-  if(pill.tagName === 'A') return; // Landing Page link works natively
-  pill.addEventListener('click', ()=> showToast('Camera / QR scanning isn\'t wired up in this preview.'));
-});
-document.querySelectorAll('.dash-head-actions .tb-pill').forEach(pill=>{
-  if(pill.id) return;
-  pill.addEventListener('click', ()=> showToast('QR / tag scanning isn\'t wired up in this preview.'));
-});
-$('viewCertPageBtn').onclick = ()=>{ if(!session) return openModal('loginOverlay'); showCertPage(); };
+$('openSafetyCenter').onclick = ()=> switchPanel('safety');
 
-/* ---------------- simulate certification -> verified webpage ---------------- */
+const dashNavToggle = $('dashNavToggle');
+if(dashNavToggle){
+  dashNavToggle.addEventListener('click', ()=>{
+    const sidebar = $('dashSidebar');
+    const open = sidebar.classList.toggle('nav-open');
+    dashNavToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    dashNavToggle.textContent = open ? '✕ Close' : '☰ Menu';
+  });
+}
+
+/* ---------------- search ---------------- */
+const searchInput = $('searchInput');
+const searchResults = $('searchResults');
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){ searchResults.classList.remove('open'); return; }
+  const matches = batteries.filter(b =>
+    b.passportId.toLowerCase().includes(q) ||
+    b.nickname.toLowerCase().includes(q) ||
+    b.type.toLowerCase().includes(q)
+  );
+  if(matches.length === 0){
+    searchResults.innerHTML = '<div style="color:var(--text-dim);cursor:default">No batteries match.</div>';
+  } else {
+    searchResults.innerHTML = matches.map(b => `<div data-id="${b.id}">${escapeHtml(b.nickname)} · ${b.passportId} · ${escapeHtml(b.type)}</div>`).join('');
+  }
+  searchResults.classList.add('open');
+});
+searchResults.addEventListener('click', e=>{
+  const row = e.target.closest('[data-id]');
+  if(!row) return;
+  activeBatteryId = row.dataset.id;
+  searchResults.classList.remove('open');
+  searchInput.value = '';
+  switchPanel('passport');
+  renderAll();
+  showToast('Switched active battery.');
+});
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.dash-search')) searchResults.classList.remove('open');
+});
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); searchInput.focus(); }
+});
+
+/* ---------------- scan simulation ---------------- */
+function simulateScan(){
+  if(!session) return openModal('loginOverlay');
+  openModal('scanOverlay');
+  setTimeout(()=>{
+    closeModal('scanOverlay');
+    const batt = addBattery('Scanned pack ' + (batteries.length+1), 'Prismatic — Li-ion', '2023-11-02', session.email, session.name);
+    renderAll();
+    switchPanel('batteries');
+    showToast(`Tag scanned — registered ${batt.passportId}.`, 'ok');
+  }, 1600);
+}
+$('scanBatteryBtn').onclick = simulateScan;
+$('scanQrBtn2').onclick = simulateScan;
+
+/* ---------------- safety acknowledge ---------------- */
+$('acknowledgeAlertBtn').onclick = ()=>{
+  const batt = activeBattery();
+  if(!batt) return;
+  batt.alertAcknowledged = true;
+  renderAll();
+  showToast('Alert acknowledged — will resurface if risk increases.', 'ok');
+};
+
+/* ---------------- inspections ---------------- */
+$('inspectionForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const batt = activeBattery();
+  if(!batt) return;
+  const type = $('inspType').value;
+  const notes = $('inspNotes').value;
+  if(!inspections[batt.id]) inspections[batt.id] = [];
+  inspections[batt.id].unshift({ type, notes, date: new Date().toLocaleString() });
+  $('inspNotes').value = '';
+  renderInspections();
+  renderNavBadges();
+  showToast('Inspection logged.', 'ok');
+});
+function renderInspections(){
+  const batt = activeBattery();
+  const list = batt ? (inspections[batt.id] || []) : [];
+  const el = $('inspectionList');
+  if(!el) return;
+  if(list.length === 0){
+    el.innerHTML = '<p class="empty-state">No inspections logged yet for this battery.</p>';
+    return;
+  }
+  el.innerHTML = list.map(item => `
+    <div class="log-item">
+      <div class="meta">${item.date}</div>
+      <b>${escapeHtml(item.type)}</b>
+      ${item.notes ? `<div style="color:var(--text-dim);font-size:13px;margin-top:4px">${escapeHtml(item.notes)}</div>` : ''}
+    </div>`).join('');
+}
+
+/* ---------------- CSV uploads ---------------- */
+const uploadDrop = $('uploadDrop');
+const uploadInput = $('uploadInput');
+uploadDrop.addEventListener('click', ()=> uploadInput.click());
+['dragover','dragenter'].forEach(evt => uploadDrop.addEventListener(evt, e=>{ e.preventDefault(); uploadDrop.classList.add('drag'); }));
+['dragleave','drop'].forEach(evt => uploadDrop.addEventListener(evt, e=>{ e.preventDefault(); uploadDrop.classList.remove('drag'); }));
+uploadDrop.addEventListener('drop', e=>{
+  if(e.dataTransfer.files.length) handleUpload(e.dataTransfer.files[0]);
+});
+uploadInput.addEventListener('change', e=>{
+  if(e.target.files.length) handleUpload(e.target.files[0]);
+});
+function handleUpload(file){
+  if(!session) return openModal('loginOverlay');
+  const batt = activeBattery();
+  if(!batt) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const text = reader.result;
+    const parsed = parseTelemetryCsv(text);
+    let summary;
+    if(parsed){
+      if(parsed.soh != null) batt.overrideSoh = parsed.soh;
+      if(parsed.cycles != null) batt.overrideCycles = parsed.cycles;
+      if(parsed.temp != null) batt.overrideTemp = parsed.temp;
+      if(parsed.fast != null) batt.overrideFast = parsed.fast;
+      batt.alertAcknowledged = false;
+      summary = `Applied: ${Object.entries(parsed).map(([k,v])=>`${k}=${v}`).join(', ')}`;
+      showToast('Telemetry file processed — record updated.', 'ok');
+    } else {
+      summary = 'No recognized columns (expected soh,cycles,temp,fast_pct) — file stored for reference only.';
+      showToast('File received, but no matching columns were found.', 'err');
+    }
+    uploadLogs.unshift({ name: file.name, date: new Date().toLocaleString(), summary });
+    renderUploadLog();
+    renderAll();
+  };
+  reader.onerror = ()=> showToast('Could not read file.', 'err');
+  reader.readAsText(file);
+}
+function parseTelemetryCsv(text){
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+  if(lines.length < 2) return null;
+  const headers = lines[0].split(',').map(h=>h.trim().toLowerCase());
+  const values = lines[1].split(',').map(v=>v.trim());
+  const map = {};
+  headers.forEach((h,i)=>{ map[h] = values[i]; });
+  const out = {};
+  if(map.soh !== undefined && !isNaN(parseFloat(map.soh))) out.soh = Math.round(parseFloat(map.soh));
+  if(map.cycles !== undefined && !isNaN(parseFloat(map.cycles))) out.cycles = Math.round(parseFloat(map.cycles));
+  if(map.temp !== undefined && !isNaN(parseFloat(map.temp))) out.temp = Math.round(parseFloat(map.temp));
+  if((map.fast_pct !== undefined || map.fast !== undefined) && !isNaN(parseFloat(map.fast_pct ?? map.fast))) out.fast = Math.round(parseFloat(map.fast_pct ?? map.fast));
+  return Object.keys(out).length ? out : null;
+}
+function renderUploadLog(){
+  const el = $('uploadLog');
+  if(!el) return;
+  if(uploadLogs.length === 0){ el.innerHTML = '<p class="empty-state">No files uploaded yet.</p>'; return; }
+  el.innerHTML = uploadLogs.map(l => `
+    <div class="log-item">
+      <div class="meta">${l.date}</div>
+      <b>${escapeHtml(l.name)}</b>
+      <div style="color:var(--text-dim);font-size:13px;margin-top:4px">${escapeHtml(l.summary)}</div>
+    </div>`).join('');
+}
+
+/* ---------------- CSV export ---------------- */
+function toCsv(rows){
+  return rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+}
+function downloadFile(filename, content, mime){
+  const blob = new Blob([content], {type: mime || 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+$('exportCsvBtn').onclick = ()=>{
+  const batt = activeBattery();
+  if(!batt) return;
+  const m = computeMetrics(batt);
+  const rows = [
+    ['field','value'],
+    ['passport_id', batt.passportId],
+    ['nickname', batt.nickname],
+    ['type', batt.type],
+    ['soh_pct', m.soh],
+    ['cycles', m.cycles],
+    ['avg_temp_c', m.temp],
+    ['fast_charge_pct', m.fast],
+    ['rul_cycles', m.rul],
+    ['safety_status', m.safety],
+  ];
+  downloadFile(`CellPass-Telemetry-${batt.passportId}.csv`, toCsv(rows));
+  showToast('Telemetry CSV exported.', 'ok');
+};
+$('exportFleetCsvBtn').onclick = ()=>{
+  const rows = [['passport_id','nickname','type','soh_pct','cycles','safety_status','purchase_date']];
+  batteries.forEach(b=>{
+    const m = computeMetrics(b);
+    rows.push([b.passportId, b.nickname, b.type, m.soh, m.cycles, m.safety, b.purchaseDate]);
+  });
+  downloadFile('CellPass-Fleet-Summary.csv', toCsv(rows));
+  showToast('Fleet summary CSV exported.', 'ok');
+};
+
+/* ---------------- certify (simulate lab test) ---------------- */
+$('certifyBtn').onclick = ()=>{
+  const batt = activeBattery();
+  if(!batt) return;
+  batt.verification = 'certified';
+  renderAll();
+  showToast('Certified lab result locked to this passport.', 'ok');
+};
+
+/* ---------------- verification / cert page ---------------- */
+$('viewCertPageBtn').onclick = ()=>{
+  if(!session) return openModal('loginOverlay');
+  showCertPage();
+};
+$('certClose').onclick = ()=> $('certPage').classList.remove('open');
 function showCertPage(){
-  $('certId').textContent = metrics.passportId;
-  $('certOwner').textContent = session.name;
-  $('certFormat').textContent = session.batteryType;
-  $('certSoh').textContent = metrics.soh + '%';
+  const batt = activeBattery();
+  if(!batt) return;
+  const m = computeMetrics(batt);
+  const isCert = batt.verification === 'certified';
+  $('certId').textContent = batt.passportId;
+  $('certOwner').textContent = batt.ownerName;
+  $('certFormat').textContent = batt.type;
+  $('certSoh').textContent = m.soh + '%';
+  $('certIssuer').textContent = isCert ? 'CellPass Certified Labs Network' : 'Field telemetry (unverified)';
+  $('certStampText').textContent = isCert ? 'CERTIFIED' : 'ESTIMATED';
+  $('certStampSub').textContent = isCert ? 'ACCREDITED LAB TEST' : 'FROM FIELD DATA';
+  $('certHeadline').textContent = isCert ? 'This passport is verified' : 'This passport is estimated';
+  $('certSub').textContent = isCert
+    ? 'An accredited lab result has been locked to this record. It can no longer be edited by field estimates.'
+    : 'Values are derived from telemetry, not an accredited lab. Run a certified test to lock this record.';
+  const stampColor = isCert ? '#2FBF8F' : '#E2A33D';
+  document.querySelectorAll('#certPage .cert-stamp circle').forEach(c => c.setAttribute('stroke', stampColor));
+  document.querySelectorAll('#certPage .cert-stamp text').forEach(t => t.setAttribute('fill', stampColor));
   $('certQr').innerHTML = '';
   new QRCode($('certQr'), {
-    text: `https://cellpass.example/verify/${metrics.passportId}`,
+    text: `https://cellpass.example/verify/${batt.passportId}`,
     width: 130, height: 130, colorDark: '#0E1420', colorLight: '#E7DFCB'
   });
   $('certPage').classList.add('open');
 }
-$('certClose').onclick = ()=> $('certPage').classList.remove('open');
 
-/* ---------------- PDF export with company name + QR ---------------- */
+/* ---------------- PDF export ---------------- */
 function exportPassportPdf(){
-  if(!session){ openModal('loginOverlay'); return; }
+  if(!session) return openModal('loginOverlay');
+  const batt = activeBattery();
+  if(!batt) return;
+  const m = computeMetrics(batt);
   const qrHolder = document.createElement('div');
   qrHolder.style.display = 'none';
   document.body.appendChild(qrHolder);
-  new QRCode(qrHolder, {
-    text: `https://cellpass.example/verify/${metrics.passportId}`,
-    width: 200, height: 200, colorDark: '#0E1420', colorLight: '#FFFFFF'
-  });
+  new QRCode(qrHolder, { text: `https://cellpass.example/verify/${batt.passportId}`, width: 200, height: 200, colorDark: '#0E1420', colorLight: '#FFFFFF' });
   setTimeout(()=>{
     const img = qrHolder.querySelector('img') || qrHolder.querySelector('canvas');
     const qrData = img.tagName === 'IMG' ? img.src : img.toDataURL('image/png');
-    buildPdf(qrData);
+    buildPdf(batt, m, qrData);
     document.body.removeChild(qrHolder);
   }, 200);
 }
-$('downloadPdfBtn').onclick = exportPassportPdf;
-$('downloadPdfBtn2').onclick = exportPassportPdf;
-$('downloadPdfBtn3').onclick = exportPassportPdf;
-$('downloadPdfBtn4').onclick = exportPassportPdf;
+['downloadPdfBtn','downloadPdfBtn2','downloadPdfBtn3','downloadPdfBtn4'].forEach(id => { if($(id)) $(id).onclick = exportPassportPdf; });
 
-function buildPdf(qrDataUrl){
+function buildPdf(batt, m, qrDataUrl){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'pt', format:'a4' });
   const pageW = doc.internal.pageSize.getWidth();
-
-  // Header — company name
-  doc.setFillColor(14,20,32);
-  doc.rect(0,0,pageW,90,'F');
-  doc.setTextColor(231,223,203);
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(22);
+  doc.setFillColor(14,20,32); doc.rect(0,0,pageW,90,'F');
+  doc.setTextColor(231,223,203); doc.setFont('helvetica','bold'); doc.setFontSize(22);
   doc.text('CellPass', 40, 42);
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(10);
-  doc.setTextColor(226,161,100);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(226,161,100);
   doc.text('Battery Health, Safety & Second-Life Passport', 40, 60);
-
-  doc.setTextColor(20,20,20);
-  doc.setFontSize(16);
-  doc.setFont('helvetica','bold');
+  doc.setTextColor(20,20,20); doc.setFontSize(16); doc.setFont('helvetica','bold');
   doc.text('Battery Passport', 40, 125);
-
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(11);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
   let y = 150;
   const rows = [
-    ['Passport ID', metrics.passportId],
-    ['Owner', session.name],
-    ['Email', session.email],
-    ['Battery format', session.batteryType],
-    ['Purchase date', session.purchaseDate],
-    ['State of health (SoH)', metrics.soh + '%'],
-    ['Charge cycles logged', String(metrics.cycles)],
-    ['Avg. temperature exposure', metrics.temp + ' °C'],
-    ['Safety status', metrics.safety],
-    ['Verification type', verification.toUpperCase()],
+    ['Passport ID', batt.passportId],
+    ['Owner', batt.ownerName],
+    ['Email', batt.email],
+    ['Nickname', batt.nickname],
+    ['Battery format', batt.type],
+    ['Purchase date', batt.purchaseDate],
+    ['State of health (SoH)', m.soh + '%'],
+    ['Charge cycles logged', String(m.cycles)],
+    ['Avg. temperature exposure', m.temp + ' °C'],
+    ['Safety status', m.safety],
+    ['Verification type', batt.verification.toUpperCase()],
     ['Issue date', new Date().toISOString().slice(0,10)],
   ];
   rows.forEach(([k,v])=>{
@@ -1920,35 +2072,253 @@ function buildPdf(qrDataUrl){
     doc.setFont('helvetica','normal'); doc.text(String(v), 220, y);
     y += 22;
   });
-
-  // verification stamp
-  const stampColor = verification === 'certified' ? [47,191,143] : [226,163,61];
-  doc.setDrawColor(...stampColor);
-  doc.setLineWidth(1.5);
+  const stampColor = batt.verification === 'certified' ? [47,191,143] : [226,163,61];
+  doc.setDrawColor(...stampColor); doc.setLineWidth(1.5);
   doc.circle(430, y+40, 55);
-  doc.setTextColor(...stampColor);
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(11);
-  doc.text(verification.toUpperCase(), 430, y+36, {align:'center'});
+  doc.setTextColor(...stampColor); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text(batt.verification.toUpperCase(), 430, y+36, {align:'center'});
   doc.setFontSize(7);
-  doc.text(verification==='certified' ? 'ACCREDITED LAB TEST' : 'FROM FIELD DATA', 430, y+48, {align:'center'});
-
-  // QR code
+  doc.text(batt.verification==='certified' ? 'ACCREDITED LAB TEST' : 'FROM FIELD DATA', 430, y+48, {align:'center'});
   doc.addImage(qrDataUrl, 'PNG', 40, y+10, 100, 100);
-  doc.setTextColor(90,90,90);
-  doc.setFontSize(9);
-  doc.setFont('helvetica','normal');
+  doc.setTextColor(90,90,90); doc.setFontSize(9); doc.setFont('helvetica','normal');
   doc.text('Scan to verify this passport online', 40, y+124);
-
-  doc.setDrawColor(220,220,220);
-  doc.line(40, 760, pageW-40, 760);
-  doc.setFontSize(8);
-  doc.setTextColor(140,140,140);
+  doc.setDrawColor(220,220,220); doc.line(40, 760, pageW-40, 760);
+  doc.setFontSize(8); doc.setTextColor(140,140,140);
   doc.text('Estimates are informational and support decision-making — they do not replace certified laboratory testing.', 40, 775);
   doc.text('© ' + new Date().getFullYear() + ' CellPass — concept platform for battery health, safety & second-life passports.', 40, 787);
-
-  doc.save(`CellPass-Passport-${metrics.passportId}.pdf`);
+  doc.save(`CellPass-Passport-${batt.passportId}.pdf`);
+  showToast('Passport PDF downloaded.', 'ok');
 }
+
+/* ---------------- charts ---------------- */
+function drawSohBarChart(){
+  const svg = $('sohBarChart');
+  if(!svg) return;
+  const buckets = [
+    { label:'<70%', color:'#E2664D', min:0, max:70 },
+    { label:'70–80%', color:'#E2A33D', min:70, max:80 },
+    { label:'80–90%', color:'#2FBF8F', min:80, max:90 },
+    { label:'90%+', color:'#4FD8B8', min:90, max:101 },
+  ];
+  const counts = buckets.map(b => batteries.filter(batt=>{
+    const s = computeMetrics(batt).soh;
+    return s >= b.min && s < b.max;
+  }).length);
+  const w=400,h=220,padB=34,padT=16,barW=56,gap=34;
+  const maxCount = Math.max(1, ...counts);
+  let s = `<line x1="30" y1="${h-padB}" x2="${w-10}" y2="${h-padB}" stroke="#2A3245" stroke-width="1"/>`;
+  buckets.forEach((b,i)=>{
+    const c = counts[i];
+    const barH = c ? Math.max(6, (c/maxCount) * (h-padB-padT)) : 4;
+    const x = 40 + i*(barW+gap);
+    const y = h - padB - barH;
+    s += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="8" fill="${b.color}" opacity="${c?0.95:0.25}"/>`;
+    s += `<text x="${x+barW/2}" y="${h-padB+18}" text-anchor="middle" fill="#8C96AA" font-size="11" font-family="IBM Plex Mono, monospace">${b.label}</text>`;
+    s += `<text x="${x+barW/2}" y="${y-8}" text-anchor="middle" fill="#E7DFCB" font-size="12" font-family='Space Grotesk, sans-serif' font-weight="700">${c}</text>`;
+  });
+  svg.innerHTML = s;
+  if($('sohChartTotal')) $('sohChartTotal').textContent = batteries.length + ' Total';
+}
+
+function drawChemDonut(){
+  const svg = $('chemDonutChart');
+  const legend = $('chemLegend');
+  if(!svg || !legend) return;
+  const colorFor = t => t.includes('NMC') ? '#2FBF8F' : t.includes('LFP') ? '#E2A164' : t.includes('Prismatic') ? '#7C9CF2' : t.includes('Pouch') ? '#E2A33D' : t.includes('Solid') ? '#E2664D' : '#8C96AA';
+  const counts = {};
+  batteries.forEach(b => { counts[b.type] = (counts[b.type]||0) + 1; });
+  const entries = Object.entries(counts);
+  const total = batteries.length || 1;
+  const r=80, cx=100, cy=100, sw=24, circ=2*Math.PI*r;
+  let offset = 0;
+  let s = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#22293A" stroke-width="${sw}"/>`;
+  entries.forEach(([type,count])=>{
+    const frac = count/total;
+    const dash = frac*circ;
+    s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colorFor(type)}" stroke-width="${sw}"
+      stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset += dash;
+  });
+  s += `<text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#E7DFCB" font-size="15" font-family="Space Grotesk, sans-serif" font-weight="700">${batteries.length}</text>`;
+  s += `<text x="${cx}" y="${cy+16}" text-anchor="middle" fill="#8C96AA" font-size="10" font-family="IBM Plex Mono, monospace">packs</text>`;
+  svg.innerHTML = s;
+  legend.innerHTML = entries.map(([type,count])=>`<div class="donut-legend-item"><span class="sw" style="background:${colorFor(type)}"></span>${escapeHtml(type)} (${count})</div>`).join('');
+}
+
+function drawLineChart(svgId, values, color, yLabelFmt){
+  const svg = $(svgId);
+  if(!svg) return;
+  const w=600,h=220,padL=40,padR=20,padT=20,padB=30;
+  const maxV = Math.max(...values)*1.05, minV = Math.min(...values)*0.95;
+  const stepX = (w-padL-padR)/(values.length-1);
+  const pts = values.map((v,i)=>{
+    const x = padL + i*stepX;
+    const y = padT + (h-padT-padB) * (1 - (v-minV)/(maxV-minV || 1));
+    return [x,y];
+  });
+  const path = pts.map((p,i)=> (i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const area = path + ` L${pts[pts.length-1][0].toFixed(1)},${h-padB} L${pts[0][0].toFixed(1)},${h-padB} Z`;
+  let s = `<line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#2A3245"/>`;
+  s += `<path d="${area}" fill="${color}" opacity="0.12"/>`;
+  s += `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+  pts.forEach((p)=>{ s += `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${color}"/>`; });
+  s += `<text x="${padL}" y="${padT-4}" fill="#8C96AA" font-size="10" font-family="IBM Plex Mono, monospace">${yLabelFmt(maxV)}</text>`;
+  s += `<text x="${padL}" y="${h-padB+14}" fill="#8C96AA" font-size="10" font-family="IBM Plex Mono, monospace">${yLabelFmt(minV)}</text>`;
+  svg.innerHTML = s;
+}
+
+/* ---------------- nav badge updates ---------------- */
+function renderNavBadges(){
+  $('navBatteriesCount').textContent = batteries.length;
+  const atRiskCount = batteries.filter(b => computeMetrics(b).atRisk).length;
+  $('navSafetyCount').textContent = atRiskCount;
+  const secondLifeCount = batteries.filter(b => computeMetrics(b).secondLife).length;
+  $('navSecondLifeCount').textContent = secondLifeCount;
+  const batt = activeBattery();
+  if($('navDamageCount')) $('navDamageCount').textContent = batt ? (inspections[batt.id]||[]).length : 0;
+}
+
+/* ---------------- full render ---------------- */
+function renderAll(){
+  if(!session || batteries.length === 0) return;
+  const batt = activeBattery();
+  const m = computeMetrics(batt);
+  const initial = (session.name || session.email || '?').trim().charAt(0).toUpperCase();
+
+  $('dashWelcome').textContent = `Welcome back, ${session.name} · active passport ${batt.passportId} · live telemetry from your ${batt.type}.`;
+  $('tbAvatar').textContent = initial;
+  $('tbUserName').textContent = session.name;
+  $('tbFleetName').textContent = `${batteries.length} battery${batteries.length>1?'ies':''} · Owner Fleet`;
+
+  const fleetSoh = Math.round(batteries.reduce((a,b)=>a+computeMetrics(b).soh,0)/batteries.length);
+  const fleetRul = Math.round(batteries.reduce((a,b)=>a+computeMetrics(b).rul,0)/batteries.length);
+  const atRiskCount = batteries.filter(b => computeMetrics(b).atRisk).length;
+  const secondLifeCount = batteries.filter(b => computeMetrics(b).secondLife).length;
+
+  $('statPacks').textContent = batteries.length;
+  $('statSoh').textContent = fleetSoh + '%';
+  $('statRul').textContent = fleetRul;
+  $('statSafetyIndex').textContent = Math.round(((batteries.length-atRiskCount)/batteries.length)*100) + '%';
+  $('statRisk').textContent = atRiskCount;
+  $('statSecondLife').textContent = secondLifeCount;
+
+  renderNavBadges();
+
+  const riskCard = $('statRiskCard');
+  const alertBanner = $('alertBanner');
+  if(atRiskCount > 0){
+    riskCard.classList.add('risk');
+    alertBanner.style.display = 'flex';
+    const worst = batteries.find(b => computeMetrics(b).atRisk);
+    const wm = computeMetrics(worst);
+    $('alertHeadline').textContent = `${atRiskCount} Battery Pack${atRiskCount>1?'s':''} Require${atRiskCount>1?'':'s'} Immediate Attention`;
+    $('alertDesc').innerHTML = `Elevated risk detected on <b>${worst.passportId}</b> — state of health has dropped to ${wm.soh}% with ${wm.fast}% fast‑charge frequency.`;
+  } else {
+    riskCard.classList.remove('risk');
+    alertBanner.style.display = 'none';
+  }
+
+  // Passport panel
+  $('passportBadge').textContent = batt.verification.toUpperCase();
+  $('passportBadge').className = 'badge ' + batt.verification;
+  $('passportIdText').textContent = batt.passportId;
+  $('ppOwner').textContent = batt.ownerName;
+  $('ppFormat').textContent = batt.type;
+  $('ppDate').textContent = batt.purchaseDate;
+  $('ppSoh').textContent = m.soh + '%';
+  $('certifyBtn').disabled = batt.verification === 'certified';
+  $('certifyBtn').textContent = batt.verification === 'certified' ? 'Already certified' : 'Simulate certified lab test';
+
+  // Batteries table
+  $('batteriesTableBody').innerHTML = batteries.map(b=>{
+    const bm = computeMetrics(b);
+    const isActive = b.id === activeBatteryId;
+    return `<tr data-id="${b.id}" style="${isActive?'background:rgba(47,191,143,.06)':''}">
+      <td style="font-family:var(--mono)">${b.passportId}${isActive?' <span style="color:var(--green);font-size:11px">● active</span>':''}</td>
+      <td>${escapeHtml(b.nickname)} — ${escapeHtml(b.type)}</td>
+      <td style="color:var(--green)">${bm.soh}%</td>
+      <td>${bm.safety}</td>
+      <td>${b.purchaseDate}</td>
+      <td><button class="btn btn-ghost" data-select="${b.id}" style="padding:6px 10px;font-size:12px">Select</button></td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('#batteriesTableBody [data-select]').forEach(btn=>{
+    btn.onclick = (e)=>{ e.stopPropagation(); activeBatteryId = btn.dataset.select; renderAll(); showToast('Active battery switched.'); };
+  });
+  document.querySelectorAll('#batteriesTableBody tr').forEach(tr=>{
+    tr.onclick = ()=>{ activeBatteryId = tr.dataset.id; renderAll(); showToast('Active battery switched.'); };
+  });
+
+  // Health panel
+  $('healthBatteryName').textContent = batt.nickname;
+  const fastNote = m.fast > 25 ? 'higher than recommended, adds heat stress' : 'within a healthy range';
+  $('hFast').textContent = m.fast + '% of sessions — ' + fastNote;
+  $('hDod').textContent = 'Mostly partial cycles — gentle on capacity fade';
+  $('hFull').textContent = (m.ageDays % 5) + 'h/week average — keep below 2h where possible';
+  $('hCal').textContent = Math.round(m.ageDays / 30) + ' months in service';
+  $('hSoh').textContent = m.soh + '%';
+  $('hCycles').textContent = m.cycles;
+  $('hTemp').textContent = m.temp + '°C';
+  $('hAge').textContent = Math.round(m.ageDays / 30) + ' months';
+
+  // Safety panel
+  $('safetyStatusBadge').textContent = m.safety;
+  $('safetyStatusBadge').className = 'badge ' + (m.atRisk ? 'estimated' : 'certified');
+  $('safetyAlertText').textContent = m.atRisk
+    ? `Elevated risk detected — state of health has dropped to ${m.soh}% with ${m.fast}% fast‑charge frequency. Reduce fast charging and schedule an inspection.`
+    : (batt.alertAcknowledged ? 'Alert acknowledged. Continue monitoring — will resurface automatically if risk increases.' : 'No active safety alerts. Cell balance, thermal readings and fast‑charge frequency are all within normal range.');
+  $('acknowledgeAlertBtn').style.display = (m.safety === 'Elevated risk' && !batt.alertAcknowledged) ? 'inline-block' : 'none';
+  const chargeWindowText = 'Charge to 80% for daily use · charge to 100% only before long trips · avoid fast‑charging below 10% state of charge';
+  $('safetyChargeWindow').textContent = chargeWindowText;
+  $('chgWindow').textContent = chargeWindowText;
+
+  // Damage/inspection
+  renderInspections();
+
+  // Degradation panel
+  $('degSoh').textContent = m.soh + '%';
+  $('degRul').textContent = m.rul + ' cycles';
+  const fadeSeries = Array.from({length:8}, (_,i)=> Math.round(100 - (100-m.soh)*(i/7)));
+  drawLineChart('degradationChart', fadeSeries, '#2FBF8F', v=>Math.round(v)+'%');
+
+  // AI predictions
+  $('predSoh12').textContent = Math.max(55, m.soh - 5) + '% (est.)';
+  $('predRul').textContent = Math.max(80, m.rul - 300) + ' cycles (est.)';
+  const forecast = Array.from({length:6}, (_,i)=> Math.round(m.soh - (5*(i/5))));
+  drawLineChart('predictionChart', forecast, '#E2A164', v=>Math.round(v)+'%');
+
+  // Charging panel
+  $('chgFast').textContent = m.fast + '% of sessions';
+
+  // Recommendations
+  $('recFast').textContent = m.fast > 25
+    ? `Fast charging is used in ${m.fast}% of sessions — try to bring this down to reduce heat stress.`
+    : `Fast‑charge frequency (${m.fast}%) is already in a healthy range — keep it up.`;
+  $('recLab').textContent = batt.verification === 'certified'
+    ? 'This passport already has a certified lab result locked in.'
+    : (m.soh < 80 ? 'Schedule a certified lab test now — SoH has dropped below 80%.' : 'Schedule a certified lab test to convert this estimate into a verified passport entry.');
+
+  // Second life
+  $('secondLifeText').textContent = m.secondLife
+    ? `This battery is flagged for second‑life routing — SoH (${m.soh}%) has fallen below the reuse‑in‑vehicle threshold. It's still a strong candidate for stationary storage (BESS) reuse.`
+    : `Not yet eligible for second‑life routing — SoH (${m.soh}%) is still within the in‑vehicle service range.`;
+
+  // Recycling
+  $('recyclingText').textContent = `Chemistry: ${batt.type}. Based on current health and format, this pack's estimated recoverable materials include lithium, nickel/cobalt or iron‑phosphate depending on chemistry, and copper/aluminum current collectors. A certified teardown assessment is required before final routing.`;
+
+  drawSohBarChart();
+  drawChemDonut();
+  renderUploadLog();
+}
+
+/* live BMS pill tick — nudges opacity slightly to feel "live" */
+setInterval(()=>{
+  if(!session || batteries.length===0) return;
+  const pill = $('liveBmsPill');
+  if(!pill) return;
+  pill.style.opacity = 0.55;
+  setTimeout(()=> pill.style.opacity = 1, 300);
+}, 4000);
 </script>
 
 <script>
